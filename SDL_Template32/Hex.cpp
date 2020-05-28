@@ -3,7 +3,7 @@
 
 Hex::Hex()
 {
-	TheTextureManager::Instance()->load("Img/hex.png", "hex", TheGame::Instance()->getRenderer());
+	TheTextureManager::Instance()->load("Img/hex.png", "hex", Engine::Instance().GetRenderer());
 
 	setPosition(glm::vec2(20, 20));
 
@@ -32,7 +32,7 @@ void Hex::draw()
 	const int xComponent = getPosition().x;
 	const int yComponent = getPosition().y;
 
-	TheTextureManager::Instance()->draw("hex", xComponent, yComponent, TheGame::Instance()->getRenderer(), false);
+	TheTextureManager::Instance()->draw("hex", xComponent, yComponent, Engine::Instance().GetRenderer(), false);
 }
 
 void Hex::update()

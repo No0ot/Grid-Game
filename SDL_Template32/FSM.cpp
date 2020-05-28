@@ -9,7 +9,7 @@ using namespace std;
 // Begin State.
 void State::Render()
 {
-	SDL_RenderPresent(TheGame::Instance()->getRenderer());
+	SDL_RenderPresent(Engine::Instance().GetRenderer());
 }
 
 void State::HandleEvents()
@@ -21,26 +21,26 @@ void State::HandleEvents()
 		switch (event.type)
 		{
 		case SDL_QUIT: // User pressed window's 'x' button.
-			TheGame::Instance()->QuitGame();
+			Engine::Instance().QuitGame();
 			break;
 		case SDL_KEYDOWN: // Try SDL_KEYUP instead.
 			switch (event.key.keysym.sym)
 			{
 			case SDLK_ESCAPE:
-				TheGame::Instance()->QuitGame();
+				Engine::Instance().QuitGame();
 				break;
 			}
 			break;
 		case SDL_MOUSEBUTTONDOWN:
 			if (event.button.button >= 1 && event.button.button <= 3)
-				TheGame::Instance()->SetMouseState(event.button.button - 1, true);
+				Engine::Instance().SetMouseState(event.button.button - 1, true);
 			break;
 		case SDL_MOUSEBUTTONUP:
 			if (event.button.button >= 1 && event.button.button <= 3)
-				TheGame::Instance()->SetMouseState(event.button.button - 1, false);
+				Engine::Instance().SetMouseState(event.button.button - 1, false);
 			break;
 		case SDL_MOUSEMOTION:
-			SDL_GetMouseState(&TheGame::Instance()->GetMousePos().x, &TheGame::Instance()->GetMousePos().y);
+			SDL_GetMouseState(&Engine::Instance().GetMousePos().x, &Engine::Instance().GetMousePos().y);
 			break;
 		}
 	}
@@ -73,13 +73,13 @@ void GameState::HandleEvents()
 void GameState::Render()
 {
 	//cout << "Rendering Game..." << endl;
-	SDL_SetRenderDrawColor(TheGame::Instance()->getRenderer(), 0, 255, 0, 255);
-	SDL_RenderClear(TheGame::Instance()->getRenderer()); // Clear the screen with the draw color.
+	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 0, 255, 0, 255);
+	SDL_RenderClear(Engine::Instance().GetRenderer()); // Clear the screen with the draw color.
 	// hex
 	m_pHex->draw();
 
 
-	if (dynamic_cast<GameState*>(TheGame::Instance()->GetFSM().GetStates().back()))
+	if (dynamic_cast<GameState*>(Engine::Instance().GetFSM().GetStates().back()))
 		State::Render();
 }
 
@@ -111,9 +111,10 @@ void TitleState::Update()
 void TitleState::Render()
 {
 	cout << "Rendering Title..." << endl;
-	SDL_SetRenderDrawColor(TheGame::Instance()->getRenderer(), 255, 0, 0, 255);
+	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 255, 0, 0, 255);
+	SDL_RenderClear(Engine::Instance().GetRenderer());
 
-	if (dynamic_cast<TitleState*>(TheGame::Instance()->GetFSM().GetStates().back()))
+	if (dynamic_cast<TitleState*>(Engine::Instance().GetFSM().GetStates().back()))
 		State::Render();
 }
 
