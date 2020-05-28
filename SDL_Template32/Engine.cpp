@@ -8,31 +8,7 @@
 #define FPS 60
 #define SIZE 10
 
-class Hex
-{
-private:
-	bool m_occupied = false;
-public:
-	bool m_active = false;
-	SDL_Rect hx_src, hx_dst;
-	Hex(int x, int y) {
-		hx_src = { 0, 0, 64, 64 };
-		hx_dst = { x , y , hx_src.w * 2 , hx_src.h };
-	}
-	Hex() {
-		hx_dst = { 0,0,0,0 };
-		hx_src = { 0,0,0,0 };
-	}
 
-	bool getOccupied() { return m_occupied; }
-	bool getActive() { return m_active; }
-	void setActive(bool b) { m_active = b; }
-	void setOccupied(bool b) { m_occupied = b; }
-
-};
-
-Hex g_selector;
-Hex g_hex[10][10];
 
 class Job
 {
@@ -199,7 +175,7 @@ bool Engine::init(const char* title, int xpos, int ypos, int width, int height, 
 			{
 				if (IMG_Init(IMG_INIT_PNG))
 				{
-					g_pTexture[0] = IMG_LoadTexture(g_pRenderer, "Hex2.png");
+					g_pTexture[0] = IMG_LoadTexture(g_pRenderer, "Hex.png");
 					g_pTexture[1] = IMG_LoadTexture(g_pRenderer, "selector.png");
 					soldier.m_texture = IMG_LoadTexture(g_pRenderer, "soldier.png");
 					squire.m_texture = IMG_LoadTexture(g_pRenderer, "squire.png");
@@ -370,13 +346,7 @@ bool Engine::keyDown(SDL_Scancode c)
 
 void Engine::update()
 {
-	for (int i = 0; i < SIZE; i++) {
-		for (int j = 0; j < SIZE; j++) {
 
-			if (g_hex[i][j].m_active == true)
-				g_selector = g_hex[i][j];
-		}
-	}
 }
 
 void Engine::render()
