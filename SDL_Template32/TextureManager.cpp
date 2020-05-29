@@ -59,6 +59,8 @@ void TextureManager::draw(std::string id, int x, int y, SDL_Renderer* pRenderer,
 
 	srcRect.w = dstRect.w = textureWidth;
 	srcRect.h = dstRect.h = textureHeight;
+	dstRect.x = x;
+	dstRect.y = y;
 
 	SDL_RenderCopyEx(pRenderer, m_textureMap[id], &srcRect, &dstRect, 0, 0, flip);
 

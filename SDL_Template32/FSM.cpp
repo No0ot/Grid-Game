@@ -1,5 +1,5 @@
 #include "FSM.h"
-#include "Game.h"
+#include "Engine.h"
 #include <iostream>
 #include <sstream>
 #define WIDTH 1024
@@ -62,7 +62,7 @@ void GameState::Enter()
 
 void GameState::Update()
 {
-	cout << "Updating Game..." << endl;
+	cout << m_pHex->getPosition().x << endl;
 }
 
 void GameState::HandleEvents()
@@ -73,9 +73,10 @@ void GameState::HandleEvents()
 void GameState::Render()
 {
 	//cout << "Rendering Game..." << endl;
-	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 0, 255, 0, 255);
-	SDL_RenderClear(Engine::Instance().GetRenderer()); // Clear the screen with the draw color.
+	//SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 0, 255, 0, 255);
+	//SDL_RenderClear(Engine::Instance().GetRenderer()); // Clear the screen with the draw color.
 	// hex
+
 	m_pHex->draw();
 
 
