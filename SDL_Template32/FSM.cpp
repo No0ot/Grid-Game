@@ -51,18 +51,41 @@ void State::Resume(){}
 
 
 // Begin GameState.
-GameState::GameState(): m_pHex(nullptr) {}
+GameState::GameState() {}
+
+void GameState::BuildHexGrid()
+{
+	m_pHexGrid = std::vector<Hex*>();
+
+	for (auto row = 0; row < 10; ++row)
+	{
+		for (auto col = 0; col < 10; ++col)
+		{
+			auto hex = new Hex();
+			if( row % 2 == 1)
+				hex->setPosition(glm::vec2(20 + (row * 48), (50 + (col * 64)) - 15));
+			else
+				hex->setPosition(glm::vec2(20 + (row * 48), (50 + (col * 64)) + 15));
+
+			m_pHexGrid.push_back(hex);
+		}
+	}
+	
+}
 
 void GameState::Enter()
 {
-	m_pHex = new Hex();
-	m_pHex->setPosition(glm::vec2(250, 250));
 	cout << "Entering Game..." << endl;
+	BuildHexGrid();
 }
 
 void GameState::Update()
 {
-	cout << m_pHex->getPosition().x << endl;
+	for (int count = 0; count < (int)m_pHexGrid.size(); count++)
+	{
+		m_pHexGrid[count]->update();
+	}
+	//std::cout << " updating..." << std::endl;
 }
 
 void GameState::HandleEvents()
@@ -77,8 +100,8 @@ void GameState::Render()
 	//SDL_RenderClear(Engine::Instance().GetRenderer()); // Clear the screen with the draw color.
 	// hex
 
-	m_pHex->draw();
-
+	for (int count = 0; count < (int)m_pHexGrid.size(); count++)
+		m_pHexGrid[count]->draw();
 
 	if (dynamic_cast<GameState*>(Engine::Instance().GetFSM().GetStates().back()))
 		State::Render();

@@ -143,7 +143,7 @@ void Engine::Render()
 {
 	GetFSM().Render();
 
-	//SDL_RenderPresent(m_pRenderer);
+	SDL_RenderPresent(m_pRenderer);
 }
 
 void Engine::Clean()

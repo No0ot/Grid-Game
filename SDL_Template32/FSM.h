@@ -19,9 +19,11 @@ public:
 class GameState : public State
 {
 private:
-	Hex* m_pHex;
+	std::vector<Hex*> m_pHexGrid;
 public:
 	GameState();
+	void BuildHexGrid();
+	//Inherited functions
 	void Enter();
 	void Update();
 	void HandleEvents();
