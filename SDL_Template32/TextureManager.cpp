@@ -32,11 +32,11 @@ bool TextureManager::load(std::string fileName, std::string id, SDL_Renderer* pR
 	return false;
 }
 
-void TextureManager::draw(std::string id, int x, int y, int width, int height, SDL_Renderer* pRenderer, SDL_RendererFlip flip)
+void TextureManager::draw(std::string id, int x, int y, int width, int height, SDL_Renderer* pRenderer,int state, SDL_RendererFlip flip)
 {
 	SDL_Rect srcRect;
 	SDL_Rect dstRect;
-	srcRect.x = 0;
+	srcRect.x = 0 + (64 * state);
 	srcRect.y = 0;
 	srcRect.w = dstRect.w = width;
 	srcRect.h = dstRect.h = height;
@@ -45,12 +45,12 @@ void TextureManager::draw(std::string id, int x, int y, int width, int height, S
 	SDL_RenderCopyEx(pRenderer, m_textureMap[id], &srcRect, &dstRect, 0, 0, flip);
 }
 
-void TextureManager::draw(std::string id, int x, int y, SDL_Renderer* pRenderer, bool centered, SDL_RendererFlip flip)
+void TextureManager::draw(std::string id, int x, int y, SDL_Renderer* pRenderer,int state, bool centered, SDL_RendererFlip flip)
 {
 	SDL_Rect srcRect;
 	SDL_Rect dstRect;
 
-	srcRect.x = 0;
+	srcRect.x = 0 + 64 * state;
 	srcRect.y = 0;
 
 	int textureWidth, textureHeight;
@@ -59,6 +59,8 @@ void TextureManager::draw(std::string id, int x, int y, SDL_Renderer* pRenderer,
 
 	srcRect.w = dstRect.w = textureWidth;
 	srcRect.h = dstRect.h = textureHeight;
+	dstRect.x = x;
+	dstRect.y = y;
 
 	SDL_RenderCopyEx(pRenderer, m_textureMap[id], &srcRect, &dstRect, 0, 0, flip);
 

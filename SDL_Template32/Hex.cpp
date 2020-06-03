@@ -1,13 +1,15 @@
 #include "Hex.h"
-#include "Game.h"
+#include "Engine.h"
+#include <iostream>
 
-Hex::Hex()
+Hex::Hex() : mouseHover(false), m_state(STATE_OFF)
 {
-	TheTextureManager::Instance()->load("Img/hex.png", "hex", TheGame::Instance()->getRenderer());
+	TheTextureManager::Instance()->load("Img/hex.png", "hex", Engine::Instance().GetRenderer());
+	TheTextureManager::Instance()->load("Img/selector.png", "hover", Engine::Instance().GetRenderer());
 
 	setPosition(glm::vec2(20, 20));
 
-	glm::vec2 size = TheTextureManager::Instance()->getTextureSize("hex");
+	glm::vec2 size =TheTextureManager::Instance()->getTextureSize("hex");
 	setWidth(size.x);
 	setHeight(size.y);
 	setType(GameObjectType::HEX);
@@ -17,31 +19,69 @@ Hex::~Hex()
 {
 
 }
-void Hex::buildGrid(int i, int j)
-{
 
-	if (j == 1 || j == 3 || j == 5 || j == 7 || j == 9 || j == 11 || j == 13 || j == 15)
-		setPosition(glm::vec2(20 + (j * 95), (50 + (i * 64)) - 15));
-
-	else if (j == 0 || j == 2 || j == 4 || j == 6 || j == 8 || j == 10 || j == 12 || j == 14)
-		setPosition(glm::vec2(20 + (j * 95), (50 + (i * 64)) + 15));
-
-}
 void Hex::draw()
 {
 	const int xComponent = getPosition().x;
 	const int yComponent = getPosition().y;
-
-	TheTextureManager::Instance()->draw("hex", xComponent, yComponent, TheGame::Instance()->getRenderer(), false);
+	SDL_Rect rectangle = { xComponent,yComponent,64,64 };
+	
+	switch (m_state)
+	{
+	case STATE_HOVER :
+		//TheTextureManager::Instance()->draw("hover", xComponent, yComponent, Engine::Instance().GetRenderer(), false);
+		SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 255, 0, 0, 2555);
+		SDL_RenderDrawRect(Engine::Instance().GetRenderer(), &rectangle);
+		break;
+	case STATE_OFF :
+		SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 0, 255, 0, 2555);
+		SDL_RenderDrawRect(Engine::Instance().GetRenderer(), &rectangle);
+		//TheTextureManager::Instance()->draw("hex", xComponent, yComponent, Engine::Instance().GetRenderer(), false);
+		break;
+	}
+	//TheTextureManager::Instance()->draw("hex", xComponent, yComponent,64,64, Engine::Instance().GetRenderer(),(int)m_state);
 }
 
 void Hex::update()
 {
+	bool mousecol = mouseCol();
+	switch (m_state)
+	{
+	case STATE_OFF:
+		if (mousecol)
+		{
+			m_state = STATE_HOVER;
+		}
+		std::cout << " state off" << std::endl;
+		break;
+	case STATE_HOVER:
+		if (!mousecol)
+		{
+			m_state = STATE_OFF;
+		}
+			std::cout << " state hover " << std::endl;
+		break;
+	}
+
 
 }
 
 void Hex::clean()
 {
 
+}
+
+
+bool Hex::mouseCol()
+{
+	int mx = Engine::Instance().GetMousePos().x;
+	int my = Engine::Instance().GetMousePos().y;
+	return (mx < (getPosition().x + getWidth()) && mx > getPosition().x &&
+		my < (getPosition().y + getHeight()) && my > getPosition().y);
+}
+
+void Hex::setHover(bool h)
+{
+	mouseHover = h;
 }
 

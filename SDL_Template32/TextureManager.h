@@ -26,8 +26,8 @@ public:
 	}
 	bool load(std::string fileName, std::string id, SDL_Renderer* pRenderer);
 
-	void draw(std::string id, int x, int y, int width, int height, SDL_Renderer* pRenderer, SDL_RendererFlip flip = SDL_FLIP_NONE);
-	void draw(std::string id, int x, int y, SDL_Renderer* pRenderer, bool centered = false, SDL_RendererFlip flip = SDL_FLIP_NONE);
+	void draw(std::string id, int x, int y, int width, int height, SDL_Renderer* pRenderer,int state, SDL_RendererFlip flip = SDL_FLIP_NONE);
+	void draw(std::string id, int x, int y, SDL_Renderer* pRenderer,int state, bool centered = false, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
 	glm::vec2 getTextureSize(std::string id);
 
