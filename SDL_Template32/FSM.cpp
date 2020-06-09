@@ -51,21 +51,21 @@ void State::Resume(){}
 
 
 // Begin GameState.
-GameState::GameState() {}
+GameState::GameState() : current_state(PLAYER_MOVE) {}
 
 void GameState::BuildHexGrid()
 {
 	m_pHexGrid = std::vector<Hex*>();
 
-	for (auto row = 0; row < 10; ++row)
+	for (auto column = 0; column < 15; ++column)
 	{
-		for (auto col = 0; col < 10; ++col)
+		for (auto row = 0; row < 10; ++row)
 		{
 			auto hex = new Hex();
-			if( row % 2 == 1)
-				hex->setPosition(glm::vec2(20 + (row * 48), (50 + (col * 64)) - 15));
+			if( column % 2 == 1)
+				hex->setPosition(glm::vec2(20 + (column * 48), (50 + (row * 64)) - 15));
 			else
-				hex->setPosition(glm::vec2(20 + (row * 48), (50 + (col * 64)) + 15));
+				hex->setPosition(glm::vec2(20 + (column * 48), (50 + (row * 64)) + 15));
 
 			m_pHexGrid.push_back(hex);
 		}
@@ -81,9 +81,17 @@ void GameState::Enter()
 
 void GameState::Update()
 {
-	for (int count = 0; count < (int)m_pHexGrid.size(); count++)
+	switch (current_state)
 	{
-		m_pHexGrid[count]->update();
+	case PLAYER_MOVE :
+		for (int count = 0; count < (int)m_pHexGrid.size(); count++)
+		{
+			m_pHexGrid[count]->update();
+		}
+		break;
+	case PLAYER_ABILITY:
+
+		break;
 	}
 	//std::cout << " updating..." << std::endl;
 }

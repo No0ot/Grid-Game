@@ -20,7 +20,9 @@ class GameState : public State
 {
 private:
 	std::vector<Hex*> m_pHexGrid;
+	enum TurnState { PLAYER_MOVE, PLAYER_ABILITY, PLAYER_ATTACK, ENEMY_TURN};
 public:
+	TurnState current_state;
 	GameState();
 	void BuildHexGrid();
 	//Inherited functions

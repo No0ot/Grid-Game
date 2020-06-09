@@ -19,6 +19,9 @@
     <Filter Include="Objects">
       <UniqueIdentifier>{cebe87c5-4557-46b2-98fb-237b2117cca5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Objects\Data Classes">
+      <UniqueIdentifier>{289ba3f9-ba67-480a-afd8-231dbb14baf7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -39,6 +42,15 @@
     <ClCompile Include="Engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Unit.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Merc.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Job.cpp">
+      <Filter>Objects\Data Classes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObject.h">
@@ -55,6 +67,15 @@
     </ClInclude>
     <ClInclude Include="Engine.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Unit.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Merc.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Job.h">
+      <Filter>Objects\Data Classes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

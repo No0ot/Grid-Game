@@ -52,14 +52,14 @@ void Hex::update()
 		{
 			m_state = STATE_HOVER;
 		}
-		std::cout << " state off" << std::endl;
+		//std::cout << " state off" << std::endl;
 		break;
 	case STATE_HOVER:
 		if (!mousecol)
 		{
 			m_state = STATE_OFF;
 		}
-			std::cout << " state hover " << std::endl;
+			//std::cout << " state hover " << std::endl;
 		break;
 	}
 
