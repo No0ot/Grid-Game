@@ -77,6 +77,9 @@ void GameState::Enter()
 {
 	cout << "Entering Game..." << endl;
 	BuildHexGrid();
+	m_MercVec = std::vector<Merc*>();
+	m_MercVec[0] = new Merc(ARCHER);
+	m_MercVec[0]->setHex(m_pHexGrid[6]);
 }
 
 void GameState::Update()
@@ -87,7 +90,11 @@ void GameState::Update()
 		for (int count = 0; count < (int)m_pHexGrid.size(); count++)
 		{
 			m_pHexGrid[count]->update();
+
 		}
+		for (int count = 0; count < (int)m_MercVec.size(); count++)
+			m_MercVec[count]->update();
+
 		break;
 	case PLAYER_ABILITY:
 
@@ -110,6 +117,8 @@ void GameState::Render()
 
 	for (int count = 0; count < (int)m_pHexGrid.size(); count++)
 		m_pHexGrid[count]->draw();
+	for (int count = 0; count < (int)m_MercVec.size(); count++)
+		m_MercVec[count]->draw();
 
 	if (dynamic_cast<GameState*>(Engine::Instance().GetFSM().GetStates().back()))
 		State::Render();

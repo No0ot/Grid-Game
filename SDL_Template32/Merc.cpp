@@ -1,4 +1,5 @@
 #include "Merc.h"
+#include "Engine.h"
 
 //Jobs
 #include "Archer.h"
@@ -22,10 +23,15 @@ Merc::~Merc()
 
 void Merc::draw()
 {
+	const int xComponent = getPosition().x;
+	const int yComponent = getPosition().y;
+
+	TheTextureManager::Instance()->draw("archer", xComponent, yComponent, Engine::Instance().GetRenderer(), false);
 }
 
 void Merc::update()
 {
+	setPosition(getHex()->getPosition());
 }
 
 void Merc::clean()
