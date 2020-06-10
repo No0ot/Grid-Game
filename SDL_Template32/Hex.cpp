@@ -9,7 +9,7 @@ Hex::Hex() : mouseHover(false), m_state(STATE_OFF)
 
 	setPosition(glm::vec2(20, 20));
 
-	glm::vec2 size =TheTextureManager::Instance()->getTextureSize("hex");
+	glm::vec2 size = TheTextureManager::Instance()->getTextureSize("hex");
 	setWidth(size.x);
 	setHeight(size.y);
 	setType(GameObjectType::HEX);
@@ -30,11 +30,11 @@ void Hex::draw()
 	{
 	case STATE_HOVER :
 		//TheTextureManager::Instance()->draw("hover", xComponent, yComponent, Engine::Instance().GetRenderer(), false);
-		SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 255, 0, 0, 2555);
+		SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 255, 0, 0, 255);
 		SDL_RenderDrawRect(Engine::Instance().GetRenderer(), &rectangle);
 		break;
 	case STATE_OFF :
-		SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 0, 255, 0, 2555);
+		SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 0, 255, 0, 255);
 		SDL_RenderDrawRect(Engine::Instance().GetRenderer(), &rectangle);
 		//TheTextureManager::Instance()->draw("hex", xComponent, yComponent, Engine::Instance().GetRenderer(), false);
 		break;

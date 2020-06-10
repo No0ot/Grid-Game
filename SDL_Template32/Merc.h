@@ -1,9 +1,12 @@
 #pragma once
 #include "Unit.h"
+#include "Job.h"
+#include "JobEnum.h"
 class Merc : public Unit
 {
 public:
-	Merc();
+	//friend class Job;
+	Merc(Jobenum job);
 	~Merc();
 
 	//Inherited functions
@@ -29,6 +32,8 @@ public:
 
 private:
 	// Needs a race and Job
+	Job* m_Job;
+	Jobenum m_JobTitle;
 
 	enum PrimaryStat { STRENGTH, FINESSE, CONCENTRATION, RESOLVE};
 	PrimaryStat m_PrimaryStat;

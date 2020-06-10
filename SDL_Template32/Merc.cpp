@@ -1,7 +1,19 @@
 #include "Merc.h"
 
-Merc::Merc()
+//Jobs
+#include "Archer.h"
+
+Merc::Merc(Jobenum job)
 {
+	switch (job)
+	{
+	case ARCHER:
+		m_Job = new Archer();
+		break;
+	case KNIGHT:
+		break;
+	}
+
 }
 
 Merc::~Merc()
@@ -52,24 +64,30 @@ int Merc::getResolve()
 
 void Merc::setMaxHealth(int new_maxhealth)
 {
+	m_MaxHealth = new_maxhealth;
 }
 
 void Merc::setCurrentHealth(int new_currenthealth)
 {
+	m_CurrentHealth = new_currenthealth;
 }
 
 void Merc::setStrength(int new_strength)
 {
+	m_Strength = new_strength;
 }
 
 void Merc::setFinesse(int new_finesse)
 {
+	m_Finnese = new_finesse;
 }
 
 void Merc::setConcentration(int new_concentration)
 {
+	m_Concentration = new_concentration;
 }
 
 void Merc::setResolve(int new_resolve)
 {
+	m_Resolve = new_resolve;
 }
