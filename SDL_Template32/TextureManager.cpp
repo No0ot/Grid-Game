@@ -50,20 +50,66 @@ void TextureManager::draw(std::string id, int x, int y, SDL_Renderer* pRenderer,
 	SDL_Rect srcRect;
 	SDL_Rect dstRect;
 
-	srcRect.x = 0 + 64 * state;
+	srcRect.x = 0;
 	srcRect.y = 0;
 
 	int textureWidth, textureHeight;
 
 	SDL_QueryTexture(m_textureMap[id], NULL, NULL, &textureWidth, &textureHeight);
 
-	srcRect.w = dstRect.w = textureWidth;
-	srcRect.h = dstRect.h = textureHeight;
+	srcRect.h = 31;
+	dstRect.h = 62;
+	srcRect.w = 31;
+	dstRect.w = 62;
 	dstRect.x = x;
 	dstRect.y = y;
 
 	SDL_RenderCopyEx(pRenderer, m_textureMap[id], &srcRect, &dstRect, 0, 0, flip);
 
+}
+
+void TextureManager::drawHex(std::string id, int x, int y, SDL_Renderer* pRenderer, int angle, int state, bool centered, SDL_RendererFlip flip)
+{
+	SDL_Rect srcRect;
+	SDL_Rect dstRect;
+
+	srcRect.x = 0;
+	srcRect.y = 0 + 31 * state;
+
+	srcRect.h = 31;
+	dstRect.h = srcRect.h * 2;
+	srcRect.w = 31;
+	dstRect.w = srcRect.w * 2;
+	dstRect.x = x;
+	dstRect.y = y;
+
+	SDL_RenderCopyEx(pRenderer, m_textureMap[id], &srcRect, &dstRect, angle, 0, flip);
+}
+
+//ANGLES FOR HEX DIRECTIONS : 
+//	UP = 0
+//	UPRIGHT = 60
+//	DOWNRIGHT = 120
+//	DOWN = 180
+//	DOWNLEFT = 240
+//	UPLEFT = 300
+
+void TextureManager::drawMerc(std::string id, int x, int y, SDL_Renderer* pRenderer, int angle, int state, bool centered, SDL_RendererFlip flip)
+{
+	SDL_Rect srcRect;
+	SDL_Rect dstRect;
+
+	srcRect.x = 0;
+	srcRect.y = 0 + 31 * state;
+
+	srcRect.h = 23;
+	dstRect.h = srcRect.h * 2;
+	srcRect.w = 21;
+	dstRect.w = srcRect.w * 2;
+	dstRect.x = x;
+	dstRect.y = y;
+
+	SDL_RenderCopyEx(pRenderer, m_textureMap[id], &srcRect, &dstRect, angle, 0, flip);
 }
 
 
