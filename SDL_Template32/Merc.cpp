@@ -31,7 +31,7 @@ void Merc::draw()
 
 void Merc::update()
 {
-	setPosition(getHex()->getPosition());
+	setPosition( glm::vec2(getHex()->getPosition().x + 16 ,getHex()->getPosition().y + 16 ));
 }
 
 void Merc::clean()
