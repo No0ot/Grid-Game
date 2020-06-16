@@ -26,12 +26,12 @@ void Merc::draw()
 	const int xComponent = getPosition().x;
 	const int yComponent = getPosition().y;
 
-	TheTextureManager::Instance()->draw("archer", xComponent, yComponent, Engine::Instance().GetRenderer(), false);
+	TheTextureManager::Instance()->drawMerc("archer", xComponent, yComponent, Engine::Instance().GetRenderer(), 300, 0);
 }
 
 void Merc::update()
 {
-	setPosition( glm::vec2(getHex()->getPosition().x + 16 ,getHex()->getPosition().y + 16 ));
+	setPosition( glm::vec2(getHex()->getPosition().x + 10 ,getHex()->getPosition().y + 5 ));
 }
 
 void Merc::clean()

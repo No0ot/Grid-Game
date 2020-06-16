@@ -57,26 +57,58 @@ void GameState::BuildHexGrid()
 {
 	m_pHexGrid = std::vector<Hex*>();
 
-	for (auto column = 0; column < 15; ++column)
+	for (auto row = 0; row < 10; row++)
 	{
-		for (auto row = 0; row < 10; ++row)
+		for (auto column = 0; column < 15; column++)
 		{
-			auto hex = new Hex();
-			if( column % 2 == 1)
-				hex->setPosition(glm::vec2(20 + (column * 48), (50 + (row * 64)) - 15));
+		
+			if (column % 2 == 1)
+			{
+				auto newhex = new Hex(glm::vec2(20 + (column * 49), (50 + (row * 61)) - 15), glm::vec2(row, column));
+				m_pHexGrid.push_back(newhex);
+			}
 			else
-				hex->setPosition(glm::vec2(20 + (column * 48), (50 + (row * 64)) + 15));
-
-			m_pHexGrid.push_back(hex);
+			{
+				auto newhex = new Hex(glm::vec2(20 + (column * 49), (50 + (row * 61)) + 15), glm::vec2(row, column));
+				m_pHexGrid.push_back(newhex);
+			}
 		}
 	}
 	
+}
+
+void GameState::MapGrid()
+{
+	for (auto hex : m_pHexGrid)
+	{
+		const auto x = hex->getGridPosition().x;
+		const auto y = hex->getGridPosition().y;
+
+		if (x != 0) { hex->setUp(m_pHexGrid[y + ((x - 1) * 15)]); }
+		if (x != 10 - 1) { hex->setDown(m_pHexGrid[y + ((x + 1) * 15)]); }
+
+		if ((int)y % 2 == 1)
+		{
+			if (y != 15 - 1 && x != 0) { hex->setUpRight(m_pHexGrid[(y + 1) + ((x - 1) * 15)]); }
+			if (y != 15 - 1) { hex->setDownRight(m_pHexGrid[(y + 1) + (x * 15)]); }
+			if (y != 0 && x != 0) { hex->setUpLeft(m_pHexGrid[(y - 1) + ((x - 1) * 15)]); }
+			if (y != 0) { hex->setDownLeft(m_pHexGrid[(y - 1) + (x * 15)]); }
+		}
+		else
+		{
+			if (y != 15 - 1) { hex->setUpRight(m_pHexGrid[(y + 1) + (x * 15)]); }
+			if (y != 15 - 1 && x != 10 - 1) { hex->setDownRight(m_pHexGrid[(y + 1) + ((x + 1) * 15)]); }
+			if (y != 0 ) { hex->setUpLeft(m_pHexGrid[(y - 1) + (x * 15)]); }
+			if (y != 0 && x != 10 - 1) { hex->setDownLeft(m_pHexGrid[(y - 1) + ((x + 1) * 15)]); }
+		}
+	}
 }
 
 void GameState::Enter()
 {
 	cout << "Entering Game..." << endl;
 	BuildHexGrid();
+	MapGrid();
 	//m_MercVec = std::vector<Merc*>();
 	//m_MercVec[0] = new Merc(ARCHER);
 	

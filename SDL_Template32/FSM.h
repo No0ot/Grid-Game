@@ -29,6 +29,7 @@ public:
 	TurnState current_state;
 	GameState();
 	void BuildHexGrid();
+	void MapGrid();
 	//Inherited functions
 	void Enter();
 	void Update();

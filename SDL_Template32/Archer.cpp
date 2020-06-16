@@ -4,7 +4,7 @@
 
 Archer::Archer()
 {
-	TheTextureManager::Instance()->load("Img/scout.png", "archer", Engine::Instance().GetRenderer());
+	TheTextureManager::Instance()->load("Img/Archer.png", "archer", Engine::Instance().GetRenderer());
 
 	setBaseStr(3);
 	setBaseFin(10);
