@@ -2,7 +2,7 @@
 #include "Engine.h"
 #include <iostream>
 
-Hex::Hex(glm::vec2 worldPosition, glm::vec2 gridPosition) : mouseHover(false), m_state(STATE_OFF), m_pGridPosition(gridPosition)
+Hex::Hex(glm::vec2 worldPosition, glm::vec2 gridPosition) : mouseHover(false), m_MouseState(STATE_OFF), m_pGridPosition(gridPosition)
 {
 	TheTextureManager::Instance()->load("Img/Hex Tileset.png", "hex", Engine::Instance().GetRenderer());
 	//TheTextureManager::Instance()->load("Img/selector.png", "hover", Engine::Instance().GetRenderer());
@@ -42,18 +42,18 @@ void Hex::draw()
 	//	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 0, 0, 255, 255);
 	//	SDL_RenderDrawRect(Engine::Instance().GetRenderer(), &rectangle);
 	//}
-	TheTextureManager::Instance()->drawHex("hex", xComponent, yComponent, Engine::Instance().GetRenderer(), 0,(int)m_state);
+	TheTextureManager::Instance()->drawHex("hex", xComponent, yComponent, Engine::Instance().GetRenderer(), 0,(int)m_MouseState);
 }
 
 void Hex::update()
 {
 	bool mousecol = mouseCol();
-	switch (m_state)
+	switch (m_MouseState)
 	{
 	case STATE_OFF:
 		if (mousecol)
 		{
-			m_state = STATE_HOVER;
+			m_MouseState = STATE_HOVER;
 			
 
 		}
@@ -61,17 +61,17 @@ void Hex::update()
 		//std::cout << " state off" << std::endl;
 		break;
 	case STATE_HOVER:
-		/*if (!mousecol)
+		if (!mousecol)
 		{
-			m_state = STATE_OFF;
-		}*/
+			m_MouseState = STATE_OFF;
+		}
 		 if (mousecol && Engine::Instance().GetMouseState(0))
 		{
-			m_state = STATE_SELECTED;
+			m_MouseState = STATE_SELECTED;
 			for (auto hex : m_pNeighbours)
 			{
 				if (hex != nullptr)
-					hex->m_state = STATE_HOVER;
+					hex->m_MouseState = STATE_HOVER;
 			}
 		}
 			//std::cout << " state hover " << std::endl;
@@ -82,12 +82,12 @@ void Hex::update()
 		{
 			if (mousecol)
 			{
-				m_state = STATE_HOVER;
+				m_MouseState = STATE_HOVER;
 				// Execute new "callback".
 
 			}
 			else
-				m_state = STATE_OFF;
+				m_MouseState = STATE_OFF;
 		}
 		break;
 	}

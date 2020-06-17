@@ -36,10 +36,10 @@ public:
 	void setUpLeft(Hex* hex);
 
 	enum TileNeighbours {UP, UPRIGHT, DOWNRIGHT, DOWN, DOWNLEFT, UPLEFT};
-	enum state { STATE_OFF, STATE_HOVER, STATE_SELECTED };
-	state m_state;
+	enum MouseState { STATE_OFF, STATE_HOVER, STATE_SELECTED };
+	MouseState m_MouseState;
 private:
-	state getState();
+	MouseState getState();
 	bool getOccupied();
 	bool getActive();
 	void setActive(bool b);
