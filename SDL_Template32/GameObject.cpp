@@ -18,6 +18,11 @@ int GameObject::getWidth() { return m_width; }
 int GameObject::getHeight() { return m_height; }
 GameObjectType GameObject::getType() { return m_type; }
 
+int GameObject::getFacing()
+{
+	return m_facing;
+}
+
 //SETTER DEFINITIONS
 void GameObject::setPosition(glm::vec2 newPosition)
 {
@@ -37,4 +42,9 @@ void GameObject::setHeight(int newHeight)
 void GameObject::setType(GameObjectType newType)
 {
 	m_type = newType;
+}
+
+void GameObject::setFacing(int newfacing)
+{
+	m_facing = newfacing;
 }

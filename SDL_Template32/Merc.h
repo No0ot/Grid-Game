@@ -6,7 +6,7 @@ class Merc : public Unit
 {
 public:
 	//friend class Job;
-	Merc(Jobenum job);
+	Merc(Jobenum job,Owner owner);
 	~Merc();
 
 	//Inherited functions
@@ -29,6 +29,9 @@ public:
 	void setFinesse(int new_finesse);
 	void setConcentration(int new_concentration);
 	void setResolve(int new_resolve);
+
+	//other functions
+	void updateFacing();
 
 private:
 	// Needs a race and Job

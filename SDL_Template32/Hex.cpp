@@ -5,12 +5,12 @@
 Hex::Hex(glm::vec2 worldPosition, glm::vec2 gridPosition) : mouseHover(false), m_MouseState(STATE_OFF), m_pGridPosition(gridPosition)
 {
 	TheTextureManager::Instance()->load("Img/Hex Tileset.png", "hex", Engine::Instance().GetRenderer());
-	//TheTextureManager::Instance()->load("Img/selector.png", "hover", Engine::Instance().GetRenderer());
 
 	setPosition(worldPosition);
 	setWidth(40);
 	setHeight(40);
 	setType(GameObjectType::HEX);
+	m_InteractiveState = INITIAL;
 
 	m_pNeighbours = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
 }
@@ -26,23 +26,7 @@ void Hex::draw()
 	const int yComponent = getPosition().y;
 	SDL_Rect rectangle = { xComponent,yComponent,64,64 };
 	
-	//switch (m_state)
-	//{
-	//case STATE_HOVER :
-	//	//TheTextureManager::Instance()->draw("hover", xComponent, yComponent, Engine::Instance().GetRenderer(), false);
-	//	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 255, 0, 0, 255);
-	//	SDL_RenderDrawRect(Engine::Instance().GetRenderer(), &rectangle);
-	//	break;
-	//case STATE_OFF :
-	//	//SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 0, 255, 0, 255);
-	//	//SDL_RenderDrawRect(Engine::Instance().GetRenderer(), &rectangle);
-	//	TheTextureManager::Instance()->draw("hex", xComponent, yComponent, Engine::Instance().GetRenderer(), false);
-	//	break;
-	//case STATE_SELECTED :
-	//	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 0, 0, 255, 255);
-	//	SDL_RenderDrawRect(Engine::Instance().GetRenderer(), &rectangle);
-	//}
-	TheTextureManager::Instance()->drawHex("hex", xComponent, yComponent, Engine::Instance().GetRenderer(), 0,(int)m_MouseState);
+	TheTextureManager::Instance()->drawHex("hex", xComponent, yComponent, Engine::Instance().GetRenderer(), 0,(int)m_MouseState, (int)m_InteractiveState);
 }
 
 void Hex::update()
@@ -54,10 +38,7 @@ void Hex::update()
 		if (mousecol)
 		{
 			m_MouseState = STATE_HOVER;
-			
-
 		}
-
 		//std::cout << " state off" << std::endl;
 		break;
 	case STATE_HOVER:
@@ -68,11 +49,7 @@ void Hex::update()
 		 if (mousecol && Engine::Instance().GetMouseState(0))
 		{
 			m_MouseState = STATE_SELECTED;
-			for (auto hex : m_pNeighbours)
-			{
-				if (hex != nullptr)
-					hex->m_MouseState = STATE_HOVER;
-			}
+			
 		}
 			//std::cout << " state hover " << std::endl;
 	
@@ -164,6 +141,31 @@ void Hex::setUpLeft(Hex* hex)
 	m_pNeighbours[UPLEFT] = hex;
 }
 
+
+std::vector<Hex*> Hex::getNeighbours() const
+{
+	return m_pNeighbours;
+}
+
+Hex::MouseState Hex::getMouseState()
+{
+	return m_MouseState;
+}
+
+Hex::InteractiveState Hex::getInteractiveState()
+{
+	return m_InteractiveState;
+}
+
+void Hex::setInteractiveState(InteractiveState newstate)
+{
+	m_InteractiveState = newstate;
+}
+
+void Hex::setMouseState(MouseState newstate)
+{
+	m_MouseState = newstate;
+}
 
 bool Hex::mouseCol()
 {

@@ -37,13 +37,18 @@ public:
 
 	enum TileNeighbours {UP, UPRIGHT, DOWNRIGHT, DOWN, DOWNLEFT, UPLEFT};
 	enum MouseState { STATE_OFF, STATE_HOVER, STATE_SELECTED };
+	enum InteractiveState {INITIAL, DASH, RUN, FACEING };
+
 	MouseState m_MouseState;
+	InteractiveState m_InteractiveState;
+
+	std::vector<Hex*> getNeighbours() const;
+	MouseState getMouseState();
+	InteractiveState getInteractiveState();
+	void setInteractiveState(InteractiveState newstate);
+	void setMouseState(MouseState newstate);
 private:
-	MouseState getState();
-	bool getOccupied();
-	bool getActive();
-	void setActive(bool b);
-	void setOccupied(bool b);
+
 	bool mouseCol();
 	void setHover(bool h);
 

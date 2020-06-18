@@ -4,8 +4,10 @@
 //Jobs
 #include "Archer.h"
 
-Merc::Merc(Jobenum job)
+Merc::Merc(Jobenum job , Owner owner)
 {
+	setState(NO_STATE);
+	setOwner(owner);
 	switch (job)
 	{
 	case ARCHER:
@@ -14,6 +16,7 @@ Merc::Merc(Jobenum job)
 	case KNIGHT:
 		break;
 	}
+
 
 }
 
@@ -26,12 +29,14 @@ void Merc::draw()
 	const int xComponent = getPosition().x;
 	const int yComponent = getPosition().y;
 
-	TheTextureManager::Instance()->drawMerc("archer", xComponent, yComponent, Engine::Instance().GetRenderer(), 300, 0);
+	TheTextureManager::Instance()->drawMerc("archer", xComponent, yComponent, Engine::Instance().GetRenderer(), getFacing(), (int)getState(),(int)getOwner());
 }
 
 void Merc::update()
 {
 	setPosition( glm::vec2(getHex()->getPosition().x + 10 ,getHex()->getPosition().y + 5 ));
+	updateFacing();
+	
 }
 
 void Merc::clean()
@@ -96,4 +101,20 @@ void Merc::setConcentration(int new_concentration)
 void Merc::setResolve(int new_resolve)
 {
 	m_Resolve = new_resolve;
+}
+
+void Merc::updateFacing()
+{
+	if (getFacingHex() == getHex()->getNeighbours()[Hex::UP])
+		setFacing(0);
+	else if (getFacingHex() == getHex()->getNeighbours()[Hex::UPRIGHT])
+		setFacing(60);
+	else if (getFacingHex() == getHex()->getNeighbours()[Hex::DOWNRIGHT])
+		setFacing(120);
+	else if (getFacingHex() == getHex()->getNeighbours()[Hex::DOWN])
+		setFacing(180);
+	else if (getFacingHex() == getHex()->getNeighbours()[Hex::DOWNLEFT])
+		setFacing(240);
+	else if (getFacingHex() == getHex()->getNeighbours()[Hex::UPLEFT])
+		setFacing(300);
 }

@@ -15,21 +15,26 @@ public:
 	virtual void HandleEvents() = 0;
 	virtual void Exit() = 0;
 	virtual void Resume();
+
+	bool mouseDown;
 };
 
 class GameState : public State
 {
 private:
 	std::vector<Hex*> m_pHexGrid;
-	enum TurnState { PLAYER_MOVE, PLAYER_ABILITY, PLAYER_ATTACK, ENEMY_TURN};
+	enum TurnState { NONE,PLAYER_MOVE, PLAYER_ABILITY, PLAYER_ATTACK, PLAYER_FACING, ENEMY_TURN};
 	std::vector<Merc*> m_MercVec;
 	Merc* m_Merc;
 
+	Hex* m_pSelectedHex;
+	int counter;
 public:
 	TurnState current_state;
 	GameState();
 	void BuildHexGrid();
 	void MapGrid();
+	void ResetHexs();
 	//Inherited functions
 	void Enter();
 	void Update();

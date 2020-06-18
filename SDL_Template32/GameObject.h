@@ -27,15 +27,19 @@ public:
 	int getWidth();
 	int getHeight();
 	GameObjectType getType();
+	int getFacing();
 
 	//SETTERS
 	void setPosition(glm::vec2 newPosition);
 	void setWidth(int newWidth);
 	void setHeight(int newHeight);
 	void setType(GameObjectType newType);
+	void setFacing(int newfacing);
 
 private:
 	// VARIABLES
+	int m_facing;
+
 	//TRANSFORM
 	glm::vec2 m_position;
 	glm::vec2 m_rotation;
