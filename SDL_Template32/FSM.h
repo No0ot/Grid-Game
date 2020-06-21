@@ -24,6 +24,7 @@ class GameState : public State
 private:
 	std::vector<Hex*> m_pHexGrid;
 	std::vector<Hex*> m_pHexList;
+	std::vector<Hex*> m_pHexList2;
 	enum TurnState { NONE,PLAYER_MOVE, PLAYER_ABILITY, PLAYER_ATTACK, PLAYER_FACING, ENEMY_TURN};
 	std::vector<Merc*> m_MercVec;
 	Merc* m_Merc;

@@ -11,6 +11,7 @@ Hex::Hex(glm::vec2 worldPosition, glm::vec2 gridPosition) : mouseHover(false), m
 	setHeight(40);
 	setType(GameObjectType::HEX);
 	m_InteractiveState = INITIAL;
+	setOccupied(false);
 
 	m_pNeighbours = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
 }
@@ -165,6 +166,16 @@ void Hex::setInteractiveState(InteractiveState newstate)
 void Hex::setMouseState(MouseState newstate)
 {
 	m_MouseState = newstate;
+}
+
+bool Hex::getOccupied()
+{
+	return m_pOccupied;
+}
+
+void Hex::setOccupied(bool newbool)
+{
+	m_pOccupied = newbool;
 }
 
 bool Hex::mouseCol()

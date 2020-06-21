@@ -35,6 +35,7 @@ void Merc::draw()
 void Merc::update()
 {
 	setPosition( glm::vec2(getHex()->getPosition().x + 10 ,getHex()->getPosition().y + 5 ));
+	getHex()->setOccupied(true);
 	updateFacing();
 	
 }

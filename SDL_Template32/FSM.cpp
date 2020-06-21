@@ -113,6 +113,7 @@ void GameState::MapGrid()
 void GameState::ResetHexs()
 {
 	m_pHexList.clear();
+	m_pHexList2.clear();
 	for (int count = 0; count < (int)m_pHexGrid.size(); count++)
 	{
 		m_pHexGrid[count]->setInteractiveState(Hex::INITIAL);
@@ -153,6 +154,10 @@ void GameState::Update()
 
 		break;
 	case PLAYER_MOVE :
+		for (auto hex : m_pHexList2)
+		{
+			hex->setInteractiveState(Hex::RUN);
+		}
 		for (auto hex : m_pHexList)
 		{
 			hex->setInteractiveState(Hex::DASH);
@@ -160,13 +165,24 @@ void GameState::Update()
 
 		for (auto hex : m_Merc->getHex()->getNeighbours())
 		{
-			if (hex != nullptr && hex != m_Merc->getHex())
+			if (hex != nullptr && hex->getOccupied() != true)
 			{
 				m_pHexList.push_back(hex);
 				for (auto hex2 : hex->getNeighbours())
 				{
-					if (hex2 != nullptr && hex2 != m_Merc->getHex())
+					if (hex2 != nullptr && hex2->getOccupied() != true)
 						m_pHexList.push_back(hex2);
+				// This doesn't work as it ends up replacing 
+					for (auto hex3 : hex2->getNeighbours())
+					{
+						if (hex3 != nullptr && hex3->getOccupied() != true)
+							m_pHexList2.push_back(hex3);
+						for (auto hex4 : hex3->getNeighbours())
+						{
+							if (hex4 != nullptr && hex4->getOccupied() != true)
+								m_pHexList2.push_back(hex4);
+						} 
+					}
 				}
 			}
 		}
@@ -175,10 +191,11 @@ void GameState::Update()
 		{
 			m_pHexGrid[count]->update();
 
-			if (m_pHexGrid[count]->getMouseState() == Hex::MouseState::STATE_SELECTED && m_pHexGrid[count] != m_Merc->getHex() && m_pHexGrid[count]->getInteractiveState() == Hex::DASH)
+			if (m_pHexGrid[count]->getMouseState() == Hex::MouseState::STATE_SELECTED && m_pHexGrid[count]->getOccupied() != true && m_pHexGrid[count]->getInteractiveState() == Hex::DASH)
 			{
 				Hex* tempHex;
 				tempHex = m_pHexGrid[count];
+				m_Merc->getHex()->setOccupied(false);
 				m_Merc->setHex(tempHex);
 				std::cout << "P1:ARCHER MOVED TO HEX: " << m_Merc->getHex()->getGridPosition().x << " " << m_Merc->getHex()->getGridPosition().y << std::endl;
 				ResetHexs();
@@ -259,7 +276,7 @@ void GameState::Render()
 
 
 	SDL_Rect rectangle = {800,20 ,220,728 };
-	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 240, 0, 0, 150);
+	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 240, 0, 0, 50);
 	SDL_RenderFillRect(Engine::Instance().GetRenderer(), &rectangle);
 
 	if (dynamic_cast<GameState*>(Engine::Instance().GetFSM().GetStates().back()))
