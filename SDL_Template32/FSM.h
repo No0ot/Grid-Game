@@ -24,10 +24,10 @@ class GameState : public State
 private:
 	std::vector<Hex*> m_pHexGrid;
 	std::vector<Hex*> m_pHexList;
-	std::vector<Hex*> m_pHexList2;
+	std::vector<Hex*> m_pMercRangeHexs;
 	enum TurnState { NONE,PLAYER_MOVE, PLAYER_ABILITY, PLAYER_ATTACK, PLAYER_FACING, ENEMY_TURN};
 	std::vector<Merc*> m_MercVec;
-	Merc* m_Merc;
+	Merc* m_CurrentMerc;
 	Merc* m_EnemyMerc;
 
 	Hex* m_pSelectedHex;
@@ -38,6 +38,7 @@ public:
 	void BuildHexGrid();
 	void MapGrid();
 	void ResetHexs();
+	void AddHexestoList();
 	//Inherited functions
 	void Enter();
 	void Update();

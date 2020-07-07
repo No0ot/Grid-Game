@@ -54,11 +54,11 @@
     <ClCompile Include="Archer.cpp">
       <Filter>Objects\Data Classes</Filter>
     </ClCompile>
+    <ClCompile Include="Race.cpp">
+      <Filter>Objects\Data Classes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GameObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TextureManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -84,6 +84,15 @@
       <Filter>Objects\Data Classes</Filter>
     </ClInclude>
     <ClInclude Include="JobEnum.h">
+      <Filter>Objects\Data Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Race.h">
+      <Filter>Objects\Data Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RaceEnum.h">
       <Filter>Objects\Data Classes</Filter>
     </ClInclude>
   </ItemGroup>

@@ -2,11 +2,12 @@
 #include "Unit.h"
 #include "Job.h"
 #include "JobEnum.h"
+#include "Race.h"
 class Merc : public Unit
 {
 public:
 	//friend class Job;
-	Merc(Jobenum job,Owner owner);
+	Merc(Jobenum job,Owner owner, int race);
 	~Merc();
 
 	//Inherited functions
@@ -37,6 +38,7 @@ private:
 	// Needs a race and Job
 	Job* m_Job;
 	Jobenum m_JobTitle;
+	Race* m_Race;
 
 	enum PrimaryStat { STRENGTH, FINESSE, CONCENTRATION, RESOLVE};
 	PrimaryStat m_PrimaryStat;

@@ -4,7 +4,7 @@
 //Jobs
 #include "Archer.h"
 
-Merc::Merc(Jobenum job , Owner owner)
+Merc::Merc(Jobenum job , Owner owner, int race)
 {
 	setState(NO_STATE);
 	setOwner(owner);
@@ -16,8 +16,14 @@ Merc::Merc(Jobenum job , Owner owner)
 	case KNIGHT:
 		break;
 	}
+	setStrength(m_Job->getBaseStr());
+	setFinesse(m_Job->getBaseFin());
+	setConcentration(m_Job->getBaseCon());
+	setResolve(m_Job->getBaseRes());
+	setMaxHealth(50 + (getStrength() * 10));
+	setCurrentHealth(getMaxHealth());
 
-
+	m_Race = new Race(race);
 }
 
 Merc::~Merc()

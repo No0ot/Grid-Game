@@ -24,7 +24,10 @@ private:
 	int m_baseStr,
 		m_baseFin,
 		m_baseCon,
-		m_baseRes;
+		m_baseRes,
+		m_Range,
+		m_minDamage,
+		m_maxDamage;
 
 
 	

@@ -113,13 +113,28 @@ void GameState::MapGrid()
 void GameState::ResetHexs()
 {
 	m_pHexList.clear();
-	m_pHexList2.clear();
 	for (int count = 0; count < (int)m_pHexGrid.size(); count++)
 	{
 		m_pHexGrid[count]->setInteractiveState(Hex::INITIAL);
 		m_pHexGrid[count]->setMouseState(Hex::STATE_OFF);
 	}
 	//std::cout << " HEXES RESET " << std::endl;
+}
+
+void GameState::AddHexestoList()
+{
+	for (auto hex : m_CurrentMerc->getHex()->getNeighbours())
+	{
+		if (hex != nullptr && hex->getOccupied() != true)
+		{
+			m_pHexList.push_back(hex);
+			for (auto hex2 : hex->getNeighbours())
+			{
+				if (hex2 != nullptr && hex2->getOccupied() != true)
+					m_pHexList.push_back(hex2);
+			}
+		}
+	}
 }
 
 void GameState::Enter()
@@ -129,11 +144,11 @@ void GameState::Enter()
 	MapGrid();
 	mouseDown = false;
 	counter = 0;
-	m_Merc = new Merc(ARCHER, Unit::Owner::PLAYER_1);
-	m_Merc->setHex(m_pHexGrid[68]);
-	m_Merc->setState(Unit::State::ACTIVE);
+	m_CurrentMerc = new Merc(ARCHER, Unit::Owner::PLAYER_1, 0);
+	m_CurrentMerc->setHex(m_pHexGrid[68]);
+	m_CurrentMerc->setState(Unit::State::ACTIVE);
 
-	m_EnemyMerc = new Merc(ARCHER, Unit::Owner::AI);
+	m_EnemyMerc = new Merc(ARCHER, Unit::Owner::AI, 1);
 	m_EnemyMerc->setHex(m_pHexGrid[21]);
 }
 
@@ -154,38 +169,15 @@ void GameState::Update()
 
 		break;
 	case PLAYER_MOVE :
-		for (auto hex : m_pHexList2)
-		{
-			hex->setInteractiveState(Hex::RUN);
-		}
+		//for (auto hex : m_pHexList2)
+		//{
+		//	hex->setInteractiveState(Hex::RUN);
+		//}
 		for (auto hex : m_pHexList)
 		{
 			hex->setInteractiveState(Hex::DASH);
 		}
 
-		for (auto hex : m_Merc->getHex()->getNeighbours())
-		{
-			if (hex != nullptr && hex->getOccupied() != true)
-			{
-				m_pHexList.push_back(hex);
-				for (auto hex2 : hex->getNeighbours())
-				{
-					if (hex2 != nullptr && hex2->getOccupied() != true)
-						m_pHexList.push_back(hex2);
-				// This doesn't work as it ends up replacing 
-					for (auto hex3 : hex2->getNeighbours())
-					{
-						if (hex3 != nullptr && hex3->getOccupied() != true)
-							m_pHexList2.push_back(hex3);
-						for (auto hex4 : hex3->getNeighbours())
-						{
-							if (hex4 != nullptr && hex4->getOccupied() != true)
-								m_pHexList2.push_back(hex4);
-						} 
-					}
-				}
-			}
-		}
 
 		for (int count = 0; count < (int)m_pHexGrid.size(); count++)
 		{
@@ -195,18 +187,28 @@ void GameState::Update()
 			{
 				Hex* tempHex;
 				tempHex = m_pHexGrid[count];
+				m_CurrentMerc->getHex()->setOccupied(false);
+				m_CurrentMerc->setHex(tempHex);
+				std::cout << "P1:ARCHER MOVED TO HEX: " << m_CurrentMerc->getHex()->getGridPosition().x << " " << m_CurrentMerc->getHex()->getGridPosition().y << std::endl;
+				ResetHexs();
+				current_state = PLAYER_FACING;
+			
+			}
+			/*else if (m_pHexGrid[count]->getMouseState() == Hex::MouseState::STATE_SELECTED && m_pHexGrid[count]->getOccupied() != true && m_pHexGrid[count]->getInteractiveState() == Hex::RUN)
+			{
+				Hex* tempHex;
+				tempHex = m_pHexGrid[count];
 				m_Merc->getHex()->setOccupied(false);
 				m_Merc->setHex(tempHex);
 				std::cout << "P1:ARCHER MOVED TO HEX: " << m_Merc->getHex()->getGridPosition().x << " " << m_Merc->getHex()->getGridPosition().y << std::endl;
 				ResetHexs();
 				current_state = PLAYER_FACING;
-			
-			}
+			}*/
 		}
 
 
 
-			m_Merc->update();
+			m_CurrentMerc->update();
 			m_EnemyMerc->update();
 			//std::cout << " MOVE STATE" << std::endl;
 			
@@ -216,12 +218,12 @@ void GameState::Update()
 
 		break;
 	case PLAYER_ATTACK:
-
+		// Get closest target in range with highest threat
 		break;
 	case PLAYER_FACING:
-		for (auto hex : m_Merc->getHex()->getNeighbours())
+		for (auto hex : m_CurrentMerc->getHex()->getNeighbours())
 		{
-			if (hex != nullptr && hex != m_Merc->getHex())
+			if (hex != nullptr && hex != m_CurrentMerc->getHex())
 			{
 				m_pHexList.push_back(hex);
 			}
@@ -235,17 +237,17 @@ void GameState::Update()
 		{
 			m_pHexGrid[count]->update();
 
-			if (m_pHexGrid[count]->getMouseState() == Hex::MouseState::STATE_SELECTED && m_pHexGrid[count] != m_Merc->getHex() && m_pHexGrid[count]->getInteractiveState() == Hex::FACEING)
+			if (m_pHexGrid[count]->getMouseState() == Hex::MouseState::STATE_SELECTED && m_pHexGrid[count] != m_CurrentMerc->getHex() && m_pHexGrid[count]->getInteractiveState() == Hex::FACEING)
 			{
 				Hex* tempHex;
 				tempHex = m_pHexGrid[count];
-				m_Merc->setFacingHex(tempHex);
+				m_CurrentMerc->setFacingHex(tempHex);
 				m_pSelectedHex = nullptr;
 				ResetHexs();
 				current_state = NONE;
 			}
 		}
-		m_Merc->update();
+		m_CurrentMerc->update();
 		m_EnemyMerc->update();
 
 		}
@@ -271,7 +273,7 @@ void GameState::Render()
 	for (int count = 0; count < (int)m_pHexGrid.size(); count++)
 		m_pHexGrid[count]->draw();
 		
-	m_Merc->draw();
+	m_CurrentMerc->draw();
 	m_EnemyMerc->draw();
 
 
