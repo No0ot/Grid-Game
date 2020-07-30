@@ -52,3 +52,23 @@ void Race::SetStats()
 		break;
 	}
 }
+
+int Race::getRaceStr()
+{
+	return m_raceStr;
+}
+
+int Race::getRaceFin()
+{
+	return m_raceFin;
+}
+
+int Race::getRaceCon()
+{
+	return m_raceCon;
+}
+
+int Race::getRaceRes()
+{
+	return m_raceRes;
+}

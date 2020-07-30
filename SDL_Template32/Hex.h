@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "TextureManager.h"
+#include "Label.h"
 #include <vector>
 class Hex : public GameObject
 {
@@ -49,8 +50,13 @@ public:
 	void setMouseState(MouseState newstate);
 	bool getOccupied();
 	void setOccupied(bool newbool);
+	float computeGlobalValue(const glm::vec2 goal_location);
 private:
+	//labels
+	Label* m_pValueLabel;
 
+	glm::vec2 m_goalLocation;
+	float m_globalGoalValue = 0.0f;
 	bool mouseCol();
 	void setHover(bool h);
 	bool m_pOccupied;

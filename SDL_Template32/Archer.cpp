@@ -10,7 +10,7 @@ Archer::Archer()
 	setBaseFin(10);
 	setBaseCon(9);
 	setBaseRes(4);
-
+	setInitMod(1);
 }
 
 Archer::~Archer()

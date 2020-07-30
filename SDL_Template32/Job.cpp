@@ -42,6 +42,11 @@ int Job::getBaseRes()
 	return m_baseRes;
 }
 
+int Job::getInitMod()
+{
+	return m_initMod;
+}
+
 void Job::setBaseStr(int str)
 {
 	m_baseStr = str;
@@ -60,4 +65,9 @@ void Job::setBaseCon(int con)
 void Job::setBaseRes(int res)
 {
 	m_baseRes = res;
+}
+
+void Job::setInitMod(int intmod)
+{
+	m_initMod = intmod;
 }

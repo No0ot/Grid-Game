@@ -1,5 +1,6 @@
 #include "FSM.h"
 #include "Engine.h"
+#include "Util.h"
 #include <iostream>
 #include <sstream>
 #define WIDTH 1024
@@ -144,12 +145,24 @@ void GameState::Enter()
 	MapGrid();
 	mouseDown = false;
 	counter = 0;
-	m_CurrentMerc = new Merc(ARCHER, Unit::Owner::PLAYER_1, 0);
-	m_CurrentMerc->setHex(m_pHexGrid[68]);
+
+
+	m_Player1Merc = new Merc(ARCHER, Unit::Owner::PLAYER_1, 0, "Curly");
+	m_Player1Merc->setHex(m_pHexGrid[68]);
+	m_Player1Merc->rollInitiative();
+	m_turnOrder.push_back(m_Player1Merc);
+
+	m_Player2Merc = new Merc(ARCHER, Unit::Owner::PLAYER_2, 1, "Moe");
+	m_Player2Merc->setHex(m_pHexGrid[21]);
+	m_Player2Merc->rollInitiative();
+	m_turnOrder.push_back(m_Player2Merc);
+
+	m_turnOrder.sort([](const Merc* lhs, const Merc* rhs) {return lhs->getInitiative() < rhs->getInitiative(); } );
+
+	m_CurrentMerc = m_turnOrder.back();
 	m_CurrentMerc->setState(Unit::State::ACTIVE);
 
-	m_EnemyMerc = new Merc(ARCHER, Unit::Owner::AI, 1);
-	m_EnemyMerc->setHex(m_pHexGrid[21]);
+	
 }
 
 void GameState::Update()
@@ -160,7 +173,7 @@ void GameState::Update()
 
 		ResetHexs();
 		counter++;
-		if (counter == 120)
+		if (counter == 60)
 		{
 			current_state = PLAYER_MOVE;
 			counter = 0;
@@ -173,11 +186,19 @@ void GameState::Update()
 		//{
 		//	hex->setInteractiveState(Hex::RUN);
 		//}
+
+		for (auto hex : m_CurrentMerc->getHex()->getNeighbours())
+		{
+			if (hex != nullptr && hex != m_CurrentMerc->getHex())
+			{
+				m_pHexList.push_back(hex);
+			}
+		}
+
 		for (auto hex : m_pHexList)
 		{
 			hex->setInteractiveState(Hex::DASH);
 		}
-
 
 		for (int count = 0; count < (int)m_pHexGrid.size(); count++)
 		{
@@ -209,7 +230,8 @@ void GameState::Update()
 
 
 			m_CurrentMerc->update();
-			m_EnemyMerc->update();
+			m_Player1Merc->update();
+			m_Player2Merc->update();
 			//std::cout << " MOVE STATE" << std::endl;
 			
 
@@ -243,12 +265,14 @@ void GameState::Update()
 				tempHex = m_pHexGrid[count];
 				m_CurrentMerc->setFacingHex(tempHex);
 				m_pSelectedHex = nullptr;
+				// Move turn to next merc in list
 				ResetHexs();
 				current_state = NONE;
 			}
 		}
+		m_Player1Merc->update();
 		m_CurrentMerc->update();
-		m_EnemyMerc->update();
+		m_Player2Merc->update();
 
 		}
 		//std::cout << " FACEING STATE" << std::endl;
@@ -256,6 +280,10 @@ void GameState::Update()
 		break;
 	}
 	//std::cout << " updating..." << std::endl;
+	for (auto hex : m_pHexGrid)
+	{
+		hex->computeGlobalValue(m_CurrentMerc->getHex()->getGridPosition());
+	}
 }
 
 void GameState::HandleEvents()
@@ -274,8 +302,8 @@ void GameState::Render()
 		m_pHexGrid[count]->draw();
 		
 	m_CurrentMerc->draw();
-	m_EnemyMerc->draw();
-
+	m_Player2Merc->draw();
+	m_Player1Merc->draw();
 
 	SDL_Rect rectangle = {800,20 ,220,728 };
 	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 240, 0, 0, 50);

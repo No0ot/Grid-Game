@@ -19,5 +19,10 @@ public:
 
 	void SetStats();
 
+	int getRaceStr();
+	int getRaceFin();
+	int getRaceCon();
+	int getRaceRes();
+
 };
 

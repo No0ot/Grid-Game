@@ -14,11 +14,13 @@ public:
 	int getBaseFin();
 	int getBaseCon();
 	int getBaseRes();
+	int getInitMod();
 	//Setters
 	void setBaseStr(int str);
 	void setBaseFin(int fin);
 	void setBaseCon(int con);
 	void setBaseRes(int res);
+	void setInitMod(int intmod);
 
 private:
 	int m_baseStr,
@@ -27,7 +29,8 @@ private:
 		m_baseRes,
 		m_Range,
 		m_minDamage,
-		m_maxDamage;
+		m_maxDamage,
+		m_initMod;
 
 
 	

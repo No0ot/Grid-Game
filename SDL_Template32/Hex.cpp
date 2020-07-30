@@ -1,6 +1,8 @@
 #include "Hex.h"
 #include "Engine.h"
 #include <iostream>
+#include <sstream>
+#include <iomanip>
 
 Hex::Hex(glm::vec2 worldPosition, glm::vec2 gridPosition) : mouseHover(false), m_MouseState(STATE_OFF), m_pGridPosition(gridPosition)
 {
@@ -12,6 +14,13 @@ Hex::Hex(glm::vec2 worldPosition, glm::vec2 gridPosition) : mouseHover(false), m
 	setType(GameObjectType::HEX);
 	m_InteractiveState = INITIAL;
 	setOccupied(false);
+
+	std::ostringstream tempLabel;
+	tempLabel << std::fixed << std::setprecision(1) << m_globalGoalValue;
+	auto labelstring = tempLabel.str();
+	SDL_Color black{ 0, 0, 0, 255 };
+	auto valueLabelPosition = glm::vec2(getPosition().x + 30 , getPosition().y + 40);
+	m_pValueLabel = new Label(labelstring, "Consolas", 14, black, valueLabelPosition, true);
 
 	m_pNeighbours = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
 }
@@ -28,6 +37,7 @@ void Hex::draw()
 	SDL_Rect rectangle = { xComponent,yComponent,64,64 };
 	
 	TheTextureManager::Instance()->drawHex("hex", xComponent, yComponent, Engine::Instance().GetRenderer(), 0,(int)m_MouseState, (int)m_InteractiveState);
+	m_pValueLabel->draw();
 }
 
 void Hex::update()
@@ -191,3 +201,28 @@ void Hex::setHover(bool h)
 	mouseHover = h;
 }
 
+float Hex::computeGlobalValue(const glm::vec2 goal_location)
+{
+	m_goalLocation = goal_location;
+
+	// declare heuristic;
+	auto h = 0.0f;
+
+	
+		h = (abs(getGridPosition().x - goal_location.x) +
+			 abs(getGridPosition().x + getGridPosition().y - goal_location.x - goal_location.y) +
+			 abs(getGridPosition().y - goal_location.y)) /2;
+
+		//return (abs(a.q - b.q)
+		//	+ abs(a.q + a.r - b.q - b.r)
+		//	+ abs(a.r - b.r)) / 2
+
+	m_globalGoalValue = h;
+
+	std::ostringstream tempLabel;
+	tempLabel << std::fixed << std::setprecision(1) << m_globalGoalValue;
+	const auto labelstring = tempLabel.str();
+	m_pValueLabel->setText(labelstring);
+
+	return m_globalGoalValue;
+}
