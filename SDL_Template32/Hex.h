@@ -3,6 +3,8 @@
 #include "TextureManager.h"
 #include "Label.h"
 #include <vector>
+
+class Unit;
 class Hex : public GameObject
 {
 public:
@@ -39,18 +41,31 @@ public:
 	enum TileNeighbours {UP, UPRIGHT, DOWNRIGHT, DOWN, DOWNLEFT, UPLEFT};
 	enum MouseState { STATE_OFF, STATE_HOVER, STATE_SELECTED };
 	enum InteractiveState {INITIAL, DASH, RUN, FACEING };
+	enum PathfindingState {NO_PATH, OPEN, CLOSED, START, GOAL, PATH, UNVISITED,IMPASSABLE};
 
 	MouseState m_MouseState;
 	InteractiveState m_InteractiveState;
+	PathfindingState m_PathfindingState;
 
+	// Other Getters
 	std::vector<Hex*> getNeighbours() const;
 	MouseState getMouseState();
 	InteractiveState getInteractiveState();
-	void setInteractiveState(InteractiveState newstate);
-	void setMouseState(MouseState newstate);
+	PathfindingState getPathfindingState();
 	bool getOccupied();
+	float getGlobalvalue() const;
+	Unit* getOccupier();
+
+	// Other Setters
+	void setInteractiveState(InteractiveState newstate);
+	void setPathfindingState(PathfindingState newstate);
+	void setMouseState(MouseState newstate);
 	void setOccupied(bool newbool);
+	void setOccupier(Unit* newunit);
+
+	// Other Methods
 	float computeGlobalValue(const glm::vec2 goal_location);
+
 private:
 	//labels
 	Label* m_pValueLabel;
@@ -63,5 +78,6 @@ private:
 	bool mouseHover;
 	glm::vec2 m_pGridPosition;
 	std::vector<Hex*> m_pNeighbours;
+	Unit* m_Occupier;
 };
 

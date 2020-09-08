@@ -1,5 +1,7 @@
 #include "Hex.h"
 #include "Engine.h"
+#include "Util.h"
+#include "Unit.h"
 #include <iostream>
 #include <sstream>
 #include <iomanip>
@@ -7,12 +9,14 @@
 Hex::Hex(glm::vec2 worldPosition, glm::vec2 gridPosition) : mouseHover(false), m_MouseState(STATE_OFF), m_pGridPosition(gridPosition)
 {
 	TheTextureManager::Instance()->load("Img/Hex Tileset.png", "hex", Engine::Instance().GetRenderer());
+	TheTextureManager::Instance()->load("Img/Selector.png", "selector", Engine::Instance().GetRenderer());
 
 	setPosition(worldPosition);
 	setWidth(40);
 	setHeight(40);
 	setType(GameObjectType::HEX);
 	m_InteractiveState = INITIAL;
+	m_PathfindingState = UNVISITED;
 	setOccupied(false);
 
 	std::ostringstream tempLabel;
@@ -168,9 +172,19 @@ Hex::InteractiveState Hex::getInteractiveState()
 	return m_InteractiveState;
 }
 
+Hex::PathfindingState Hex::getPathfindingState()
+{
+	return m_PathfindingState;
+}
+
 void Hex::setInteractiveState(InteractiveState newstate)
 {
 	m_InteractiveState = newstate;
+}
+
+void Hex::setPathfindingState(PathfindingState newstate)
+{
+	m_PathfindingState = newstate;
 }
 
 void Hex::setMouseState(MouseState newstate)
@@ -186,6 +200,11 @@ bool Hex::getOccupied()
 void Hex::setOccupied(bool newbool)
 {
 	m_pOccupied = newbool;
+}
+
+void Hex::setOccupier(Unit* newunit)
+{
+	m_Occupier = newunit;
 }
 
 bool Hex::mouseCol()
@@ -208,14 +227,23 @@ float Hex::computeGlobalValue(const glm::vec2 goal_location)
 	// declare heuristic;
 	auto h = 0.0f;
 
+	glm::vec3 cube_coord_a = (Util::offset_to_cube(getGridPosition()));
+	glm::vec3 cube_coord_b = (Util::offset_to_cube(goal_location));
+
+	h = (abs(cube_coord_a.x - cube_coord_b.x) + abs(cube_coord_a.y - cube_coord_b.y) + abs(cube_coord_a.z - cube_coord_b.z)) / 2;
 	
-		h = (abs(getGridPosition().x - goal_location.x) +
+		/*h = (abs(getGridPosition().x - goal_location.x) +
 			 abs(getGridPosition().x + getGridPosition().y - goal_location.x - goal_location.y) +
-			 abs(getGridPosition().y - goal_location.y)) /2;
+			 abs(getGridPosition().y - goal_location.y)) /2;*/
 
 		//return (abs(a.q - b.q)
 		//	+ abs(a.q + a.r - b.q - b.r)
 		//	+ abs(a.r - b.r)) / 2
+
+	/*	function offset_distance(a, b) :
+			var ac = offset_to_cube(a)
+			var bc = offset_to_cube(b)
+			return cube_distance(ac, bc)*/
 
 	m_globalGoalValue = h;
 
@@ -225,4 +253,14 @@ float Hex::computeGlobalValue(const glm::vec2 goal_location)
 	m_pValueLabel->setText(labelstring);
 
 	return m_globalGoalValue;
+}
+
+float Hex::getGlobalvalue() const
+{
+	return m_globalGoalValue;
+}
+
+Unit* Hex::getOccupier()
+{
+	return m_Occupier;
 }

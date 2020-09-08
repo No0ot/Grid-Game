@@ -3,5 +3,7 @@
 enum Jobenum 
 {
     ARCHER,
-    KNIGHT 
+    BARBARIAN,
+    MAGE,
+    PRIEST
 };

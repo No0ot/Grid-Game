@@ -25,7 +25,7 @@ class GameState : public State
 private:
 	std::vector<Hex*> m_pHexGrid;
 	std::vector<Hex*> m_pHexList;
-	std::vector<Hex*> m_pMercRangeHexs;
+	std::list<Hex*> m_pThreatenedHexes;
 	enum TurnState { NONE,PLAYER_MOVE, PLAYER_ABILITY, PLAYER_ATTACK, PLAYER_FACING, ENEMY_TURN};
 	std::vector<Merc*> m_Player1MercVec;
 	std::vector<Merc*> m_Player2MercVec;
@@ -42,6 +42,7 @@ public:
 	void BuildHexGrid();
 	void MapGrid();
 	void ResetHexs();
+	int SpawnObjects(Unit* spawned_object);
 	void AddHexestoList();
 	//Inherited functions
 	void Enter();

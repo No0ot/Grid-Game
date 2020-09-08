@@ -25,6 +25,8 @@ public:
 	int getConcentration();
 	int getResolve();
 	int getInitiative() const;
+	Job* getJob();
+	std::string getName();
 
 	//Setters
 	void setMaxHealth(int new_maxhealth);
@@ -37,6 +39,7 @@ public:
 	//other functions
 	void updateFacing();
 	void rollInitiative();
+	void attack(Merc* targetUnit);
 
 private:
 	// Needs a race and Job

@@ -51,9 +51,6 @@
     <ClCompile Include="Job.cpp">
       <Filter>Objects\Data Classes</Filter>
     </ClCompile>
-    <ClCompile Include="Archer.cpp">
-      <Filter>Objects\Data Classes</Filter>
-    </ClCompile>
     <ClCompile Include="Race.cpp">
       <Filter>Objects\Data Classes</Filter>
     </ClCompile>
@@ -87,9 +84,6 @@
       <Filter>Objects</Filter>
     </ClInclude>
     <ClInclude Include="Job.h">
-      <Filter>Objects\Data Classes</Filter>
-    </ClInclude>
-    <ClInclude Include="Archer.h">
       <Filter>Objects\Data Classes</Filter>
     </ClInclude>
     <ClInclude Include="JobEnum.h">

@@ -133,7 +133,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Archer.cpp" />
     <ClCompile Include="FontManager.cpp" />
     <ClCompile Include="FSM.cpp" />
     <ClCompile Include="Engine.cpp" />
@@ -149,7 +148,6 @@
     <ClCompile Include="Util.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Archer.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="FontManager.h" />
     <ClInclude Include="FSM.h" />
