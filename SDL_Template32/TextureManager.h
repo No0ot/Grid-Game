@@ -29,7 +29,8 @@ public:
 
 	void draw(std::string id, int x, int y, int width, int height, SDL_Renderer* pRenderer,int state, SDL_RendererFlip flip = SDL_FLIP_NONE);
 	void draw(std::string id, int x, int y, SDL_Renderer* pRenderer,int state, bool centered = false, SDL_RendererFlip flip = SDL_FLIP_NONE);
-	void drawHex(std::string id, int x, int y, SDL_Renderer* pRenderer, int angle, int mousestate,int hexstate, bool centered = false, SDL_RendererFlip flip = SDL_FLIP_NONE);
+	void drawHex(std::string id, int x, int y, SDL_Renderer* pRenderer, int angle, int type,int hexstate, bool centered = false, SDL_RendererFlip flip = SDL_FLIP_NONE);
+	void drawSelector(std::string id, int x, int y, SDL_Renderer* pRenderer, int angle, int state, bool centered = false, SDL_RendererFlip flip = SDL_FLIP_NONE);
 	void drawMerc(std::string id, int x, int y, SDL_Renderer* pRenderer, int angle, int state,int owner, bool centered = false, SDL_RendererFlip flip = SDL_FLIP_NONE);
 	void drawText(const std::string& id, int x, int y, SDL_Renderer* renderer, double angle, int alpha, bool centered = false, SDL_RendererFlip flip = SDL_FLIP_NONE);
 

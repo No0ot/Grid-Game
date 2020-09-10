@@ -8,17 +8,17 @@
 
 Hex::Hex(glm::vec2 worldPosition, glm::vec2 gridPosition) : mouseHover(false), m_MouseState(STATE_OFF), m_pGridPosition(gridPosition)
 {
-	TheTextureManager::Instance()->load("Img/Hex Tileset.png", "hex", Engine::Instance().GetRenderer());
-	TheTextureManager::Instance()->load("Img/Selector.png", "selector", Engine::Instance().GetRenderer());
+	TheTextureManager::Instance()->load("Img/Hex Tileset2.png", "hex", Engine::Instance().GetRenderer());
+	TheTextureManager::Instance()->load("Img/selector.png", "selector", Engine::Instance().GetRenderer());
 
 	setPosition(worldPosition);
 	setWidth(40);
 	setHeight(40);
 	setType(GameObjectType::HEX);
-	m_InteractiveState = INITIAL;
-	m_PathfindingState = UNVISITED;
+	
 	setOccupied(false);
 
+	BuildHex();
 	std::ostringstream tempLabel;
 	tempLabel << std::fixed << std::setprecision(1) << m_globalGoalValue;
 	auto labelstring = tempLabel.str();
@@ -40,7 +40,9 @@ void Hex::draw()
 	const int yComponent = getPosition().y;
 	SDL_Rect rectangle = { xComponent,yComponent,64,64 };
 	
-	TheTextureManager::Instance()->drawHex("hex", xComponent, yComponent, Engine::Instance().GetRenderer(), 0,(int)m_MouseState, (int)m_InteractiveState);
+	TheTextureManager::Instance()->drawHex("hex", xComponent, yComponent, Engine::Instance().GetRenderer(), 0,(int)m_HexType, (int)m_InteractiveState);
+	if(m_MouseState != STATE_OFF)
+	TheTextureManager::Instance()->drawSelector("selector", xComponent, yComponent, Engine::Instance().GetRenderer(), 0, (int)m_MouseState);
 	m_pValueLabel->draw();
 }
 
@@ -54,7 +56,7 @@ void Hex::update()
 		{
 			m_MouseState = STATE_HOVER;
 		}
-		//std::cout << " state off" << std::endl;
+		//cout << " state off" << std::endl;
 		break;
 	case STATE_HOVER:
 		if (!mousecol)
@@ -84,6 +86,10 @@ void Hex::update()
 		break;
 	}
 
+	std::ostringstream tempLabel;
+	tempLabel << std::fixed << std::setprecision(1) << m_localGoalValue;
+	const auto labelstring = tempLabel.str();
+	m_pValueLabel->setText(labelstring);
 }
 
 void Hex::clean()
@@ -207,6 +213,26 @@ void Hex::setOccupier(Unit* newunit)
 	m_Occupier = newunit;
 }
 
+void Hex::setHexParent(Hex* new_hex)
+{
+	m_hexPathfindingParent = new_hex;
+}
+
+void Hex::setHexCost(int new_value)
+{
+	m_HexMoveCost = new_value;
+}
+
+void Hex::setLocalValue(float new_value)
+{
+	m_localGoalValue = new_value;
+}
+
+void Hex::setGlobalValue(float new_value)
+{
+	m_globalGoalValue = new_value;
+}
+
 bool Hex::mouseCol()
 {
 	int mx = Engine::Instance().GetMousePos().x;
@@ -218,6 +244,37 @@ bool Hex::mouseCol()
 void Hex::setHover(bool h)
 {
 	mouseHover = h;
+}
+
+void Hex::BuildHex()
+{
+	
+	m_HexType = PLAINS;
+
+	int randnum = rand() % 5;
+	if (randnum == 4)
+		m_HexType = WALL;
+	else if (randnum == 3)
+		m_HexType = ROUGH;
+
+	switch (m_HexType)
+	{
+	case PLAINS:
+		setHexCost(1);
+		m_InteractiveState = INITIAL;
+		m_PathfindingState = UNVISITED;
+		break;
+	case WALL:
+		setHexCost(1);
+		m_InteractiveState = INITIAL;
+		m_PathfindingState = IMPASSABLE;
+		break;
+	case ROUGH:
+		setHexCost(1);
+		m_InteractiveState = INITIAL;
+		m_PathfindingState = UNVISITED;
+		break;
+	}
 }
 
 float Hex::computeGlobalValue(const glm::vec2 goal_location)
@@ -247,20 +304,105 @@ float Hex::computeGlobalValue(const glm::vec2 goal_location)
 
 	m_globalGoalValue = h;
 
-	std::ostringstream tempLabel;
-	tempLabel << std::fixed << std::setprecision(1) << m_globalGoalValue;
-	const auto labelstring = tempLabel.str();
-	m_pValueLabel->setText(labelstring);
+
 
 	return m_globalGoalValue;
 }
 
-float Hex::getGlobalvalue() const
+float Hex::computeLocalValue(Hex* active_hex)
+{
+	active_hex->setPathfindingState(GOAL);
+	Hex* current_hex = this;
+	m_openList.push_back(current_hex);
+	std::vector<Hex*> adjacent = current_hex->getNeighbours();
+
+	while (!m_openList.empty() && current_hex->getPathfindingState() != GOAL)
+	{
+		m_openList.sort([](const Hex* lhs, const Hex* rhs) {return lhs->getGlobalValue() < rhs->getGlobalValue(); });
+
+
+
+		while (!m_openList.empty() && m_openList.front()->b_visited)
+			m_openList.pop_front();
+
+
+		if (m_openList.empty() /*|| current_tile->getTileState() == GOAL*/)
+			break;
+
+		current_hex = m_openList.front();
+		current_hex->b_visited = true;
+
+
+		std::vector<Hex*> adjacent = current_hex->getNeighbours();
+		for (auto hex : adjacent)
+		{
+
+			if (hex != nullptr)
+			{
+				if (hex->getPathfindingState() == GOAL)
+				{
+					hex->setHexParent(current_hex);
+					Hex* current = hex;
+					while (current->getHexParent() != nullptr)
+					{
+
+						m_path.push_back(current);
+						current = current->getHexParent();
+						
+						
+					}
+					current_hex = hex;
+					m_openList.clear();
+					break;
+				}
+				if (!hex->b_visited && hex->getPathfindingState() != IMPASSABLE)
+				{
+					m_openList.push_back(hex);
+					
+				}
+				else
+				{
+					continue;
+				}
+
+				float tempLocal = current_hex->getLocalValue() + hex->getHexCost();
+				if (tempLocal > hex->getLocalValue())
+				{
+					hex->setHexParent(current_hex);
+					hex->setLocalValue(tempLocal);
+				}
+
+
+			}
+		}
+	}
+
+	
+
+	return m_localGoalValue;
+}
+
+float Hex::getGlobalValue() const
 {
 	return m_globalGoalValue;
+}
+
+float Hex::getLocalValue() const
+{
+	return m_localGoalValue;
 }
 
 Unit* Hex::getOccupier()
 {
 	return m_Occupier;
+}
+
+int Hex::getHexCost()
+{
+	return m_HexMoveCost;
+}
+
+Hex* Hex::getHexParent()
+{
+	return m_hexPathfindingParent;
 }

@@ -85,12 +85,12 @@ void TextureManager::draw(std::string id, int x, int y, SDL_Renderer* pRenderer,
 
 }
 
-void TextureManager::drawHex(std::string id, int x, int y, SDL_Renderer* pRenderer, int angle, int mousestate,int hexstate, bool centered, SDL_RendererFlip flip)
+void TextureManager::drawHex(std::string id, int x, int y, SDL_Renderer* pRenderer, int angle, int type,int hexstate, bool centered, SDL_RendererFlip flip)
 {
 	SDL_Rect srcRect;
 	SDL_Rect dstRect;
 
-	srcRect.x = 0 + 31 * mousestate;
+	srcRect.x = 0 + 31 * type;
 	srcRect.y = 0 + 31 * hexstate;
 
 	srcRect.h = 31;
@@ -99,6 +99,24 @@ void TextureManager::drawHex(std::string id, int x, int y, SDL_Renderer* pRender
 	dstRect.w = srcRect.w * 2;
 	dstRect.x = x;
 	dstRect.y = y;
+
+	SDL_RenderCopyEx(pRenderer, m_textureMap[id].get(), &srcRect, &dstRect, angle, 0, flip);
+}
+
+void TextureManager::drawSelector(std::string id, int x, int y, SDL_Renderer* pRenderer, int angle, int state, bool centered, SDL_RendererFlip flip)
+{
+	SDL_Rect srcRect;
+	SDL_Rect dstRect;
+
+	srcRect.x = 0 + 29 * state;
+	srcRect.y = 0;
+
+	srcRect.h = 29;
+	dstRect.h = srcRect.h * 2;
+	srcRect.w = 29;
+	dstRect.w = srcRect.w * 2;
+	dstRect.x = x + 2;
+	dstRect.y = y + 2;
 
 	SDL_RenderCopyEx(pRenderer, m_textureMap[id].get(), &srcRect, &dstRect, angle, 0, flip);
 }

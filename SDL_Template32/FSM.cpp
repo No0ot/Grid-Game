@@ -204,6 +204,7 @@ void GameState::Update()
 		m_CurrentMerc = nullptr;
 		m_CurrentMerc = m_turnOrder.front();
 		m_CurrentMerc->setState(Unit::State::ACTIVE);
+		m_CurrentMerc->getHex()->setPathfindingState(Hex::PathfindingState::GOAL);
 		counter++;
 		if (counter == 30)
 		{
@@ -226,10 +227,10 @@ void GameState::Update()
 	
 		for (auto hex : m_pHexGrid)
 		{
-			if (hex != nullptr && hex->getOccupied() == false && hex->getGlobalvalue() <= m_CurrentMerc->getJob()->getMoveRange() )
+			if (hex != nullptr && hex->getPathfindingState() != Hex::PathfindingState::IMPASSABLE && hex->getGlobalValue() <= m_CurrentMerc->getJob()->getMoveRange() )
 			{
 				hex->setInteractiveState(Hex::RUN);
-				if (hex != nullptr && hex->getOccupied() == false && hex->getGlobalvalue() <= m_CurrentMerc->getJob()->getDashRange())
+				if (hex != nullptr && hex->getPathfindingState() != Hex::PathfindingState::IMPASSABLE && hex->getGlobalValue() <= m_CurrentMerc->getJob()->getDashRange())
 					hex->setInteractiveState(Hex::DASH);
 			}
 		}
@@ -280,13 +281,13 @@ void GameState::Update()
 		// Get closest target in range with highest threat
 		for (auto hex : m_pHexGrid)
 		{
-			if ( hex->getOccupied() == true && hex->getGlobalvalue() <= m_CurrentMerc->getJob()->getAttackRange() && hex != m_CurrentMerc->getHex() && hex->getOccupier()->getOwner() != m_CurrentMerc->getOwner())
+			if ( hex->getOccupied() == true && hex->getGlobalValue() <= m_CurrentMerc->getJob()->getAttackRange() && hex != m_CurrentMerc->getHex() && hex->getOccupier()->getOwner() != m_CurrentMerc->getOwner())
 			{
 				m_pThreatenedHexes.push_back(hex);
 			}
 		}
 
-		m_pThreatenedHexes.sort([](const Hex* lhs, const Hex* rhs) {return lhs->getGlobalvalue() < rhs->getGlobalvalue(); });
+		m_pThreatenedHexes.sort([](const Hex* lhs, const Hex* rhs) {return lhs->getGlobalValue() < rhs->getGlobalValue(); });
 		if(!m_pThreatenedHexes.empty())
 			m_pSelectedHex = m_pThreatenedHexes.front();
 
@@ -357,6 +358,7 @@ void GameState::Update()
 	for (auto hex : m_pHexGrid)
 	{
 		hex->computeGlobalValue(m_CurrentMerc->getHex()->getGridPosition());
+		hex->computeLocalValue(m_CurrentMerc->getHex());
 	}
 }
 
