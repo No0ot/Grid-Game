@@ -27,6 +27,7 @@ public:
 	int getInitiative() const;
 	Job* getJob();
 	std::string getName();
+	int getMainStat();
 
 	//Setters
 	void setMaxHealth(int new_maxhealth);
@@ -35,6 +36,7 @@ public:
 	void setFinesse(int new_finesse);
 	void setConcentration(int new_concentration);
 	void setResolve(int new_resolve);
+	void setMainStat(int new_stat);
 
 	//other functions
 	void updateFacing();
@@ -48,8 +50,7 @@ private:
 	Race* m_Race;
 
 
-	enum PrimaryStat { STRENGTH, FINESSE, CONCENTRATION, RESOLVE};
-	PrimaryStat m_PrimaryStat;
+
 	// Data for stats
 	std::string m_Name;
 	int m_MaxHealth;
@@ -58,7 +59,8 @@ private:
 		m_Finnese,
 		m_Concentration,
 		m_Resolve,
-		m_Initiative;
+		m_Initiative,
+		m_Mainstat;
 
 
 };

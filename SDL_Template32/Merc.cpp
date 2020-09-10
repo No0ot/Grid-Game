@@ -18,6 +18,21 @@ Merc::Merc(Jobenum job , Owner owner, int race, std::string name)
 	setMaxHealth(50 + (getStrength() * 10));
 	setCurrentHealth(getMaxHealth());
 	
+	switch (m_Job->getPrimaryStat())
+	{
+	case Job::STRENGTH:
+		setMainStat(getStrength());
+		break;
+	case Job::FINESSE:
+		setMainStat(getFinesse());
+		break;
+	case Job::CONCENTRATION:
+		setMainStat(getConcentration());
+		break;
+	case Job::RESOLVE:
+		setMainStat(getResolve());
+		break;
+	}
 }
 
 Merc::~Merc()
@@ -89,6 +104,11 @@ std::string Merc::getName()
 	return m_Name;
 }
 
+int Merc::getMainStat()
+{
+	return m_Mainstat;
+}
+
 void Merc::setMaxHealth(int new_maxhealth)
 {
 	m_MaxHealth = new_maxhealth;
@@ -117,6 +137,11 @@ void Merc::setConcentration(int new_concentration)
 void Merc::setResolve(int new_resolve)
 {
 	m_Resolve = new_resolve;
+}
+
+void Merc::setMainStat(int new_stat)
+{
+	m_Mainstat = new_stat;
 }
 
 void Merc::updateFacing()
@@ -150,7 +175,7 @@ void Merc::attack(Merc* targetUnit)
 
 	if (attackroll > missChance)
 	{
-		int damage = rand() % m_Job->getMaxDamage() + m_Job->getMinDamage();
+		int damage = rand() % m_Job->getMaxDamage() + m_Job->getMinDamage() + getMainStat();
 		std::cout << this->getName() << " dealt " << damage << " damage to " << targetUnit->getName() << std::endl;
 		targetUnit->setCurrentHealth(targetUnit->getCurrentHealth() - damage);
 		std::cout << targetUnit->getName() << " has " << targetUnit->getCurrentHealth() << " health remaining." << std::endl;

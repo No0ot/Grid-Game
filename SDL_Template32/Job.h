@@ -5,7 +5,9 @@ class Job
 {
 public:
 	//enum Jobenum { ARCHER, KNIGHT };
+	enum PrimaryStat { STRENGTH, FINESSE, CONCENTRATION, RESOLVE };
 	Jobenum m_Jobenum;
+
 	
 	Job(Jobenum job);
 	~Job();
@@ -21,7 +23,10 @@ public:
 	int getMoveRange();
 	int getDashRange();
 	int getAttackRange();
+	int getMainStat();
 	std::string getTexturename();
+	PrimaryStat getPrimaryStat();
+
 	//Setters
 	void setBaseStr(int str);
 	void setBaseFin(int fin);
@@ -33,6 +38,7 @@ public:
 	void setMoveRange(int moverange);
 	void setDashRange(int dashrange);
 	void setAttackRange(int attackrange);
+	void setMainStat(int mainstat);
 
 private:
 	int m_baseStr,
@@ -44,9 +50,10 @@ private:
 		m_initMod,
 		m_moveRange,
 		m_dashRange,
-		m_attackRange;
+		m_attackRange,
+		m_mainStat;
 
 	std::string m_Texturename;
-	
+	PrimaryStat m_PrimaryStat;
 };
 

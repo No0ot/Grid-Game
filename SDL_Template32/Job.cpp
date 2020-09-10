@@ -19,6 +19,7 @@ Job::Job(Jobenum job)
 		setDashRange(1);
 		setAttackRange(4);
 		m_Texturename = "archer";
+		m_PrimaryStat = FINESSE;
 		break;
 	case BARBARIAN:
 		TheTextureManager::Instance()->load("Img/Barb.png", "barbarian", Engine::Instance().GetRenderer());
@@ -33,6 +34,7 @@ Job::Job(Jobenum job)
 		setDashRange(2);
 		setAttackRange(1);
 		m_Texturename = "barbarian";
+		m_PrimaryStat = STRENGTH;
 		break;
 	case MAGE:
 		TheTextureManager::Instance()->load("Img/Mage.png", "mage", Engine::Instance().GetRenderer());
@@ -47,6 +49,7 @@ Job::Job(Jobenum job)
 		setDashRange(1);
 		setAttackRange(3);
 		m_Texturename = "mage";
+		m_PrimaryStat = CONCENTRATION;
 		break;
 	case PRIEST:
 		TheTextureManager::Instance()->load("Img/Priest.png", "priest", Engine::Instance().GetRenderer());
@@ -61,6 +64,7 @@ Job::Job(Jobenum job)
 		setDashRange(1);
 		setAttackRange(3);
 		m_Texturename = "priest";
+		m_PrimaryStat = RESOLVE;
 		break;
 	}
 }
@@ -119,9 +123,19 @@ int Job::getAttackRange()
 	return m_attackRange;
 }
 
+int Job::getMainStat()
+{
+	return m_mainStat;
+}
+
 std::string Job::getTexturename()
 {
 	return m_Texturename;
+}
+
+Job::PrimaryStat Job::getPrimaryStat()
+{
+	return m_PrimaryStat;
 }
 
 void Job::setBaseStr(int str)
@@ -172,4 +186,9 @@ void Job::setDashRange(int dashrange)
 void Job::setAttackRange(int attackrange)
 {
 	m_attackRange = attackrange;
+}
+
+void Job::setMainStat(int mainstat)
+{
+	m_mainStat = mainstat;
 }
