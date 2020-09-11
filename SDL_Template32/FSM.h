@@ -4,6 +4,7 @@
 //Game Objects
 #include "Hex.h"
 #include "Merc.h"
+#include "UnitProfile.h"
 
 class State // Abstract base class.
 {
@@ -33,6 +34,8 @@ private:
 	Merc* m_Player1Merc;
 	Merc* m_Player2Merc;
 	std::list<Merc*> m_turnOrder;
+	UnitProfile* m_ActiveUnitProfile;
+	UnitProfile* m_HoverUnitProfile;
 
 	Hex* m_pSelectedHex;
 	int counter;

@@ -109,6 +109,11 @@ int Merc::getMainStat()
 	return m_Mainstat;
 }
 
+Race* Merc::getRace()
+{
+	return m_Race;
+}
+
 void Merc::setMaxHealth(int new_maxhealth)
 {
 	m_MaxHealth = new_maxhealth;

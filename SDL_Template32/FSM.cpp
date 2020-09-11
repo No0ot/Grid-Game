@@ -168,6 +168,8 @@ void GameState::Enter()
 	MapGrid();
 	mouseDown = false;
 	counter = 0;
+	m_ActiveUnitProfile = new UnitProfile(glm::vec2(820,400));
+	m_HoverUnitProfile = new UnitProfile(glm::vec2(820, 20));
 
 	m_Player1MercVec = { new Merc(ARCHER, Unit::Owner::PLAYER_1, 0, "Curly"),
 						 new Merc(BARBARIAN, Unit::Owner::PLAYER_1, 1, "Larry"),
@@ -176,6 +178,7 @@ void GameState::Enter()
 	for (int count = 0; count < 4; count ++)
 	{
 		SpawnObjects(m_Player1MercVec[count]);
+		m_Player1MercVec[count]->getHex()->setOccupier(m_Player1MercVec[count]);
 		m_Player1MercVec[count]->rollInitiative();
 		m_turnOrder.push_back(m_Player1MercVec[count]);
 	}
@@ -187,6 +190,7 @@ void GameState::Enter()
 	for (int count = 0; count < 4; count++)
 	{
 		SpawnObjects(m_Player2MercVec[count]);
+		m_Player2MercVec[count]->getHex()->setOccupier(m_Player2MercVec[count]);
 		m_Player2MercVec[count]->rollInitiative();
 		m_turnOrder.push_back(m_Player2MercVec[count]);
 	}
@@ -204,6 +208,7 @@ void GameState::Update()
 		m_CurrentMerc = nullptr;
 		m_CurrentMerc = m_turnOrder.front();
 		m_CurrentMerc->setState(Unit::State::ACTIVE);
+		m_ActiveUnitProfile->setUnitReference(m_CurrentMerc);
 		m_CurrentMerc->getHex()->setPathfindingState(Hex::PathfindingState::GOAL);
 		counter++;
 		if (counter == 30)
@@ -245,6 +250,7 @@ void GameState::Update()
 				m_CurrentMerc->getHex()->setOccupied(false);
 				m_CurrentMerc->getHex()->setOccupier(nullptr);
 				m_CurrentMerc->setHex(tempHex);
+				tempHex->setOccupier(m_CurrentMerc);
 				std::cout << m_CurrentMerc->getName() <<" MOVED TO HEX: " << m_CurrentMerc->getHex()->getGridPosition().x << " " << m_CurrentMerc->getHex()->getGridPosition().y << std::endl;
 				ResetHexs();
 				current_state = PLAYER_ATTACK;
@@ -256,6 +262,7 @@ void GameState::Update()
 				m_CurrentMerc->getHex()->setOccupied(false);
 				m_CurrentMerc->getHex()->setOccupier(nullptr);
 				m_CurrentMerc->setHex(tempHex);
+				tempHex->setOccupier(m_CurrentMerc);
 				std::cout << m_CurrentMerc->getName() << " MOVED TO HEX: " << m_CurrentMerc->getHex()->getGridPosition().x << " " << m_CurrentMerc->getHex()->getGridPosition().y << std::endl;
 				ResetHexs();
 				current_state = PLAYER_FACING;
@@ -359,7 +366,18 @@ void GameState::Update()
 	{
 		hex->computeGlobalValue(m_CurrentMerc->getHex()->getGridPosition());
 		hex->computeLocalValue(m_CurrentMerc->getHex());
+		if (hex->getMouseState() == Hex::STATE_HOVER && hex->getOccupied())
+		{
+			m_HoverUnitProfile->setUnitReference(hex->getOccupier());
+		}
+		else if (hex->getMouseState() == Hex::STATE_HOVER && !hex->getOccupied())
+		{
+			m_HoverUnitProfile->setUnitReference(nullptr);
+		}
 	}
+	m_ActiveUnitProfile->update();
+	m_HoverUnitProfile->update();
+	
 }
 
 void GameState::HandleEvents()
@@ -392,6 +410,8 @@ void GameState::Render()
 	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 240, 0, 0, 50);
 	SDL_RenderFillRect(Engine::Instance().GetRenderer(), &rectangle);
 	SDL_RenderFillRect(Engine::Instance().GetRenderer(), &rectangle2);
+	m_ActiveUnitProfile->draw();
+	m_HoverUnitProfile->draw();
 
 	if (dynamic_cast<GameState*>(Engine::Instance().GetFSM().GetStates().back()))
 		State::Render();

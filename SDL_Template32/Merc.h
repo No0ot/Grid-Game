@@ -28,6 +28,7 @@ public:
 	Job* getJob();
 	std::string getName();
 	int getMainStat();
+	Race* getRace();
 
 	//Setters
 	void setMaxHealth(int new_maxhealth);

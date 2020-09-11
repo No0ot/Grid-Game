@@ -32,8 +32,8 @@ public:
 	void drawHex(std::string id, int x, int y, SDL_Renderer* pRenderer, int angle, int type,int hexstate, bool centered = false, SDL_RendererFlip flip = SDL_FLIP_NONE);
 	void drawSelector(std::string id, int x, int y, SDL_Renderer* pRenderer, int angle, int state, bool centered = false, SDL_RendererFlip flip = SDL_FLIP_NONE);
 	void drawMerc(std::string id, int x, int y, SDL_Renderer* pRenderer, int angle, int state,int owner, bool centered = false, SDL_RendererFlip flip = SDL_FLIP_NONE);
+	void drawUnitProfile(std::string id, int x, int y, SDL_Renderer* pRenderer, int angle, bool centered = false, SDL_RendererFlip flip = SDL_FLIP_NONE);
 	void drawText(const std::string& id, int x, int y, SDL_Renderer* renderer, double angle, int alpha, bool centered = false, SDL_RendererFlip flip = SDL_FLIP_NONE);
-
 	glm::vec2 getTextureSize(std::string id);
 
 	bool addTexture(const std::string& id, std::shared_ptr<SDL_Texture> texture);

@@ -147,6 +147,24 @@ void TextureManager::drawMerc(std::string id, int x, int y, SDL_Renderer* pRende
 	SDL_RenderCopyEx(pRenderer, m_textureMap[id].get(), &srcRect, &dstRect, angle, 0, flip);
 }
 
+void TextureManager::drawUnitProfile(std::string id, int x, int y, SDL_Renderer* pRenderer, int angle, bool centered, SDL_RendererFlip flip)
+{
+	SDL_Rect srcRect;
+	SDL_Rect dstRect;
+
+	srcRect.x = 0;
+	srcRect.y = 0;
+
+	srcRect.h = 350;
+	dstRect.h = srcRect.h;
+	srcRect.w = 500;
+	dstRect.w = srcRect.w;
+	dstRect.x = x;
+	dstRect.y = y;
+
+	SDL_RenderCopyEx(pRenderer, m_textureMap[id].get(), &srcRect, &dstRect, angle, 0, flip);
+}
+
 void TextureManager::drawText(const std::string& id, int x, int y, SDL_Renderer* renderer, double angle, int alpha, bool centered, SDL_RendererFlip flip)
 {
 	SDL_Rect srcRect;

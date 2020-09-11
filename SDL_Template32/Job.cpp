@@ -7,7 +7,7 @@ Job::Job(Jobenum job)
 	switch (job)
 	{
 	case ARCHER:
-		TheTextureManager::Instance()->load("Img/Archer.png", "archer", Engine::Instance().GetRenderer());
+		TheTextureManager::Instance()->load("Img/Archer.png", "Archer", Engine::Instance().GetRenderer());
 		setBaseStr(3);
 		setBaseFin(10);
 		setBaseCon(9);
@@ -18,11 +18,11 @@ Job::Job(Jobenum job)
 		setMoveRange(4);
 		setDashRange(1);
 		setAttackRange(4);
-		m_Texturename = "archer";
+		m_Texturename = "Archer";
 		m_PrimaryStat = FINESSE;
 		break;
 	case BARBARIAN:
-		TheTextureManager::Instance()->load("Img/Barb.png", "barbarian", Engine::Instance().GetRenderer());
+		TheTextureManager::Instance()->load("Img/Barb.png", "Barbarian", Engine::Instance().GetRenderer());
 		setBaseStr(12);
 		setBaseFin(9);
 		setBaseCon(3);
@@ -33,26 +33,26 @@ Job::Job(Jobenum job)
 		setMoveRange(6);
 		setDashRange(2);
 		setAttackRange(1);
-		m_Texturename = "barbarian";
+		m_Texturename = "Barbarian";
 		m_PrimaryStat = STRENGTH;
 		break;
 	case MAGE:
-		TheTextureManager::Instance()->load("Img/Mage.png", "mage", Engine::Instance().GetRenderer());
+		TheTextureManager::Instance()->load("Img/Mage.png", "Mage", Engine::Instance().GetRenderer());
 		setBaseStr(2);
 		setBaseFin(6);
 		setBaseCon(14);
 		setBaseRes(9);
-		setMinDamage(14);
-		setMaxDamage(2);
+		setMinDamage(2);
+		setMaxDamage(4);
 		setInitMod(0);
 		setMoveRange(4);
 		setDashRange(1);
 		setAttackRange(3);
-		m_Texturename = "mage";
+		m_Texturename = "Mage";
 		m_PrimaryStat = CONCENTRATION;
 		break;
 	case PRIEST:
-		TheTextureManager::Instance()->load("Img/Priest.png", "priest", Engine::Instance().GetRenderer());
+		TheTextureManager::Instance()->load("Img/Priest.png", "Priest", Engine::Instance().GetRenderer());
 		setBaseStr(4);
 		setBaseFin(6);
 		setBaseCon(8);
@@ -63,7 +63,7 @@ Job::Job(Jobenum job)
 		setMoveRange(4);
 		setDashRange(1);
 		setAttackRange(3);
-		m_Texturename = "priest";
+		m_Texturename = "Priest";
 		m_PrimaryStat = RESOLVE;
 		break;
 	}

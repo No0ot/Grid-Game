@@ -4,7 +4,7 @@
 #include "Label.h"
 #include <vector>
 
-class Unit;
+class Merc;
 class Hex : public GameObject
 {
 public:
@@ -57,7 +57,7 @@ public:
 	bool getOccupied();
 	float getGlobalValue() const;
 	float getLocalValue() const;
-	Unit* getOccupier();
+	Merc* getOccupier();
 	int getHexCost();
 	Hex* getHexParent();
 
@@ -66,7 +66,7 @@ public:
 	void setPathfindingState(PathfindingState newstate);
 	void setMouseState(MouseState newstate);
 	void setOccupied(bool newbool);
-	void setOccupier(Unit* newunit);
+	void setOccupier(Merc* newunit);
 	void setHexParent(Hex* new_hex);
 	void setHexCost(int new_value);
 	void setLocalValue(float new_value);
@@ -95,6 +95,6 @@ private:
 	bool mouseHover;
 	glm::vec2 m_pGridPosition;
 	std::vector<Hex*> m_pNeighbours;
-	Unit* m_Occupier;
+	Merc* m_Occupier;
 };
 

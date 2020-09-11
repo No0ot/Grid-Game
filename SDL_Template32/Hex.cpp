@@ -208,7 +208,7 @@ void Hex::setOccupied(bool newbool)
 	m_pOccupied = newbool;
 }
 
-void Hex::setOccupier(Unit* newunit)
+void Hex::setOccupier(Merc* newunit)
 {
 	m_Occupier = newunit;
 }
@@ -392,7 +392,7 @@ float Hex::getLocalValue() const
 	return m_localGoalValue;
 }
 
-Unit* Hex::getOccupier()
+Merc* Hex::getOccupier()
 {
 	return m_Occupier;
 }
