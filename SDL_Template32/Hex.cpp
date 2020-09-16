@@ -6,7 +6,7 @@
 #include <sstream>
 #include <iomanip>
 
-Hex::Hex(glm::vec2 worldPosition, glm::vec2 gridPosition) : mouseHover(false), m_MouseState(STATE_OFF), m_pGridPosition(gridPosition)
+Hex::Hex(glm::vec2 worldPosition, glm::vec2 gridPosition) : mouseHover(false), m_MouseState(STATE_OFF), m_pGridPosition(gridPosition), m_PathfindingState(UNVISITED)
 {
 	TheTextureManager::Instance()->load("Img/Hex Tileset2.png", "hex", Engine::Instance().GetRenderer());
 	TheTextureManager::Instance()->load("Img/selector.png", "selector", Engine::Instance().GetRenderer());
@@ -87,7 +87,7 @@ void Hex::update()
 	}
 
 	std::ostringstream tempLabel;
-	tempLabel << std::fixed << std::setprecision(1) << m_localGoalValue;
+	tempLabel << std::fixed << std::setprecision(1) << m_MovementCost;
 	const auto labelstring = tempLabel.str();
 	m_pValueLabel->setText(labelstring);
 }
@@ -265,12 +265,12 @@ void Hex::BuildHex()
 		m_PathfindingState = UNVISITED;
 		break;
 	case WALL:
-		setHexCost(1);
+		setHexCost(0);
 		m_InteractiveState = INITIAL;
 		m_PathfindingState = IMPASSABLE;
 		break;
 	case ROUGH:
-		setHexCost(1);
+		setHexCost(2);
 		m_InteractiveState = INITIAL;
 		m_PathfindingState = UNVISITED;
 		break;
@@ -301,19 +301,21 @@ float Hex::computeGlobalValue(const glm::vec2 goal_location)
 			var ac = offset_to_cube(a)
 			var bc = offset_to_cube(b)
 			return cube_distance(ac, bc)*/
+	float g = getHexCost();
 
-	m_globalGoalValue = h;
+	m_globalGoalValue = h + g;
 
 
 
 	return m_globalGoalValue;
 }
 
-float Hex::computeLocalValue(Hex* active_hex)
+bool Hex::AstarPathfinding(Hex* active_hex)
 {
 	active_hex->setPathfindingState(GOAL);
 	Hex* current_hex = this;
 	m_openList.push_back(current_hex);
+	bool goal_reached = false;
 	std::vector<Hex*> adjacent = current_hex->getNeighbours();
 
 	while (!m_openList.empty() && current_hex->getPathfindingState() != GOAL)
@@ -351,6 +353,7 @@ float Hex::computeLocalValue(Hex* active_hex)
 						
 						
 					}
+					goal_reached = true;
 					current_hex = hex;
 					m_openList.clear();
 					break;
@@ -377,9 +380,18 @@ float Hex::computeLocalValue(Hex* active_hex)
 		}
 	}
 
-	
+	if (goal_reached)
+		return true;
+	else
+		return false;
+}
 
-	return m_localGoalValue;
+void Hex::buildPath()
+{
+	for (auto hex : m_path)
+	{
+		m_MovementCost += hex->getHexCost();
+	}
 }
 
 float Hex::getGlobalValue() const

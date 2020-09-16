@@ -210,7 +210,9 @@ void GameState::Update()
 		m_CurrentMerc->setState(Unit::State::ACTIVE);
 		m_ActiveUnitProfile->setUnitReference(m_CurrentMerc);
 		m_CurrentMerc->getHex()->setPathfindingState(Hex::PathfindingState::GOAL);
+
 		counter++;
+
 		if (counter == 30)
 		{
 			std::cout << "----------------"<< m_CurrentMerc->getName() << "'s Turn" << "----------------"<<std::endl;
@@ -364,8 +366,11 @@ void GameState::Update()
 	//std::cout << " updating..." << std::endl;
 	for (auto hex : m_pHexGrid)
 	{
+		if (hex->AstarPathfinding(m_CurrentMerc->getHex()))
+		{
+			hex->buildPath();
+		}
 		hex->computeGlobalValue(m_CurrentMerc->getHex()->getGridPosition());
-		hex->computeLocalValue(m_CurrentMerc->getHex());
 		if (hex->getMouseState() == Hex::STATE_HOVER && hex->getOccupied())
 		{
 			m_HoverUnitProfile->setUnitReference(hex->getOccupier());

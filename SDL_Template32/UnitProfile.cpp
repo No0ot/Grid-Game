@@ -46,6 +46,16 @@ void UnitProfile::draw()
 
 	for(auto labels : m_Labels)
 		labels->draw();
+
+	if (getUnitReference() != nullptr)
+	{
+		SDL_Rect rectangle = { xComponent + 428, yComponent + 28 ,43,43 };
+		if (getUnitReference()->getOwner() == Unit::PLAYER_1)
+			SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 240, 100, 0, 50);
+		else
+			SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 0, 100, 250, 50);
+		SDL_RenderFillRect(Engine::Instance().GetRenderer(), &rectangle);
+	}
 }
 
 void UnitProfile::update()

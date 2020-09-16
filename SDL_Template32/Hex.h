@@ -75,7 +75,8 @@ public:
 	// Other Methods
 	void BuildHex();
 	float computeGlobalValue(const glm::vec2 goal_location);
-	float computeLocalValue(Hex* active_hex);
+	bool AstarPathfinding(Hex* active_hex);
+	void buildPath();
 
 private:
 	//labels
@@ -84,6 +85,7 @@ private:
 	glm::vec2 m_goalLocation;
 	float m_globalGoalValue = 0.0f;
 	float m_localGoalValue = 0.0f;
+	float m_MovementCost = 0.0f;
 	std::list<Hex*> m_openList;
 	std::vector<Hex*> m_path;
 	bool b_visited;
