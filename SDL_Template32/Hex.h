@@ -95,6 +95,7 @@ private:
 	void setHover(bool h);
 	bool m_pOccupied;
 	bool mouseHover;
+	glm::vec3 m_cubeCoordinate;
 	glm::vec2 m_pGridPosition;
 	std::vector<Hex*> m_pNeighbours;
 	Merc* m_Occupier;

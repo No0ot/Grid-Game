@@ -22,6 +22,9 @@
     <Filter Include="Objects\Data Classes">
       <UniqueIdentifier>{289ba3f9-ba67-480a-afd8-231dbb14baf7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Objects\WIP">
+      <UniqueIdentifier>{f3e03c3f-3ea8-4c92-a03e-d90dc901ca6e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -65,6 +68,9 @@
     </ClCompile>
     <ClCompile Include="UnitProfile.cpp">
       <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Hex2.cpp">
+      <Filter>Objects\WIP</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -115,6 +121,9 @@
     </ClInclude>
     <ClInclude Include="UnitProfile.h">
       <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Hex2.h">
+      <Filter>Objects\WIP</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
