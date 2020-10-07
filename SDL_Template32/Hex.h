@@ -99,5 +99,5 @@ private:
 	glm::vec2 m_pGridPosition;
 	std::vector<Hex*> m_pNeighbours;
 	Merc* m_Occupier;
-};
 
+};

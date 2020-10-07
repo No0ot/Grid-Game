@@ -253,7 +253,6 @@ void Hex::setHover(bool h)
 
 void Hex::BuildHex()
 {
-	
 	m_HexType = PLAINS;
 
 	int randnum = rand() % 5;

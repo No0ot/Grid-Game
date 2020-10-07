@@ -69,7 +69,7 @@
     <ClCompile Include="UnitProfile.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Hex2.cpp">
+    <ClCompile Include="HexCoordinates.cpp">
       <Filter>Objects\WIP</Filter>
     </ClCompile>
   </ItemGroup>
@@ -122,7 +122,7 @@
     <ClInclude Include="UnitProfile.h">
       <Filter>Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Hex2.h">
+    <ClInclude Include="HexCoordinates.h">
       <Filter>Objects\WIP</Filter>
     </ClInclude>
   </ItemGroup>
