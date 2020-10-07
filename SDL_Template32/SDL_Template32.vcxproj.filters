@@ -51,11 +51,20 @@
     <ClCompile Include="Job.cpp">
       <Filter>Objects\Data Classes</Filter>
     </ClCompile>
-    <ClCompile Include="Archer.cpp">
-      <Filter>Objects\Data Classes</Filter>
-    </ClCompile>
     <ClCompile Include="Race.cpp">
       <Filter>Objects\Data Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Label.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="FontManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Util.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UnitProfile.cpp">
+      <Filter>Objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -80,9 +89,6 @@
     <ClInclude Include="Job.h">
       <Filter>Objects\Data Classes</Filter>
     </ClInclude>
-    <ClInclude Include="Archer.h">
-      <Filter>Objects\Data Classes</Filter>
-    </ClInclude>
     <ClInclude Include="JobEnum.h">
       <Filter>Objects\Data Classes</Filter>
     </ClInclude>
@@ -94,6 +100,21 @@
     </ClInclude>
     <ClInclude Include="RaceEnum.h">
       <Filter>Objects\Data Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Label.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="FontManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Util.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UnitProfile.h">
+      <Filter>Objects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

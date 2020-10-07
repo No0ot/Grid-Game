@@ -1,7 +1,7 @@
 #pragma once
 #include "GameObject.h"
-#include "Hex.h"
-
+//#include "Hex.h"
+class Hex;
 class Unit : public GameObject
 {
 public:

@@ -1,29 +1,38 @@
 #include "Merc.h"
 #include "Engine.h"
+#include <iostream>
 
-//Jobs
-#include "Archer.h"
-
-Merc::Merc(Jobenum job , Owner owner, int race)
+Merc::Merc(Jobenum job , Owner owner, int race, std::string name)
 {
 	setState(NO_STATE);
 	setOwner(owner);
-	switch (job)
-	{
-	case ARCHER:
-		m_Job = new Archer();
-		break;
-	case KNIGHT:
-		break;
-	}
-	setStrength(m_Job->getBaseStr());
-	setFinesse(m_Job->getBaseFin());
-	setConcentration(m_Job->getBaseCon());
-	setResolve(m_Job->getBaseRes());
+
+	m_Job = new Job(job);
+	m_Race = new Race(race);
+	m_Name = name;
+
+	setStrength(m_Job->getBaseStr() + m_Race->getRaceStr());
+	setFinesse(m_Job->getBaseFin() + m_Race->getRaceFin());
+	setConcentration(m_Job->getBaseCon() + m_Race->getRaceCon());
+	setResolve(m_Job->getBaseRes() + m_Race->getRaceRes());
 	setMaxHealth(50 + (getStrength() * 10));
 	setCurrentHealth(getMaxHealth());
-
-	m_Race = new Race(race);
+	
+	switch (m_Job->getPrimaryStat())
+	{
+	case Job::STRENGTH:
+		setMainStat(getStrength());
+		break;
+	case Job::FINESSE:
+		setMainStat(getFinesse());
+		break;
+	case Job::CONCENTRATION:
+		setMainStat(getConcentration());
+		break;
+	case Job::RESOLVE:
+		setMainStat(getResolve());
+		break;
+	}
 }
 
 Merc::~Merc()
@@ -35,7 +44,7 @@ void Merc::draw()
 	const int xComponent = getPosition().x;
 	const int yComponent = getPosition().y;
 
-	TheTextureManager::Instance()->drawMerc("archer", xComponent, yComponent, Engine::Instance().GetRenderer(), getFacing(), (int)getState(),(int)getOwner());
+	TheTextureManager::Instance()->drawMerc(getJob()->getTexturename(), xComponent, yComponent, Engine::Instance().GetRenderer(), getFacing(), (int)getState(),(int)getOwner());
 }
 
 void Merc::update()
@@ -80,6 +89,31 @@ int Merc::getResolve()
 	return m_Resolve;
 }
 
+int Merc::getInitiative() const
+{
+	return m_Initiative;
+}
+
+Job* Merc::getJob()
+{
+	return m_Job;
+}
+
+std::string Merc::getName()
+{
+	return m_Name;
+}
+
+int Merc::getMainStat()
+{
+	return m_Mainstat;
+}
+
+Race* Merc::getRace()
+{
+	return m_Race;
+}
+
 void Merc::setMaxHealth(int new_maxhealth)
 {
 	m_MaxHealth = new_maxhealth;
@@ -110,6 +144,11 @@ void Merc::setResolve(int new_resolve)
 	m_Resolve = new_resolve;
 }
 
+void Merc::setMainStat(int new_stat)
+{
+	m_Mainstat = new_stat;
+}
+
 void Merc::updateFacing()
 {
 	if (getFacingHex() == getHex()->getNeighbours()[Hex::UP])
@@ -125,3 +164,30 @@ void Merc::updateFacing()
 	else if (getFacingHex() == getHex()->getNeighbours()[Hex::UPLEFT])
 		setFacing(300);
 }
+
+void Merc::rollInitiative()
+{
+	m_Initiative = rand() % 20 + 1 + m_Job->getInitMod();
+	std::cout << m_Name << " Rolled " << m_Initiative << " Initiative" <<  std::endl;
+}
+
+void Merc::attack(Merc* targetUnit)
+{
+	int missChance = 40 + targetUnit->getFinesse();
+	std::cout << this->getName() << " has a  " << 100 - missChance << "% chance to hit." << std::endl;
+	int attackroll = rand() % 100 + getConcentration();
+	std::cout << this->getName() << " rolled a " << attackroll << std::endl;
+
+	if (attackroll > missChance)
+	{
+		int damage = rand() % m_Job->getMaxDamage() + m_Job->getMinDamage() + getMainStat();
+		std::cout << this->getName() << " dealt " << damage << " damage to " << targetUnit->getName() << std::endl;
+		targetUnit->setCurrentHealth(targetUnit->getCurrentHealth() - damage);
+		std::cout << targetUnit->getName() << " has " << targetUnit->getCurrentHealth() << " health remaining." << std::endl;
+	}
+	else
+	{
+		std::cout << "--Attack Missed--" << std::endl;
+	}
+}
+

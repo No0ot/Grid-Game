@@ -1,17 +1,30 @@
 #include "Hex.h"
 #include "Engine.h"
+#include "Util.h"
+#include "Unit.h"
 #include <iostream>
+#include <sstream>
+#include <iomanip>
 
-Hex::Hex(glm::vec2 worldPosition, glm::vec2 gridPosition) : mouseHover(false), m_MouseState(STATE_OFF), m_pGridPosition(gridPosition)
+Hex::Hex(glm::vec2 worldPosition, glm::vec2 gridPosition) : mouseHover(false), m_MouseState(STATE_OFF), m_pGridPosition(gridPosition), m_PathfindingState(UNVISITED)
 {
-	TheTextureManager::Instance()->load("Img/Hex Tileset.png", "hex", Engine::Instance().GetRenderer());
+	TheTextureManager::Instance()->load("Img/Hex Tileset2.png", "hex", Engine::Instance().GetRenderer());
+	TheTextureManager::Instance()->load("Img/selector.png", "selector", Engine::Instance().GetRenderer());
 
 	setPosition(worldPosition);
 	setWidth(40);
 	setHeight(40);
 	setType(GameObjectType::HEX);
-	m_InteractiveState = INITIAL;
+	
 	setOccupied(false);
+
+	BuildHex();
+	std::ostringstream tempLabel;
+	tempLabel << std::fixed << std::setprecision(1) << m_globalGoalValue;
+	auto labelstring = tempLabel.str();
+	SDL_Color black{ 0, 0, 0, 255 };
+	auto valueLabelPosition = glm::vec2(getPosition().x + 30 , getPosition().y + 40);
+	m_pValueLabel = new Label(labelstring, "Consolas", 14, black, valueLabelPosition, true);
 
 	m_pNeighbours = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
 }
@@ -27,7 +40,10 @@ void Hex::draw()
 	const int yComponent = getPosition().y;
 	SDL_Rect rectangle = { xComponent,yComponent,64,64 };
 	
-	TheTextureManager::Instance()->drawHex("hex", xComponent, yComponent, Engine::Instance().GetRenderer(), 0,(int)m_MouseState, (int)m_InteractiveState);
+	TheTextureManager::Instance()->drawHex("hex", xComponent, yComponent, Engine::Instance().GetRenderer(), 0,(int)m_HexType, (int)m_InteractiveState);
+	if(m_MouseState != STATE_OFF)
+	TheTextureManager::Instance()->drawSelector("selector", xComponent, yComponent, Engine::Instance().GetRenderer(), 0, (int)m_MouseState);
+	m_pValueLabel->draw();
 }
 
 void Hex::update()
@@ -40,7 +56,7 @@ void Hex::update()
 		{
 			m_MouseState = STATE_HOVER;
 		}
-		//std::cout << " state off" << std::endl;
+		//cout << " state off" << std::endl;
 		break;
 	case STATE_HOVER:
 		if (!mousecol)
@@ -70,6 +86,10 @@ void Hex::update()
 		break;
 	}
 
+	std::ostringstream tempLabel;
+	tempLabel << std::fixed << std::setprecision(1) << m_MovementCost;
+	const auto labelstring = tempLabel.str();
+	m_pValueLabel->setText(labelstring);
 }
 
 void Hex::clean()
@@ -158,9 +178,19 @@ Hex::InteractiveState Hex::getInteractiveState()
 	return m_InteractiveState;
 }
 
+Hex::PathfindingState Hex::getPathfindingState()
+{
+	return m_PathfindingState;
+}
+
 void Hex::setInteractiveState(InteractiveState newstate)
 {
 	m_InteractiveState = newstate;
+}
+
+void Hex::setPathfindingState(PathfindingState newstate)
+{
+	m_PathfindingState = newstate;
 }
 
 void Hex::setMouseState(MouseState newstate)
@@ -178,6 +208,31 @@ void Hex::setOccupied(bool newbool)
 	m_pOccupied = newbool;
 }
 
+void Hex::setOccupier(Merc* newunit)
+{
+	m_Occupier = newunit;
+}
+
+void Hex::setHexParent(Hex* new_hex)
+{
+	m_hexPathfindingParent = new_hex;
+}
+
+void Hex::setHexCost(int new_value)
+{
+	m_HexMoveCost = new_value;
+}
+
+void Hex::setLocalValue(float new_value)
+{
+	m_localGoalValue = new_value;
+}
+
+void Hex::setGlobalValue(float new_value)
+{
+	m_globalGoalValue = new_value;
+}
+
 bool Hex::mouseCol()
 {
 	int mx = Engine::Instance().GetMousePos().x;
@@ -191,3 +246,175 @@ void Hex::setHover(bool h)
 	mouseHover = h;
 }
 
+void Hex::BuildHex()
+{
+	
+	m_HexType = PLAINS;
+
+	int randnum = rand() % 5;
+	if (randnum == 4)
+		m_HexType = WALL;
+	else if (randnum == 3)
+		m_HexType = ROUGH;
+
+	switch (m_HexType)
+	{
+	case PLAINS:
+		setHexCost(1);
+		m_InteractiveState = INITIAL;
+		m_PathfindingState = UNVISITED;
+		break;
+	case WALL:
+		setHexCost(0);
+		m_InteractiveState = INITIAL;
+		m_PathfindingState = IMPASSABLE;
+		break;
+	case ROUGH:
+		setHexCost(2);
+		m_InteractiveState = INITIAL;
+		m_PathfindingState = UNVISITED;
+		break;
+	}
+}
+
+float Hex::computeGlobalValue(const glm::vec2 goal_location)
+{
+	m_goalLocation = goal_location;
+
+	// declare heuristic;
+	auto h = 0.0f;
+
+	glm::vec3 cube_coord_a = (Util::offset_to_cube(getGridPosition()));
+	glm::vec3 cube_coord_b = (Util::offset_to_cube(goal_location));
+
+	h = (abs(cube_coord_a.x - cube_coord_b.x) + abs(cube_coord_a.y - cube_coord_b.y) + abs(cube_coord_a.z - cube_coord_b.z)) / 2;
+	
+		/*h = (abs(getGridPosition().x - goal_location.x) +
+			 abs(getGridPosition().x + getGridPosition().y - goal_location.x - goal_location.y) +
+			 abs(getGridPosition().y - goal_location.y)) /2;*/
+
+		//return (abs(a.q - b.q)
+		//	+ abs(a.q + a.r - b.q - b.r)
+		//	+ abs(a.r - b.r)) / 2
+
+	/*	function offset_distance(a, b) :
+			var ac = offset_to_cube(a)
+			var bc = offset_to_cube(b)
+			return cube_distance(ac, bc)*/
+	float g = getHexCost();
+
+	m_globalGoalValue = h + g;
+
+
+
+	return m_globalGoalValue;
+}
+
+bool Hex::AstarPathfinding(Hex* active_hex)
+{
+	active_hex->setPathfindingState(GOAL);
+	Hex* current_hex = this;
+	m_openList.push_back(current_hex);
+	bool goal_reached = false;
+	std::vector<Hex*> adjacent = current_hex->getNeighbours();
+
+	while (!m_openList.empty() && current_hex->getPathfindingState() != GOAL)
+	{
+		m_openList.sort([](const Hex* lhs, const Hex* rhs) {return lhs->getGlobalValue() < rhs->getGlobalValue(); });
+
+
+
+		while (!m_openList.empty() && m_openList.front()->b_visited)
+			m_openList.pop_front();
+
+
+		if (m_openList.empty() /*|| current_tile->getTileState() == GOAL*/)
+			break;
+
+		current_hex = m_openList.front();
+		current_hex->b_visited = true;
+
+
+		std::vector<Hex*> adjacent = current_hex->getNeighbours();
+		for (auto hex : adjacent)
+		{
+
+			if (hex != nullptr)
+			{
+				if (hex->getPathfindingState() == GOAL)
+				{
+					hex->setHexParent(current_hex);
+					Hex* current = hex;
+					while (current->getHexParent() != nullptr)
+					{
+
+						m_path.push_back(current);
+						current = current->getHexParent();
+						
+						
+					}
+					goal_reached = true;
+					current_hex = hex;
+					m_openList.clear();
+					break;
+				}
+				if (!hex->b_visited && hex->getPathfindingState() != IMPASSABLE)
+				{
+					m_openList.push_back(hex);
+					
+				}
+				else
+				{
+					continue;
+				}
+
+				float tempLocal = current_hex->getLocalValue() + hex->getHexCost();
+				if (tempLocal > hex->getLocalValue())
+				{
+					hex->setHexParent(current_hex);
+					hex->setLocalValue(tempLocal);
+				}
+
+
+			}
+		}
+	}
+
+	if (goal_reached)
+		return true;
+	else
+		return false;
+}
+
+void Hex::buildPath()
+{
+	for (auto hex : m_path)
+	{
+		m_MovementCost += hex->getHexCost();
+	}
+}
+
+float Hex::getGlobalValue() const
+{
+	return m_globalGoalValue;
+}
+
+float Hex::getLocalValue() const
+{
+	return m_localGoalValue;
+}
+
+Merc* Hex::getOccupier()
+{
+	return m_Occupier;
+}
+
+int Hex::getHexCost()
+{
+	return m_HexMoveCost;
+}
+
+Hex* Hex::getHexParent()
+{
+	return m_hexPathfindingParent;
+}
