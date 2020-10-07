@@ -234,10 +234,10 @@ void GameState::Update()
 	
 		for (auto hex : m_pHexGrid)
 		{
-			if (hex != nullptr && hex->getPathfindingState() != Hex::PathfindingState::IMPASSABLE && hex->getGlobalValue() <= m_CurrentMerc->getJob()->getMoveRange() )
+			if (hex != nullptr && hex->getPathfindingState() != Hex::PathfindingState::IMPASSABLE && hex->getOccupied() != true && hex->getGlobalValue() <= m_CurrentMerc->getJob()->getMoveRange() )
 			{
 				hex->setInteractiveState(Hex::RUN);
-				if (hex != nullptr && hex->getPathfindingState() != Hex::PathfindingState::IMPASSABLE && hex->getGlobalValue() <= m_CurrentMerc->getJob()->getDashRange())
+				if (hex != nullptr && hex->getPathfindingState() != Hex::PathfindingState::IMPASSABLE && hex->getOccupied() != true && hex->getGlobalValue() <= m_CurrentMerc->getJob()->getDashRange())
 					hex->setInteractiveState(Hex::DASH);
 			}
 		}

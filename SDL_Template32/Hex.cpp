@@ -87,7 +87,7 @@ void Hex::update()
 	}
 
 	std::ostringstream tempLabel;
-	tempLabel << std::fixed << std::setprecision(1) << m_MovementCost;
+	tempLabel << std::fixed << std::setprecision(1) << m_globalGoalValue;
 	const auto labelstring = tempLabel.str();
 	m_pValueLabel->setText(labelstring);
 }
@@ -303,7 +303,7 @@ float Hex::computeGlobalValue(const glm::vec2 goal_location)
 			return cube_distance(ac, bc)*/
 	float g = getHexCost();
 
-	m_globalGoalValue = h + g;
+	m_globalGoalValue = h;// + g;
 
 
 
