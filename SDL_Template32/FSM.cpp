@@ -1,6 +1,7 @@
 #include "FSM.h"
 #include "Engine.h"
 #include "Util.h"
+#include <algorithm>
 #include <iostream>
 #include <sstream>
 #define WIDTH 1024
@@ -62,53 +63,51 @@ GameState::GameState() : current_state(NONE) {}
 
 void GameState::BuildHexGrid()
 {
-	m_pHexGrid = std::vector<Hex*>();
-
-	for (auto row = 0; row < 11; row++)
-	{
-		for (auto column = 0; column < 15; column++)
-		{
-		
-			if (column % 2 == 1)
-			{
-				auto newhex = new Hex(glm::vec2(20 + (column * 49), (50 + (row * 61)) - 15), glm::vec2(row, column));
-				m_pHexGrid.push_back(newhex);
-			}
-			else
-			{
-				auto newhex = new Hex(glm::vec2(20 + (column * 49), (50 + (row * 61)) + 15), glm::vec2(row, column));
-				m_pHexGrid.push_back(newhex);
-			}
+	int map_radius = 6;
+	for (int q = -map_radius; q <= map_radius; q++) {
+		int r1 = max(-map_radius, -q - map_radius);
+		int r2 = min(map_radius, -q + map_radius);
+		for (int r = r1; r <= r2; r++) {
+			m_pHexGrid.push_back(new Hex(q, r, -q - r));
 		}
 	}
-	
+}
+
+Hex* GameState::returnHex(glm::vec3 search)
+{
+	Hex* temp = NULL;
+
+	for (auto hex : m_pHexGrid)
+	{
+		if (hex->getCubeCoordinate() == search)
+		{
+			temp = hex;
+		}
+	}
+
+	return temp;
 }
 
 void GameState::MapGrid()
 {
+
 	for (auto hex : m_pHexGrid)
 	{
-		const auto x = hex->getGridPosition().x;
-		const auto y = hex->getGridPosition().y;
 
-		if (x != 0) { hex->setUp(m_pHexGrid[y + ((x - 1) * 15)]); }
-		if (x != 11 - 1) { hex->setDown(m_pHexGrid[y + ((x + 1) * 15)]); }
+		for (auto neighbour : hex->directions)
+		{
+			float x = hex->getCubeCoordinate().x + neighbour.x;
+			float y = hex->getCubeCoordinate().y + neighbour.y;
+			float z = hex->getCubeCoordinate().z + neighbour.z;
 
-		if ((int)y % 2 == 1)
-		{
-			if (y != 15 - 1 && x != 0) { hex->setUpRight(m_pHexGrid[(y + 1) + ((x - 1) * 15)]); }
-			if (y != 15 - 1) { hex->setDownRight(m_pHexGrid[(y + 1) + (x * 15)]); }
-			if (y != 0 && x != 0) { hex->setUpLeft(m_pHexGrid[(y - 1) + ((x - 1) * 15)]); }
-			if (y != 0) { hex->setDownLeft(m_pHexGrid[(y - 1) + (x * 15)]); }
-		}
-		else
-		{
-			if (y != 15 - 1) { hex->setUpRight(m_pHexGrid[(y + 1) + (x * 15)]); }
-			if (y != 15 - 1 && x != 11 - 1) { hex->setDownRight(m_pHexGrid[(y + 1) + ((x + 1) * 15)]); }
-			if (y != 0 ) { hex->setUpLeft(m_pHexGrid[(y - 1) + (x * 15)]); }
-			if (y != 0 && x != 11 - 1) { hex->setDownLeft(m_pHexGrid[(y - 1) + ((x + 1) * 15)]); }
+			if (x < 7.0 && x > -7.0 && y < 7.0 && y > -7.0 && z < 7.0 && z > -7.0)
+			{
+				Hex* temp = returnHex(glm::vec3(x, y, z));
+				hex->m_pNeighbours.push_back(temp);
+			}
 		}
 	}
+
 }
 
 void GameState::ResetHexs()
@@ -147,18 +146,7 @@ int GameState::SpawnObjects(Unit* spawned_object)
 
 void GameState::AddHexestoList()
 {
-	for (auto hex : m_CurrentMerc->getHex()->getNeighbours())
-	{
-		if (hex != nullptr && hex->getOccupied() != true)
-		{
-			m_pHexList.push_back(hex);
-			for (auto hex2 : hex->getNeighbours())
-			{
-				if (hex2 != nullptr && hex2->getOccupied() != true)
-					m_pHexList.push_back(hex2);
-			}
-		}
-	}
+
 }
 
 void GameState::Enter()
@@ -219,19 +207,19 @@ void GameState::Update()
 			current_state = PLAYER_MOVE;
 			counter = 0;
 		}
-		//std::cout << " NONE STATE " << std::endl;
+		std::cout << " NONE STATE " << std::endl;
 		for (auto merc : m_Player1MercVec)
 		{
 			merc->update();
 		}
-		//m_CurrentMerc->update();
+		m_CurrentMerc->update();
 		for (auto merc : m_Player2MercVec)
 		{
 			merc->update();
 		}
 		break;
-	case PLAYER_MOVE :
-	
+	case PLAYER_MOVE:
+
 		for (auto hex : m_pHexGrid)
 		{
 			if (hex != nullptr && hex->getPathfindingState() != Hex::PathfindingState::IMPASSABLE && hex->getGlobalValue() <= m_CurrentMerc->getJob()->getMoveRange() )
@@ -253,7 +241,7 @@ void GameState::Update()
 				m_CurrentMerc->getHex()->setOccupier(nullptr);
 				m_CurrentMerc->setHex(tempHex);
 				tempHex->setOccupier(m_CurrentMerc);
-				std::cout << m_CurrentMerc->getName() <<" MOVED TO HEX: " << m_CurrentMerc->getHex()->getGridPosition().x << " " << m_CurrentMerc->getHex()->getGridPosition().y << std::endl;
+				//std::cout << m_CurrentMerc->getName() <<" MOVED TO HEX: " << m_CurrentMerc->getHex()->getGridPosition().x << " " << m_CurrentMerc->getHex()->getGridPosition().y << std::endl;
 				ResetHexs();
 				current_state = PLAYER_ATTACK;
 			}
@@ -265,22 +253,22 @@ void GameState::Update()
 				m_CurrentMerc->getHex()->setOccupier(nullptr);
 				m_CurrentMerc->setHex(tempHex);
 				tempHex->setOccupier(m_CurrentMerc);
-				std::cout << m_CurrentMerc->getName() << " MOVED TO HEX: " << m_CurrentMerc->getHex()->getGridPosition().x << " " << m_CurrentMerc->getHex()->getGridPosition().y << std::endl;
+				//std::cout << m_CurrentMerc->getName() << " MOVED TO HEX: " << m_CurrentMerc->getHex()->getGridPosition().x << " " << m_CurrentMerc->getHex()->getGridPosition().y << std::endl;
 				ResetHexs();
 				current_state = PLAYER_FACING;
 			}
 		}
-			
-			for (auto merc : m_Player1MercVec)
-			{
-				merc->update();
-			}
-			for (auto merc : m_Player2MercVec)
-			{
-				merc->update();
-			}
-			//std::cout << " MOVE STATE" << std::endl;
-			
+
+		for (auto merc : m_Player1MercVec)
+		{
+			merc->update();
+		}
+		for (auto merc : m_Player2MercVec)
+		{
+			merc->update();
+		}
+		//std::cout << " MOVE STATE" << std::endl;
+
 
 		break;
 	case PLAYER_ABILITY:
@@ -296,30 +284,30 @@ void GameState::Update()
 			}
 		}
 
-		m_pThreatenedHexes.sort([](const Hex* lhs, const Hex* rhs) {return lhs->getGlobalValue() < rhs->getGlobalValue(); });
-		if(!m_pThreatenedHexes.empty())
-			m_pSelectedHex = m_pThreatenedHexes.front();
+			m_pThreatenedHexes.sort([](const Hex* lhs, const Hex* rhs) {return lhs->getGlobalValue() < rhs->getGlobalValue(); });
+			if(!m_pThreatenedHexes.empty())
+				m_pSelectedHex = m_pThreatenedHexes.front();
 
-		if (m_pSelectedHex == nullptr)
-		{
-			ResetHexs();
-			current_state = PLAYER_FACING;
-		}
-
-		for (auto merc : m_turnOrder)
-		{
-			if (merc->getHex() == m_pSelectedHex && merc->getOwner() != m_CurrentMerc->getOwner() && merc != m_CurrentMerc)
+			if (m_pSelectedHex == nullptr)
 			{
-				merc->setState(Unit::State::TARGET);
-				m_CurrentMerc->attack(merc);
 				ResetHexs();
-				m_pSelectedHex = nullptr;
 				current_state = PLAYER_FACING;
-				break;
 			}
-			else
-				current_state = PLAYER_FACING;
-		}
+
+			for (auto merc : m_turnOrder)
+			{
+				if (merc->getHex() == m_pSelectedHex && merc->getOwner() != m_CurrentMerc->getOwner() && merc != m_CurrentMerc)
+				{
+					merc->setState(Unit::State::TARGET);
+					m_CurrentMerc->attack(merc);
+					ResetHexs();
+					m_pSelectedHex = nullptr;
+					current_state = PLAYER_FACING;
+					break;
+				}
+				else
+					current_state = PLAYER_FACING;
+			}
 		break;
 	case PLAYER_FACING:
 		for (auto hex : m_CurrentMerc->getHex()->getNeighbours())
@@ -359,18 +347,16 @@ void GameState::Update()
 			{
 				merc->update();
 			}
-
-		}
-		//std::cout << " FACEING STATE" << std::endl;
+		break;
+	}
+	//	std::cout << " FACEING STATE" << std::endl;
 
 	//std::cout << " updating..." << std::endl;
 	for (auto hex : m_pHexGrid)
 	{
-		if (hex->AstarPathfinding(m_CurrentMerc->getHex()))
-		{
-			hex->buildPath();
-		}
-		hex->computeGlobalValue(m_CurrentMerc->getHex()->getGridPosition());
+	
+		hex->computeGlobalValue(m_CurrentMerc->getHex()->getCubeCoordinate());
+
 		if (hex->getMouseState() == Hex::STATE_HOVER && hex->getOccupied())
 		{
 			m_HoverUnitProfile->setUnitReference(hex->getOccupier());
@@ -380,8 +366,8 @@ void GameState::Update()
 			m_HoverUnitProfile->setUnitReference(nullptr);
 		}
 	}
-	m_ActiveUnitProfile->update();
-	m_HoverUnitProfile->update();
+		m_ActiveUnitProfile->update();
+		m_HoverUnitProfile->update();
 	
 }
 
@@ -410,11 +396,11 @@ void GameState::Render()
 		merc->draw();
 	}
 
-	SDL_Rect rectangle = {820,20 ,500,350 };
-	SDL_Rect rectangle2 = { 820,400 ,500,350 };
-	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 240, 0, 0, 50);
-	SDL_RenderFillRect(Engine::Instance().GetRenderer(), &rectangle);
-	SDL_RenderFillRect(Engine::Instance().GetRenderer(), &rectangle2);
+	//SDL_Rect rectangle = {820,20 ,500,350 };
+	//SDL_Rect rectangle2 = { 820,400 ,500,350 };
+	//SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 240, 0, 0, 50);
+	//SDL_RenderFillRect(Engine::Instance().GetRenderer(), &rectangle);
+	//SDL_RenderFillRect(Engine::Instance().GetRenderer(), &rectangle2);
 	m_ActiveUnitProfile->draw();
 	m_HoverUnitProfile->draw();
 

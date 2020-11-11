@@ -2,48 +2,40 @@
 #include "Engine.h"
 #include "Util.h"
 
-struct Orientation {
-	const double f0, f1, f2, f3;
-	const double b0, b1, b2, b3;
-	const double start_angle; // in multiples of 60°
-	Orientation(double f0_, double f1_, double f2_, double f3_,
-		double b0_, double b1_, double b2_, double b3_,
-		double start_angle_)
-		: f0(f0_), f1(f1_), f2(f2_), f3(f3_),
-		b0(b0_), b1(b1_), b2(b2_), b3(b3_),
-		start_angle(start_angle_) {}
-};
+glm::vec2 hex_to_pixel(Layout layout, glm::vec3 h) {
+	const Orientation& M = layout.orientation;
+	double x = (M.f0 * h.x + M.f1 * h.y) * layout.size.x;
+	double y = (M.f2 * h.x + M.f3 * h.y) * layout.size.y;
+	return glm::vec2(x + layout.origin.x, y + layout.origin.y);
+}
 
-const Orientation layout_flat
-= Orientation(3.0 / 2.0, 0.0, sqrt(3.0) / 2.0, sqrt(3.0),
-	2.0 / 3.0, 0.0, -1.0 / 3.0, sqrt(3.0) / 3.0,
-	0.0);
-
-struct Layout {
-	const Orientation orientation;
-	const glm::vec2 size;
-	const glm::vec2 origin;
-	Layout(Orientation temporientation, glm::vec2 tempsize, glm::vec2 temporigin)
-		: orientation(temporientation), size(tempsize), origin(temporigin) {}
-};
-
-HexCoordinates::HexCoordinates(int x, int y, int z) : m_cubeCoordinate(glm::vec3(x,y,z)), mouseHover(false), m_MouseState(STATE_OFF), m_PathfindingState(UNVISITED)
+Hex::Hex(int x, int y, int z) : m_hexLayout(Layout(layout_flat, glm::vec2(32.0, 34.0), glm::vec2(400.0,375.0))), m_cubeCoordinate(glm::vec3(x, y, z)), mouseHover(false), m_MouseState(STATE_OFF), m_PathfindingState(UNVISITED)
 {
     TheTextureManager::Instance()->load("Img/Hex Tileset2.png", "hex", Engine::Instance().GetRenderer());
     TheTextureManager::Instance()->load("Img/selector.png", "selector", Engine::Instance().GetRenderer());
 
 	BuildHex();
+	setHeight(40);
+	setWidth(40);
+	
+	setPosition(hex_to_pixel(m_hexLayout, getCubeCoordinate()));
 
+	directions[0] = glm::vec3(1.0, -1.0, 0.0);	//DOWN RIGHT
+	directions[1] = glm::vec3(1.0, 0.0, -1.0);	//UP RIGHT
+	directions[2] = glm::vec3(0.0, 1.0, -1.0);	// UP
+	directions[3] = glm::vec3(-1.0, 1.0, 0.0);	//UP LEFT
+	directions[4] = glm::vec3(-1.0, 0.0, 1.0);	// DOWN LEFT
+	directions[5] = glm::vec3(0.0, -1.0, 1.0);	//DOWN
 }
 
-HexCoordinates::~HexCoordinates()
+Hex::~Hex()
 {
 }
 
-void HexCoordinates::draw()
+void Hex::draw()
 {
-    const int xComponent = getPosition().x;
-    const int yComponent = getPosition().y;
+	const int xComponent = getPosition().x;
+	const int yComponent = getPosition().y;
     SDL_Rect rectangle = { xComponent,yComponent,64,64 };
 
     TheTextureManager::Instance()->drawHex("hex", xComponent, yComponent, Engine::Instance().GetRenderer(), 0, (int)m_HexType, (int)m_InteractiveState);
@@ -51,7 +43,7 @@ void HexCoordinates::draw()
         TheTextureManager::Instance()->drawSelector("selector", xComponent, yComponent, Engine::Instance().GetRenderer(), 0, (int)m_MouseState);
 }
 
-void HexCoordinates::update()
+void Hex::update()
 {
 	bool mousecol = mouseCol();
 	switch (m_MouseState)
@@ -92,49 +84,111 @@ void HexCoordinates::update()
 	}
 }
 
-bool HexCoordinates::mouseCol()
+bool Hex::mouseCol()
 {
+
 	int mx = Engine::Instance().GetMousePos().x;
 	int my = Engine::Instance().GetMousePos().y;
 	return (mx < (getPosition().x + getWidth()) && mx > getPosition().x &&
 		my < (getPosition().y + getHeight()) && my > getPosition().y);
 }
 
-void HexCoordinates::clean()
+void Hex::clean()
 {
+
 }
 
-glm::vec3 HexCoordinates::getCubeCoordinate()
+glm::vec3 Hex::getCubeCoordinate()
 {
     return m_cubeCoordinate;
 }
 
-HexCoordinates HexCoordinates::Hex_add(HexCoordinates a, HexCoordinates b)
+Hex::MouseState Hex::getMouseState()
 {
-    return HexCoordinates(a.getCubeCoordinate().x + b.getCubeCoordinate().x,
+	return m_MouseState;
+}
+
+Hex::InteractiveState Hex::getInteractiveState()
+{
+	return m_InteractiveState;
+}
+
+bool Hex::getOccupied()
+{
+	return m_pOccupied;
+}
+
+Merc* Hex::getOccupier()
+{
+	return m_Occupier;
+}
+
+float Hex::getGlobalValue() const
+{
+	return m_globalGoalValue;
+}
+
+void Hex::setInteractiveState(InteractiveState newstate)
+{
+	m_InteractiveState = newstate;
+}
+
+void Hex::setPathfindingState(PathfindingState newstate)
+{
+	m_PathfindingState = newstate;
+}
+
+void Hex::setMouseState(MouseState newstate)
+{
+	m_MouseState = newstate;
+}
+
+void Hex::setOccupied(bool newbool)
+{
+	m_pOccupied = newbool;
+}
+
+void Hex::setOccupier(Merc* newunit)
+{
+	m_Occupier = newunit;
+}
+
+Hex::PathfindingState Hex::getPathfindingState()
+{
+	return m_PathfindingState;
+}
+
+std::vector<Hex*> Hex::getNeighbours() const
+{
+	return m_pNeighbours;
+}
+
+Hex Hex::Hex_add(Hex a, Hex b)
+{
+    return Hex(a.getCubeCoordinate().x + b.getCubeCoordinate().x,
                 a.getCubeCoordinate().y + b.getCubeCoordinate().y,
                 a.getCubeCoordinate().z + b.getCubeCoordinate().z);
 }
 
-HexCoordinates HexCoordinates::Hex_subtract(HexCoordinates a, HexCoordinates b)
+Hex Hex::Hex_subtract(Hex a, Hex b)
 {
-    return HexCoordinates(a.getCubeCoordinate().x + b.getCubeCoordinate().x,
+    return Hex(a.getCubeCoordinate().x + b.getCubeCoordinate().x,
         a.getCubeCoordinate().y + b.getCubeCoordinate().y,
         a.getCubeCoordinate().z + b.getCubeCoordinate().z);
 }
 
-HexCoordinates HexCoordinates::Hex_multiply(HexCoordinates a, int k)
+Hex Hex::Hex_multiply(Hex a, int k)
 {
-    return HexCoordinates(a.getCubeCoordinate().x * k,
+    return Hex(a.getCubeCoordinate().x * k,
                 a.getCubeCoordinate().y * k,
                 a.getCubeCoordinate().z * k);
 }
 
-bool operator == (HexCoordinates a, HexCoordinates b) {
+bool operator == (Hex a, Hex b) {
     return a.getCubeCoordinate().x == b.getCubeCoordinate().x && a.getCubeCoordinate().y == b.getCubeCoordinate().y && a.getCubeCoordinate().z == b.getCubeCoordinate().z;
 }
 
-void HexCoordinates::BuildHex()
+void Hex::BuildHex()
 {
 	m_HexType = PLAINS;
 
@@ -161,9 +215,34 @@ void HexCoordinates::BuildHex()
 	}
 }
 
-glm::vec2 hex_to_pixel(Layout layout, HexCoordinates h) {
-	const Orientation& M = layout.orientation;
-	double x = (M.f0 * h.getCubeCoordinate().x + M.f1 * h.getCubeCoordinate().y) * layout.size.x;
-	double y = (M.f2 * h.getCubeCoordinate().x + M.f3 * h.getCubeCoordinate().y) * layout.size.y;
-	return glm::vec2(x + layout.origin.x, y + layout.origin.y);
+float Hex::computeGlobalValue(const glm::vec3 goal_location)
+{
+
+	// declare heuristic;
+	auto h = 0.0f;
+
+	glm::vec3 cube_coord_a = getCubeCoordinate();
+	glm::vec3 cube_coord_b = goal_location;
+
+	h = (abs(cube_coord_a.x - cube_coord_b.x) + abs(cube_coord_a.y - cube_coord_b.y) + abs(cube_coord_a.z - cube_coord_b.z)) / 2;
+
+	/*h = (abs(getGridPosition().x - goal_location.x) +
+		 abs(getGridPosition().x + getGridPosition().y - goal_location.x - goal_location.y) +
+		 abs(getGridPosition().y - goal_location.y)) /2;*/
+
+		 //return (abs(a.q - b.q)
+		 //	+ abs(a.q + a.r - b.q - b.r)
+		 //	+ abs(a.r - b.r)) / 2
+
+	 /*	function offset_distance(a, b) :
+			 var ac = offset_to_cube(a)
+			 var bc = offset_to_cube(b)
+			 return cube_distance(ac, bc)*/
+	float g = 1;
+
+	m_globalGoalValue = h;
+
+
+
+	return m_globalGoalValue;
 }

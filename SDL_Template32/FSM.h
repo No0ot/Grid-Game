@@ -2,7 +2,8 @@
 #include <vector>
 #include <list>
 //Game Objects
-#include "Hex.h"
+//#include "Hex.h"
+#include "HexCoordinates.h"
 #include "Merc.h"
 #include "UnitProfile.h"
 
@@ -43,6 +44,7 @@ public:
 	TurnState current_state;
 	GameState();
 	void BuildHexGrid();
+	Hex* returnHex(glm::vec3 search);
 	void MapGrid();
 	void ResetHexs();
 	int SpawnObjects(Unit* spawned_object);

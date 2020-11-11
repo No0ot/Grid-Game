@@ -151,18 +151,28 @@ void Merc::setMainStat(int new_stat)
 
 void Merc::updateFacing()
 {
-	if (getFacingHex() == getHex()->getNeighbours()[Hex::UP])
-		setFacing(0);
-	else if (getFacingHex() == getHex()->getNeighbours()[Hex::UPRIGHT])
-		setFacing(60);
-	else if (getFacingHex() == getHex()->getNeighbours()[Hex::DOWNRIGHT])
-		setFacing(120);
-	else if (getFacingHex() == getHex()->getNeighbours()[Hex::DOWN])
-		setFacing(180);
-	else if (getFacingHex() == getHex()->getNeighbours()[Hex::DOWNLEFT])
-		setFacing(240);
-	else if (getFacingHex() == getHex()->getNeighbours()[Hex::UPLEFT])
-		setFacing(300);
+	int count = getHex()->getNeighbours().size();
+	for (int i = 0; i < count ; i++)
+	{
+		if (getHex()->getNeighbours()[i] != nullptr)
+		{
+			Hex* checkHex = getHex()->getNeighbours()[i];
+			if (getFacingHex() == checkHex)
+				setFacing((60 * i) + 60);
+		}
+	}
+	//if (getFacingHex() == getHex()->getNeighbours()[0])
+	//	setFacing(120);
+	//else if (getFacingHex() == getHex()->getNeighbours()[1])
+	//	setFacing(60);
+	//else if (getFacingHex() == getHex()->getNeighbours()[2])
+	//	setFacing(0);
+	//else if (getFacingHex() == getHex()->getNeighbours()[3])
+	//	setFacing(300);
+	//else if (getFacingHex() == getHex()->getNeighbours()[4])
+	//	setFacing(240);
+	//else if (getFacingHex() == getHex()->getNeighbours()[5])
+	//	setFacing(180);
 }
 
 void Merc::rollInitiative()
