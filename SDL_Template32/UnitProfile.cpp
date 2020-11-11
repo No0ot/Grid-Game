@@ -17,19 +17,19 @@ UnitProfile::UnitProfile(glm::vec2 worldposition)
 		auto labelstring = tempLabel.str();
 		SDL_Color black{ 0, 0, 0, 255 };
 		auto valueLabelPosition = glm::vec2(-20, -20);
-			m_Labels = { new Label(labelstring, "Consolas", 16, black, valueLabelPosition, true),
-						 new Label(labelstring, "Consolas", 16, black, valueLabelPosition, true),
-						 new Label(labelstring, "Consolas", 16, black, valueLabelPosition, true),
-						 new Label(labelstring, "Consolas", 16, black, valueLabelPosition, true),
-						 new Label(labelstring, "Consolas", 16, black, valueLabelPosition, true),
-						 new Label(labelstring, "Consolas", 16, black, valueLabelPosition, true),
-						 new Label(labelstring, "Consolas", 16, black, valueLabelPosition, true),
-						 new Label(labelstring, "Consolas", 16, black, valueLabelPosition, true),
-						 new Label(labelstring, "Consolas", 16, black, valueLabelPosition, true),
-						 new Label(labelstring, "Consolas", 16, black, valueLabelPosition, true),
-						 new Label(labelstring, "Consolas", 16, black, valueLabelPosition, true),
-						 new Label(labelstring, "Consolas", 16, black, valueLabelPosition, true),
-						 new Label(labelstring, "Consolas", 16, black, valueLabelPosition, true)};
+			m_Labels = { new Label(labelstring, "Consolas",10, black, valueLabelPosition, true),
+						 new Label(labelstring, "Consolas",10, black, valueLabelPosition, true),
+						 new Label(labelstring, "Consolas",10, black, valueLabelPosition, true),
+						 new Label(labelstring, "Consolas",10, black, valueLabelPosition, true),
+						 new Label(labelstring, "Consolas",10, black, valueLabelPosition, true),
+						 new Label(labelstring, "Consolas",10, black, valueLabelPosition, true),
+						 new Label(labelstring, "Consolas",10, black, valueLabelPosition, true),
+						 new Label(labelstring, "Consolas",10, black, valueLabelPosition, true),
+						 new Label(labelstring, "Consolas",10, black, valueLabelPosition, true),
+						 new Label(labelstring, "Consolas",10, black, valueLabelPosition, true),
+						 new Label(labelstring, "Consolas",10, black, valueLabelPosition, true),
+						 new Label(labelstring, "Consolas",10, black, valueLabelPosition, true),
+						 new Label(labelstring, "Consolas",10, black, valueLabelPosition, true)};
 	
 }
 
@@ -49,7 +49,8 @@ void UnitProfile::draw()
 
 	if (getUnitReference() != nullptr)
 	{
-		SDL_Rect rectangle = { xComponent + 428, yComponent + 28 ,43,43 };
+		SDL_Rect rectangle = { xComponent, yComponent ,250,175 };
+		SDL_SetRenderDrawBlendMode(Engine::Instance().GetRenderer(), SDL_BLENDMODE_BLEND);
 		if (getUnitReference()->getOwner() == Unit::PLAYER_1)
 			SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 240, 100, 0, 50);
 		else
@@ -70,51 +71,51 @@ void UnitProfile::update()
 		glm::vec2 labelposition[14];
 		//HEALTH LABEL
 		tempLabel[0] << std::fixed << std::setprecision(1) << m_UnitReference->getCurrentHealth() << " / " << m_UnitReference->getMaxHealth();
-		labelposition[0] = glm::vec2(xComponent + 100, yComponent + 245);
+		labelposition[0] = glm::vec2(xComponent + 50, yComponent + 122);
 		//DAMAGE LABEL
 		tempLabel[1] << std::fixed << std::setprecision(1) << m_UnitReference->getJob()->getMinDamage() + m_UnitReference->getMainStat() << "-" << m_UnitReference->getJob()->getMaxDamage() + m_UnitReference->getMainStat();
-		labelposition[1] = glm::vec2(xComponent + 165, yComponent + 300);
+		labelposition[1] = glm::vec2(xComponent + 82 , yComponent + 150);
 		//NAME LABEL
 		tempLabel[2] << std::fixed << std::setprecision(1) << m_UnitReference->getName();
-		labelposition[2] = glm::vec2(xComponent + 355, yComponent + 50);
+		labelposition[2] = glm::vec2(xComponent + 177, yComponent + 25);
 		//JOB LABEL
 		tempLabel[3] << std::fixed << std::setprecision(1) << m_UnitReference->getJob()->getTexturename();
-		labelposition[3] = glm::vec2(xComponent + 300, yComponent + 105);
+		labelposition[3] = glm::vec2(xComponent + 150, yComponent + 52);
 		//RACE LABEL
 		tempLabel[4] << std::fixed << std::setprecision(1) << m_UnitReference->getRace()->getRaceName();
-		labelposition[4] = glm::vec2(xComponent + 420, yComponent + 105);
+		labelposition[4] = glm::vec2(xComponent + 210, yComponent + 52);
 		//STR LABEL
 		tempLabel[5] << std::fixed << std::setprecision(1) << m_UnitReference->getStrength();
-		labelposition[5] = glm::vec2(xComponent + 320, yComponent + 175);
+		labelposition[5] = glm::vec2(xComponent + 160, yComponent + 87);
 		//FIN LABEL
 		tempLabel[6] << std::fixed << std::setprecision(1) << m_UnitReference->getFinesse();
-		labelposition[6] = glm::vec2(xComponent + 320, yComponent + 215);
+		labelposition[6] = glm::vec2(xComponent + 160, yComponent + 107);
 		//CON LABEL
 		tempLabel[7] << std::fixed << std::setprecision(1) << m_UnitReference->getConcentration();
-		labelposition[7] = glm::vec2(xComponent + 320, yComponent + 255);
+		labelposition[7] = glm::vec2(xComponent + 160, yComponent + 127);
 		//RES LABEL
 		tempLabel[8] << std::fixed << std::setprecision(1) << m_UnitReference->getResolve();
-		labelposition[8] = glm::vec2(xComponent + 320, yComponent + 285);
+		labelposition[8] = glm::vec2(xComponent + 160, yComponent + 142);
 		//INIT LABEL
 		tempLabel[9] << std::fixed << std::setprecision(1) << m_UnitReference->getInitiative();
-		labelposition[9] = glm::vec2(xComponent + 440, yComponent + 175);
+		labelposition[9] = glm::vec2(xComponent + 220, yComponent + 87);
 		//DASH LABEL
 		tempLabel[10] << std::fixed << std::setprecision(1) << m_UnitReference->getJob()->getDashRange();
-		labelposition[10] = glm::vec2(xComponent + 440, yComponent + 215);
+		labelposition[10] = glm::vec2(xComponent + 220, yComponent + 107);
 		//RUN LABEL
 		tempLabel[11] << std::fixed << std::setprecision(1) << m_UnitReference->getJob()->getMoveRange();
-		labelposition[11] = glm::vec2(xComponent + 440, yComponent + 255);
+		labelposition[11] = glm::vec2(xComponent + 220, yComponent + 127);
 		//RANGE LABEL
 		tempLabel[12] << std::fixed << std::setprecision(1) << m_UnitReference->getJob()->getAttackRange();
-		labelposition[12] = glm::vec2(xComponent + 450, yComponent + 285);
+		labelposition[12] = glm::vec2(xComponent + 225, yComponent + 142);
 
 		for (int count = 0; count < m_Labels.size(); count++)
 		{
 			m_Labels[count]->setPosition(labelposition[count]);
 			labelstring[count] = tempLabel[count].str();
-			SDL_Color black{ 0, 0, 0, 255 };
+			const SDL_Color green{ 0, 255, 100, 255 };
 			m_Labels[count]->setText(labelstring[count]);
-			
+			m_Labels[count]->setColour(green);
 		}
 	}
 }

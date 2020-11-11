@@ -72,6 +72,12 @@
     <ClCompile Include="HexCoordinates.cpp">
       <Filter>Objects\WIP</Filter>
     </ClCompile>
+    <ClCompile Include="PlayState.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="State.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TextureManager.h">
@@ -124,6 +130,12 @@
     </ClInclude>
     <ClInclude Include="HexCoordinates.h">
       <Filter>Objects\WIP</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayState.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="State.h">
+      <Filter>Scenes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

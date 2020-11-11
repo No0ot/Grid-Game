@@ -9,7 +9,7 @@ glm::vec2 hex_to_pixel(Layout layout, glm::vec3 h) {
 	return glm::vec2(x + layout.origin.x, y + layout.origin.y);
 }
 
-Hex::Hex(int x, int y, int z) : m_hexLayout(Layout(layout_flat, glm::vec2(32.0, 34.0), glm::vec2(400.0,375.0))), m_cubeCoordinate(glm::vec3(x, y, z)), mouseHover(false), m_MouseState(STATE_OFF), m_PathfindingState(UNVISITED)
+Hex::Hex(int x, int y, int z) : m_hexLayout(Layout(layout_flat, glm::vec2(32.0, 34.0), glm::vec2(600.0,375.0))), m_cubeCoordinate(glm::vec3(x, y, z)), mouseHover(false), m_MouseState(STATE_OFF), m_PathfindingState(UNVISITED)
 {
     TheTextureManager::Instance()->load("Img/Hex Tileset2.png", "hex", Engine::Instance().GetRenderer());
     TheTextureManager::Instance()->load("Img/selector.png", "selector", Engine::Instance().GetRenderer());

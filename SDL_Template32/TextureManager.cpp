@@ -156,9 +156,9 @@ void TextureManager::drawUnitProfile(std::string id, int x, int y, SDL_Renderer*
 	srcRect.y = 0;
 
 	srcRect.h = 350;
-	dstRect.h = srcRect.h;
+	dstRect.h = srcRect.h / 2;
 	srcRect.w = 500;
-	dstRect.w = srcRect.w;
+	dstRect.w = srcRect.w / 2;
 	dstRect.x = x;
 	dstRect.y = y;
 
