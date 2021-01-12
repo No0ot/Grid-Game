@@ -87,6 +87,7 @@ public:
 
 	glm::vec3 directions[6];
 private:
+	Label* m_pValueLabel;
 
 	bool m_pOccupied;
 	Merc* m_Occupier;

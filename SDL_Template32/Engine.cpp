@@ -2,6 +2,10 @@
 #include <iostream>
 #include <ctime>
 
+// IMGUI Includes
+#include "IMGUI/imgui.h"
+#include "IMGUI_SDL/imgui_sdl.h"
+
 Engine::Engine()
 {
 
@@ -47,10 +51,15 @@ bool Engine::Init(const char* title, int xpos, int ypos, int width, int height, 
 				else return false;
 			}
 			else return false; // Renderer init fail.
+
 		}
 		else return false; // Window init fail.
 	}
 	else return false; // SDL init fail.
+
+	ImGui::CreateContext();
+	ImGuiSDL::Initialize(m_pRenderer, width, height);
+
 	m_fps = (Uint32)round((1 / 60) * 1000); // Sets FPS in milliseconds and rounds.
 	m_iKeystates = SDL_GetKeyboardState(nullptr);
 	m_pFSM = new FSM();

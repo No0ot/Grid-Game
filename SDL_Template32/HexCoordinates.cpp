@@ -1,6 +1,10 @@
 #include "HexCoordinates.h"
 #include "Engine.h"
 #include "Util.h"
+#include <iostream>
+#include <sstream>
+#include <iomanip>
+
 
 glm::vec2 hex_to_pixel(Layout layout, glm::vec3 h) {
 	const Orientation& M = layout.orientation;
@@ -26,6 +30,13 @@ Hex::Hex(int x, int y, int z) : m_hexLayout(Layout(layout_flat, glm::vec2(32.0, 
 	directions[3] = glm::vec3(-1.0, 1.0, 0.0);	//UP LEFT
 	directions[4] = glm::vec3(-1.0, 0.0, 1.0);	// DOWN LEFT
 	directions[5] = glm::vec3(0.0, -1.0, 1.0);	//DOWN
+
+	std::ostringstream tempLabel;
+	tempLabel << std::fixed << std::setprecision(1) << m_globalGoalValue;
+	auto labelstring = tempLabel.str();
+	SDL_Color black{ 0, 0, 0, 255 };
+	auto valueLabelPosition = glm::vec2(getPosition().x + 30, getPosition().y + 40);
+	m_pValueLabel = new Label(labelstring, "Consolas", 14, black, valueLabelPosition, true);
 }
 
 Hex::~Hex()
@@ -41,6 +52,8 @@ void Hex::draw()
     TheTextureManager::Instance()->drawHex("hex", xComponent, yComponent, Engine::Instance().GetRenderer(), 0, (int)m_HexType, (int)m_InteractiveState);
     if (m_MouseState != STATE_OFF)
         TheTextureManager::Instance()->drawSelector("selector", xComponent, yComponent, Engine::Instance().GetRenderer(), 0, (int)m_MouseState);
+
+	m_pValueLabel->draw();
 }
 
 void Hex::update()
@@ -82,6 +95,10 @@ void Hex::update()
 		}
 		break;
 	}
+	std::ostringstream tempLabel;
+	tempLabel << std::fixed << std::setprecision(1) << m_globalGoalValue;
+	const auto labelstring = tempLabel.str();
+	m_pValueLabel->setText(labelstring);
 }
 
 bool Hex::mouseCol()

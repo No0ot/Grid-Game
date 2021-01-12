@@ -268,6 +268,7 @@ void GameState::Update()
 		{
 			hex->setInteractiveState(Hex::FACEING);
 		}
+
 		for (int count = 0; count < (int)m_pHexGrid.size(); count++)
 		{
 			m_pHexGrid[count]->update();

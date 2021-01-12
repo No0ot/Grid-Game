@@ -5,6 +5,10 @@
 
 class Config {
 public:
+
+	static const int SCREEN_WIDTH = 1260;
+	static const int SCREEN_HEIGHT = 800;
+
 	// Define Custom Deleters for shared_ptr types
 	static void SDL_DelRes(SDL_Window* r) { SDL_DestroyWindow(r); }
 	static void SDL_DelRes(SDL_Renderer* r) { SDL_DestroyRenderer(r); }
