@@ -4,7 +4,7 @@
 int main(int argc, char* args[]) // Main MUST have these parameters for SDL.
 {
 	
-		if (Engine::Instance().Init("Grid Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1366, 768, 0) == false)
+		if (Engine::Instance().Init("Grid Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, Config::SCREEN_WIDTH, Config::SCREEN_HEIGHT, 0) == false)
 			return 1;
 		while (Engine::Instance().m_bRunning)
 		{

@@ -21,6 +21,7 @@ void Unit::setHex(Hex* new_hex)
 	m_currentHex = new_hex;
 	m_currentHex->setOccupied(true);
 	m_currentHex->setPathfindingState(Hex::PathfindingState::IMPASSABLE);
+	
 }
 
 Hex* Unit::getFacingHex() const

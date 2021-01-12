@@ -54,9 +54,9 @@ public:
 	MouseState getMouseState();
 	InteractiveState getInteractiveState();
 	PathfindingState getPathfindingState();
-	bool getOccupied();
 	float getGlobalValue() const;
 	float getLocalValue() const;
+	bool getOccupied();
 	Merc* getOccupier();
 	int getHexCost();
 	Hex* getHexParent();
@@ -94,9 +94,10 @@ private:
 	bool mouseCol();
 	void setHover(bool h);
 	bool m_pOccupied;
+	Merc* m_Occupier;
 	bool mouseHover;
+	glm::vec3 m_cubeCoordinate;
 	glm::vec2 m_pGridPosition;
 	std::vector<Hex*> m_pNeighbours;
-	Merc* m_Occupier;
-};
 
+};

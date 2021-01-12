@@ -6,10 +6,15 @@
 #include <sstream>
 #include <iomanip>
 
-Hex::Hex(glm::vec2 worldPosition, glm::vec2 gridPosition) : mouseHover(false), m_MouseState(STATE_OFF), m_pGridPosition(gridPosition), m_PathfindingState(UNVISITED)
+Hex::Hex(glm::vec2 worldPosition, glm::vec2 gridPosition)
+	: mouseHover(false), m_MouseState(STATE_OFF), m_pGridPosition(gridPosition), m_PathfindingState(UNVISITED)
 {
 	TheTextureManager::Instance()->load("Img/Hex Tileset2.png", "hex", Engine::Instance().GetRenderer());
 	TheTextureManager::Instance()->load("Img/selector.png", "selector", Engine::Instance().GetRenderer());
+
+	m_cubeCoordinate.x = gridPosition.x;
+	m_cubeCoordinate.y = gridPosition.y;
+	m_cubeCoordinate.z = -gridPosition.x - gridPosition.y;
 
 	setPosition(worldPosition);
 	setWidth(40);
@@ -248,7 +253,6 @@ void Hex::setHover(bool h)
 
 void Hex::BuildHex()
 {
-	
 	m_HexType = PLAINS;
 
 	int randnum = rand() % 5;
