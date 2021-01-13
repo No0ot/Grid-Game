@@ -41,8 +41,8 @@ Merc::~Merc()
 
 void Merc::draw()
 {
-	const int xComponent = getPosition().x;
-	const int yComponent = getPosition().y;
+	const int xComponent = getPosition().x - getCamPosition().x;
+	const int yComponent = getPosition().y - getCamPosition().y;
 
 	TheTextureManager::Instance()->drawMerc(getJob()->getTexturename(), xComponent, yComponent, Engine::Instance().GetRenderer(), getFacing(), (int)getState(),(int)getOwner());
 }

@@ -8,6 +8,7 @@ enum GameObjectType {
 	HEX,
 	JOB,
 	CHARACTER,
+	BUTTON,
 	NUM_OF_TYPES
 };
 
@@ -23,6 +24,7 @@ public:
 
 	//GETTERS
 	glm::vec2 getPosition();
+	glm::vec2 getCamPosition();
 	glm::vec2 getRotation();
 	glm::vec2 getScale();
 	int getWidth();
@@ -31,7 +33,8 @@ public:
 	int getFacing();
 
 	//SETTERS
-	void setPosition(glm::vec2 newPosition);
+	void setPosition(glm::vec2 newpos);
+	void setCamPosition(glm::vec2 newpos);
 	void setWidth(int newWidth);
 	void setHeight(int newHeight);
 	void setType(GameObjectType newType);
@@ -42,7 +45,8 @@ private:
 	int m_facing;
 
 	//TRANSFORM
-	glm::vec2 m_position;
+	glm::vec2 m_worldPosition;
+	glm::vec2 m_cameraPosition;
 	glm::vec2 m_rotation;
 	glm::vec2 m_scale;
 

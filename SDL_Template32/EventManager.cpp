@@ -2,21 +2,6 @@
 #include <iostream>
 #include "Engine.h"
 
-enum Event
-{
-    CLICK,
-    MOUSE_OVER,
-    MOUSE_OUT,
-    NUM_OF_EVENTS
-};
-
-enum MouseButtons
-{
-    LEFT,
-    MIDDLE,
-    RIGHT
-};
-
 void EventManager::reset()
 {
     m_isActive = false;

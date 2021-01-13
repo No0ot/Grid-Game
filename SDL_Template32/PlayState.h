@@ -1,6 +1,7 @@
 #pragma once
 
 #include "State.h"
+#include "Camera.h"
 
 //Game Objects
 //#include "Hex.h"
@@ -23,6 +24,7 @@ private:
 	std::list<Merc*> m_turnOrder;
 	UnitProfile* m_ActiveUnitProfile;
 	UnitProfile* m_HoverUnitProfile;
+	Camera* m_GameCamera;
 
 	Hex* m_pSelectedHex;
 	int counter;
@@ -35,6 +37,9 @@ public:
 	void ResetHexs();
 	int SpawnObjects(Unit* spawned_object);
 	void AddHexestoList();
+	void drawGameBoard();
+	void drawUI();
+
 	//Inherited functions
 	void Enter();
 	void Update();

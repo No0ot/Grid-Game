@@ -22,8 +22,8 @@ Label::~Label()
 
 void Label::draw()
 {
-	const int xComponent = getPosition().x;
-	const int yComponent = getPosition().y;
+	const int xComponent = getPosition().x - getCamPosition().x;
+	const int yComponent = getPosition().y - getCamPosition().y;
 	TheTextureManager::Instance()->drawText(m_fontID, xComponent, yComponent,
 		Engine::Instance().GetRenderer(), 0, 255, m_isCentered);
 }

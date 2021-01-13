@@ -105,6 +105,15 @@
     <ClCompile Include="IMGUI_SDL\imgui_sdl.cpp">
       <Filter>IMGUI</Filter>
     </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="UIControl.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FSM.h">
@@ -187,6 +196,15 @@
     </ClInclude>
     <ClInclude Include="IMGUI_SDL\imgui_sdl.h">
       <Filter>IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="UIControl.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

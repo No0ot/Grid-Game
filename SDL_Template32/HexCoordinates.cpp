@@ -45,14 +45,15 @@ Hex::~Hex()
 
 void Hex::draw()
 {
-	const int xComponent = getPosition().x;
-	const int yComponent = getPosition().y;
+	const int xComponent = getPosition().x - getCamPosition().x;
+	const int yComponent = getPosition().y - getCamPosition().y;
     SDL_Rect rectangle = { xComponent,yComponent,64,64 };
 
     TheTextureManager::Instance()->drawHex("hex", xComponent, yComponent, Engine::Instance().GetRenderer(), 0, (int)m_HexType, (int)m_InteractiveState);
     if (m_MouseState != STATE_OFF)
         TheTextureManager::Instance()->drawSelector("selector", xComponent, yComponent, Engine::Instance().GetRenderer(), 0, (int)m_MouseState);
 
+	m_pValueLabel->setCamPosition(getCamPosition());
 	m_pValueLabel->draw();
 }
 
@@ -73,7 +74,7 @@ void Hex::update()
 		{
 			m_MouseState = STATE_OFF;
 		}
-		if (mousecol && Engine::Instance().GetMouseState(0))
+		if (mousecol && EventManager::Instance().getMouseButton(0))
 		{
 			m_MouseState = STATE_SELECTED;
 
@@ -82,7 +83,7 @@ void Hex::update()
 
 		break;
 	case STATE_SELECTED:
-		if (!Engine::Instance().GetMouseState(0))
+		if (!EventManager::Instance().getMouseButton(0))
 		{
 			if (mousecol)
 			{
@@ -104,8 +105,8 @@ void Hex::update()
 bool Hex::mouseCol()
 {
 
-	int mx = Engine::Instance().GetMousePos().x;
-	int my = Engine::Instance().GetMousePos().y;
+	int mx = EventManager::Instance().getMousePosition().x + getCamPosition().x;
+	int my = EventManager::Instance().getMousePosition().y + getCamPosition().y;
 	return (mx < (getPosition().x + getWidth()) && mx > getPosition().x &&
 		my < (getPosition().y + getHeight()) && my > getPosition().y);
 }

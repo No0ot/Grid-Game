@@ -133,6 +133,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Button.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="EventManager.cpp" />
     <ClCompile Include="FontManager.cpp" />
     <ClCompile Include="FSM.cpp" />
@@ -154,6 +156,7 @@
     <ClCompile Include="Merc.cpp" />
     <ClCompile Include="PlayState.cpp" />
     <ClCompile Include="State.cpp" />
+    <ClCompile Include="UIControl.cpp" />
     <ClCompile Include="UnitProfile.cpp" />
     <ClCompile Include="Race.cpp" />
     <ClCompile Include="TextureManager.cpp" />
@@ -161,6 +164,8 @@
     <ClCompile Include="Util.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Button.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="EventManager.h" />
     <ClInclude Include="FontManager.h" />
@@ -184,6 +189,7 @@
     <ClInclude Include="Merc.h" />
     <ClInclude Include="PlayState.h" />
     <ClInclude Include="State.h" />
+    <ClInclude Include="UIControl.h" />
     <ClInclude Include="UnitProfile.h" />
     <ClInclude Include="Race.h" />
     <ClInclude Include="RaceEnum.h" />

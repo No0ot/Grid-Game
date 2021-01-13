@@ -2,6 +2,7 @@
 #include "Util.h"
 #include "Engine.h"
 #include <algorithm>
+#include "EventManager.h"
 using namespace std;
 
 // Begin GameState.
@@ -9,7 +10,7 @@ GameState::GameState() : current_state(NONE) {}
 
 void GameState::BuildHexGrid()
 {
-	int map_radius = 6;
+	int map_radius = 10;
 	for (int q = -map_radius; q <= map_radius; q++) {
 		int r1 = max(-map_radius, -q - map_radius);
 		int r2 = min(map_radius, -q + map_radius);
@@ -95,6 +96,33 @@ void GameState::AddHexestoList()
 
 }
 
+void GameState::drawGameBoard()
+{
+	for (int count = 0; count < (int)m_pHexGrid.size(); count++)
+	{
+		m_pHexGrid[count]->setCamPosition(m_GameCamera->getPosition());
+		m_pHexGrid[count]->draw();
+	}
+
+	for (auto merc : m_Player2MercVec)
+	{
+		merc->setCamPosition(m_GameCamera->getPosition());
+		merc->draw();
+	}
+	for (auto merc : m_Player1MercVec)
+	{
+		merc->setCamPosition(m_GameCamera->getPosition());
+		merc->draw();
+	}
+
+}
+
+void GameState::drawUI()
+{
+	m_ActiveUnitProfile->draw();
+	m_HoverUnitProfile->draw();
+}
+
 void GameState::Enter()
 {
 	//cout << "Entering Game..." << endl;
@@ -128,6 +156,8 @@ void GameState::Enter()
 		m_Player2MercVec[count]->rollInitiative();
 		m_turnOrder.push_back(m_Player2MercVec[count]);
 	}
+
+	m_GameCamera = new Camera(glm::vec2(50, 50));
 
 	m_turnOrder.sort([](const Merc* lhs, const Merc* rhs) {return lhs->getInitiative() > rhs->getInitiative(); });
 }
@@ -320,36 +350,55 @@ void GameState::Update()
 
 void GameState::HandleEvents()
 {
-	State::HandleEvents();
+	//State::HandleEvents();
+	EventManager::Instance().update();
+
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_A))
+	{
+		m_GameCamera->setPosition(glm::vec2(m_GameCamera->getPosition().x - 25, m_GameCamera->getPosition().y));
+	}
+	else if (EventManager::Instance().isKeyDown(SDL_SCANCODE_D))
+	{
+		m_GameCamera->setPosition(glm::vec2(m_GameCamera->getPosition().x + 25, m_GameCamera->getPosition().y));
+	}
+	else
+	{
+		
+	}
+
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_W))
+	{
+		m_GameCamera->setPosition(glm::vec2(m_GameCamera->getPosition().x, m_GameCamera->getPosition().y - 25));
+	}
+	else if (EventManager::Instance().isKeyDown(SDL_SCANCODE_S))
+	{
+		m_GameCamera->setPosition(glm::vec2(m_GameCamera->getPosition().x, m_GameCamera->getPosition().y + 25));
+	}
+	else
+	{
+		
+	}
+
 }
 
 void GameState::Render()
 {
 	//cout << "Rendering Game..." << endl;
-	//SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 0, 255, 0, 255);
-	//SDL_RenderClear(Engine::Instance().GetRenderer()); // Clear the screen with the draw color.
+	SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 0, 0, 25, 255);
+	SDL_RenderClear(Engine::Instance().GetRenderer()); // Clear the screen with the draw color.
 	// hex
 
-	for (int count = 0; count < (int)m_pHexGrid.size(); count++)
-		m_pHexGrid[count]->draw();
 
 
-	for (auto merc : m_Player2MercVec)
-	{
-		merc->draw();
-	}
-	for (auto merc : m_Player1MercVec)
-	{
-		merc->draw();
-	}
+	drawGameBoard();
+	drawUI();
 
 	//SDL_Rect rectangle = {820,20 ,500,350 };
 	//SDL_Rect rectangle2 = { 820,400 ,500,350 };
 	//SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 240, 0, 0, 50);
 	//SDL_RenderFillRect(Engine::Instance().GetRenderer(), &rectangle);
 	//SDL_RenderFillRect(Engine::Instance().GetRenderer(), &rectangle2);
-	m_ActiveUnitProfile->draw();
-	m_HoverUnitProfile->draw();
+
 
 	if (dynamic_cast<GameState*>(Engine::Instance().GetFSM().GetStates().back()))
 		State::Render();

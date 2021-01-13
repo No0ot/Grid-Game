@@ -8,6 +8,21 @@
 #include "GameController.h"
 #include "IMGUI/imgui.h"
 
+enum Event
+{
+	CLICK,
+	MOUSE_OVER,
+	MOUSE_OUT,
+	NUM_OF_EVENTS
+};
+
+enum MouseButtons
+{
+	LEFT,
+	MIDDLE,
+	RIGHT
+};
+
 /* singleton with magic static */
 class EventManager
 {
