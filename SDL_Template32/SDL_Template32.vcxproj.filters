@@ -42,9 +42,6 @@
     <ClCompile Include="FSM.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="Hex.cpp">
-      <Filter>Objects</Filter>
-    </ClCompile>
     <ClCompile Include="Engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -118,9 +115,6 @@
   <ItemGroup>
     <ClInclude Include="FSM.h">
       <Filter>Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="Hex.h">
-      <Filter>Objects</Filter>
     </ClInclude>
     <ClInclude Include="Engine.h">
       <Filter>Header Files</Filter>

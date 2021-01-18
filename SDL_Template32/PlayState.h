@@ -6,7 +6,7 @@
 //Game Objects
 //#include "Hex.h"
 #include "Button.h"
-#include "Hex.h"
+#include "HexCoordinates.h"
 #include "Merc.h"
 #include "UnitProfile.h"
 enum TurnState 
