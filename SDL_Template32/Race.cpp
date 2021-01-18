@@ -16,7 +16,7 @@ Race::Race(int raceIndex)
 		m_Name = HUMAN;
 		break;
 	case 3:
-		m_Name = XIIN;
+		m_Name = GLORYBORN;
 	}
 	SetStats();
 
@@ -47,7 +47,7 @@ void Race::SetStats()
 		m_raceRes = 2;
 		m_RaceName = "HUMAN";
 		break;
-	case XIIN:
+	case GLORYBORN:
 		m_raceStr = 1;
 		m_raceFin = 1;
 		m_raceCon = 2;
@@ -80,4 +80,9 @@ int Race::getRaceRes()
 std::string Race::getRaceName()
 {
 	return m_RaceName;
+}
+
+RaceEnum Race::getEnum()
+{
+	return m_Name;
 }

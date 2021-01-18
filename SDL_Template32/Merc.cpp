@@ -59,12 +59,12 @@ void Merc::clean()
 {
 }
 
-int Merc::getMaxHealth()
+float Merc::getMaxHealth()
 {
 	return m_MaxHealth;
 }
 
-int Merc::getCurrentHealth()
+float Merc::getCurrentHealth()
 {
 	return m_CurrentHealth;
 }
@@ -114,12 +114,12 @@ Race* Merc::getRace()
 	return m_Race;
 }
 
-void Merc::setMaxHealth(int new_maxhealth)
+void Merc::setMaxHealth(float new_maxhealth)
 {
 	m_MaxHealth = new_maxhealth;
 }
 
-void Merc::setCurrentHealth(int new_currenthealth)
+void Merc::setCurrentHealth(float new_currenthealth)
 {
 	m_CurrentHealth = new_currenthealth;
 }

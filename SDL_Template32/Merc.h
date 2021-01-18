@@ -18,8 +18,8 @@ public:
 	virtual void clean() override;
 
 	//Getters
-	int getMaxHealth();
-	int getCurrentHealth();
+	float getMaxHealth();
+	float getCurrentHealth();
 	int getStrength();
 	int getFinesse();
 	int getConcentration();
@@ -31,8 +31,8 @@ public:
 	Race* getRace();
 
 	//Setters
-	void setMaxHealth(int new_maxhealth);
-	void setCurrentHealth(int new_currenthealth);
+	void setMaxHealth(float new_maxhealth);
+	void setCurrentHealth(float new_currenthealth);
 	void setStrength(int new_strength);
 	void setFinesse(int new_finesse);
 	void setConcentration(int new_concentration);
@@ -54,8 +54,8 @@ private:
 
 	// Data for stats
 	std::string m_Name;
-	int m_MaxHealth;
-	int m_CurrentHealth;
+	float m_MaxHealth;
+	float m_CurrentHealth;
 	int m_Strength,
 		m_Finnese,
 		m_Concentration,

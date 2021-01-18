@@ -15,7 +15,7 @@ public:
 	virtual ~UIControl();
 	
 	virtual void draw() = 0;
-	virtual void update(float deltaTime) = 0;
+	virtual void update() = 0;
 	virtual void clean() = 0;
 
 	typedef std::function<void()> EventHandler;
@@ -24,20 +24,20 @@ public:
 	EventHandler getEventHandler(Event event);
 	bool pointRectCheck(const glm::vec2, const glm::vec2, const float, const float);
 	
+	// mouse events
+	bool m_mouseOver;
+	bool m_mouseOverActive;
+	bool m_mouseOutActive;
+	bool m_leftMouseButtonClicked;
+	bool m_eventExists(Event id);
 protected:
 	void onMouseOver();
 	void onMouseOut();
 	void onLeftMouseButtonClick();
 
 private:
-	bool m_eventExists(Event id);
 
-	// mouse events
-	bool m_mouseOver;
-	bool m_mouseOverActive;
-	bool m_mouseOutActive;
 	
-	bool m_leftMouseButtonClicked;
 
 	// event structure
 	std::unordered_map<Event, EventHandler> m_events;

@@ -6,10 +6,17 @@
 #include <SDL.h>
 #include "UIControl.h"
 
+enum MouseState
+{
+	NONE,
+	HOVER,
+	CLICKED
+};
+
 class Button : public UIControl
 {
 public:
-	Button(const std::string& image_path,
+	Button(const std::string image_path,
 		std::string button_name,
 		glm::vec2 position, bool is_centered = true,
 		GameObjectType type = BUTTON );
@@ -25,6 +32,7 @@ public:
 	void setAlpha(Uint8 alpha);
 	void setActive(bool value);
 	
+	MouseState m_state;
 private:
 	Uint8 m_alpha;
 	std::string m_name;

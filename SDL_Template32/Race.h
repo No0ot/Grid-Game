@@ -1,9 +1,11 @@
 #pragma once
 #include <string>
+
+enum RaceEnum { GOLEM, ORILLA, HUMAN, GLORYBORN };
+
 class Race
 {
 private:
-	enum RaceEnum { GOLEM, ORILLA, HUMAN, XIIN };
 	RaceEnum m_Name;
 	enum PrimaryStat { STRENGTH, FINESSE, CONCENTRATION, RESOLVE };
 	PrimaryStat m_PrimaryStat;
@@ -26,5 +28,6 @@ public:
 	int getRaceRes();
 	std::string getRaceName();
 
+	RaceEnum getEnum();
 };
 

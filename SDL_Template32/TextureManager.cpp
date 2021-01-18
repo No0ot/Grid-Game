@@ -49,14 +49,16 @@ bool TextureManager::load(std::string fileName, std::string id, SDL_Renderer* pR
 	return false;
 }
 
-void TextureManager::draw(std::string id, int x, int y, int width, int height, SDL_Renderer* pRenderer,int state, SDL_RendererFlip flip)
+void TextureManager::draw(std::string id, int x, int y, int width, int height, SDL_Renderer* pRenderer, SDL_RendererFlip flip)
 {
 	SDL_Rect srcRect;
 	SDL_Rect dstRect;
-	srcRect.x = 0 + (64 * state);
+	srcRect.x = 0;
 	srcRect.y = 0;
-	srcRect.w = dstRect.w = width;
-	srcRect.h = dstRect.h = height;
+	srcRect.w = width;
+	dstRect.w = width / 1.5;
+	srcRect.h = height;
+	dstRect.h = height / 1.5;
 	dstRect.x = x;
 	dstRect.y = y;
 	SDL_RenderCopyEx(pRenderer, m_textureMap[id].get(), &srcRect, &dstRect, 0, 0, flip);
@@ -101,6 +103,24 @@ void TextureManager::drawHex(std::string id, int x, int y, SDL_Renderer* pRender
 	dstRect.y = y;
 
 	SDL_RenderCopyEx(pRenderer, m_textureMap[id].get(), &srcRect, &dstRect, angle, 0, flip);
+}
+
+void TextureManager::drawButton(std::string id, int x, int y, SDL_Renderer* pRenderer, int type, bool centered, SDL_RendererFlip flip)
+{
+	SDL_Rect srcRect;
+	SDL_Rect dstRect;
+
+	srcRect.x = 0 + 128 * type;
+	srcRect.y = 0;
+
+	srcRect.h = 128;
+	dstRect.h = srcRect.h / 1.5;
+	srcRect.w = 128;
+	dstRect.w = srcRect.w / 1.5;
+	dstRect.x = x;
+	dstRect.y = y;
+
+	SDL_RenderCopyEx(pRenderer, m_textureMap[id].get(), &srcRect, &dstRect, 0, 0, flip);
 }
 
 void TextureManager::drawSelector(std::string id, int x, int y, SDL_Renderer* pRenderer, int angle, int state, bool centered, SDL_RendererFlip flip)
@@ -156,9 +176,9 @@ void TextureManager::drawUnitProfile(std::string id, int x, int y, SDL_Renderer*
 	srcRect.y = 0;
 
 	srcRect.h = 350;
-	dstRect.h = srcRect.h / 2;
+	dstRect.h = srcRect.h / 1.5;
 	srcRect.w = 500;
-	dstRect.w = srcRect.w / 2;
+	dstRect.w = srcRect.w / 1.5;
 	dstRect.x = x;
 	dstRect.y = y;
 

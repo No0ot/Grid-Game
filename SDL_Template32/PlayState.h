@@ -5,9 +5,20 @@
 
 //Game Objects
 //#include "Hex.h"
-#include "HexCoordinates.h"
+#include "Button.h"
+#include "Hex.h"
 #include "Merc.h"
 #include "UnitProfile.h"
+enum TurnState 
+{
+	START,
+	IDLE,
+	MOVE,
+	ABILITY, 
+	ATTACK,
+	FACING, 
+	END
+};
 
 class GameState : public State
 {
@@ -15,7 +26,6 @@ private:
 	std::vector<Hex*> m_pHexGrid;
 	std::vector<Hex*> m_pHexList;
 	std::list<Hex*> m_pThreatenedHexes;
-	enum TurnState { NONE, PLAYER_MOVE, PLAYER_ABILITY, PLAYER_ATTACK, PLAYER_FACING, ENEMY_TURN };
 	std::vector<Merc*> m_Player1MercVec;
 	std::vector<Merc*> m_Player2MercVec;
 	Merc* m_CurrentMerc;
@@ -24,6 +34,10 @@ private:
 	std::list<Merc*> m_turnOrder;
 	UnitProfile* m_ActiveUnitProfile;
 	UnitProfile* m_HoverUnitProfile;
+	Button* m_MoveButton;
+	Button* m_AttackButton;
+	Button* m_AbilityButton;
+	Button* m_EndButton;
 	Camera* m_GameCamera;
 
 	Hex* m_pSelectedHex;
@@ -39,6 +53,15 @@ public:
 	void AddHexestoList();
 	void drawGameBoard();
 	void drawUI();
+
+	//TURN FUNCTIONS
+	void TurnStart();
+	void TurnIdle();
+	void TurnMove();
+	void TurnAttack();
+	void TurnFacing();
+	void TurnEnd();
+
 
 	//Inherited functions
 	void Enter();

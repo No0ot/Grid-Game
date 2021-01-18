@@ -24,6 +24,11 @@ int GameObject::getFacing()
 	return m_facing;
 }
 
+bool GameObject::getActive()
+{
+	return m_active;
+}
+
 //SETTER DEFINITIONS
 void GameObject::setPosition(glm::vec2 newPosition)
 {
@@ -53,4 +58,9 @@ void GameObject::setType(GameObjectType newType)
 void GameObject::setFacing(int newfacing)
 {
 	m_facing = newfacing;
+}
+
+void GameObject::setActive(bool newactive)
+{
+	m_active = newactive;
 }

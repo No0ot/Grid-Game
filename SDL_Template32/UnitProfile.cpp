@@ -7,6 +7,11 @@
 UnitProfile::UnitProfile(glm::vec2 worldposition)
 {
 	TheTextureManager::Instance()->load("Img/Unit Profile.png", "unitprofile", Engine::Instance().GetRenderer());
+	TheTextureManager::Instance()->load("Img/Golm.png", "golm", Engine::Instance().GetRenderer());
+	TheTextureManager::Instance()->load("Img/Orilla.png", "orilla", Engine::Instance().GetRenderer());
+	TheTextureManager::Instance()->load("Img/Human.png", "human", Engine::Instance().GetRenderer());
+	TheTextureManager::Instance()->load("Img/Gloryborn.png", "gloryborn", Engine::Instance().GetRenderer());
+
 
 	setPosition(worldposition);
 
@@ -17,19 +22,19 @@ UnitProfile::UnitProfile(glm::vec2 worldposition)
 		auto labelstring = tempLabel.str();
 		SDL_Color black{ 0, 0, 0, 255 };
 		auto valueLabelPosition = glm::vec2(-20, -20);
-			m_Labels = { new Label(labelstring, "Consolas",10, black, valueLabelPosition, true),
-						 new Label(labelstring, "Consolas",10, black, valueLabelPosition, true),
-						 new Label(labelstring, "Consolas",10, black, valueLabelPosition, true),
-						 new Label(labelstring, "Consolas",10, black, valueLabelPosition, true),
-						 new Label(labelstring, "Consolas",10, black, valueLabelPosition, true),
-						 new Label(labelstring, "Consolas",10, black, valueLabelPosition, true),
-						 new Label(labelstring, "Consolas",10, black, valueLabelPosition, true),
-						 new Label(labelstring, "Consolas",10, black, valueLabelPosition, true),
-						 new Label(labelstring, "Consolas",10, black, valueLabelPosition, true),
-						 new Label(labelstring, "Consolas",10, black, valueLabelPosition, true),
-						 new Label(labelstring, "Consolas",10, black, valueLabelPosition, true),
-						 new Label(labelstring, "Consolas",10, black, valueLabelPosition, true),
-						 new Label(labelstring, "Consolas",10, black, valueLabelPosition, true)};
+			m_Labels = { new Label(labelstring, "Consolas",12, black, valueLabelPosition, true),
+						 new Label(labelstring, "Consolas",12, black, valueLabelPosition, true),
+						 new Label(labelstring, "Consolas",12, black, valueLabelPosition, true),
+						 new Label(labelstring, "Consolas",12, black, valueLabelPosition, true),
+						 new Label(labelstring, "Consolas",12, black, valueLabelPosition, true),
+						 new Label(labelstring, "Consolas",12, black, valueLabelPosition, true),
+						 new Label(labelstring, "Consolas",12, black, valueLabelPosition, true),
+						 new Label(labelstring, "Consolas",12, black, valueLabelPosition, true),
+						 new Label(labelstring, "Consolas",12, black, valueLabelPosition, true),
+						 new Label(labelstring, "Consolas",12, black, valueLabelPosition, true),
+						 new Label(labelstring, "Consolas",12, black, valueLabelPosition, true),
+						 new Label(labelstring, "Consolas",12, black, valueLabelPosition, true),
+						 new Label(labelstring, "Consolas",12, black, valueLabelPosition, true)};
 	
 }
 
@@ -42,20 +47,44 @@ void UnitProfile::draw()
 	const int xComponent = getPosition().x;
 	const int yComponent = getPosition().y;
 
-	TheTextureManager::Instance()->drawUnitProfile("unitprofile", xComponent, yComponent, Engine::Instance().GetRenderer(), 0);
-
-	for(auto labels : m_Labels)
-		labels->draw();
 
 	if (getUnitReference() != nullptr)
 	{
-		SDL_Rect rectangle = { xComponent, yComponent ,250,175 };
+		TheTextureManager::Instance()->drawUnitProfile("unitprofile", xComponent, yComponent, Engine::Instance().GetRenderer(), 0);
+		float healthbarwidth = 128.0f * m_HealthPerc;
+		if (healthbarwidth < 0)
+			healthbarwidth = 0;
+
+		SDL_Rect health_rec = { xComponent + 18, yComponent + 156, healthbarwidth, 16 };
+		SDL_SetRenderDrawBlendMode(Engine::Instance().GetRenderer(), SDL_BLENDMODE_NONE);
+		SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 0, 200, 0, 100);
+		SDL_RenderFillRect(Engine::Instance().GetRenderer(), &health_rec);
+
+		for(auto labels : m_Labels)
+			labels->draw();
+		SDL_Rect rectangle = { xComponent, yComponent ,333,233 };
 		SDL_SetRenderDrawBlendMode(Engine::Instance().GetRenderer(), SDL_BLENDMODE_BLEND);
 		if (getUnitReference()->getOwner() == Unit::PLAYER_1)
 			SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 240, 100, 0, 50);
 		else
 			SDL_SetRenderDrawColor(Engine::Instance().GetRenderer(), 0, 100, 250, 50);
 		SDL_RenderFillRect(Engine::Instance().GetRenderer(), &rectangle);
+
+		switch (getUnitReference()->getRace()->getEnum())
+		{
+		case GOLEM:
+			TheTextureManager::Instance()->draw("golm", xComponent + 22, yComponent + 21,182,182, Engine::Instance().GetRenderer());
+			break;
+		case ORILLA:
+			TheTextureManager::Instance()->draw("orilla", xComponent + 22, yComponent + 21, 182, 182, Engine::Instance().GetRenderer());
+			break;
+		case HUMAN:
+			TheTextureManager::Instance()->draw("human", xComponent + 22, yComponent + 21, 182, 182, Engine::Instance().GetRenderer());
+			break;
+		case GLORYBORN:
+			TheTextureManager::Instance()->draw("gloryborn", xComponent + 22, yComponent + 21, 182, 182, Engine::Instance().GetRenderer());
+			break;
+		}
 	}
 }
 
@@ -70,44 +99,44 @@ void UnitProfile::update()
 		std::string labelstring[14];
 		glm::vec2 labelposition[14];
 		//HEALTH LABEL
-		tempLabel[0] << std::fixed << std::setprecision(1) << m_UnitReference->getCurrentHealth() << " / " << m_UnitReference->getMaxHealth();
-		labelposition[0] = glm::vec2(xComponent + 50, yComponent + 122);
+		tempLabel[0] << std::fixed << std::setprecision(1) << (int)m_UnitReference->getCurrentHealth() << " / " << (int)m_UnitReference->getMaxHealth();
+		labelposition[0] = glm::vec2(xComponent + 90, yComponent + 165);
 		//DAMAGE LABEL
 		tempLabel[1] << std::fixed << std::setprecision(1) << m_UnitReference->getJob()->getMinDamage() + m_UnitReference->getMainStat() << "-" << m_UnitReference->getJob()->getMaxDamage() + m_UnitReference->getMainStat();
-		labelposition[1] = glm::vec2(xComponent + 82 , yComponent + 150);
+		labelposition[1] = glm::vec2(xComponent + 110 , yComponent + 200);
 		//NAME LABEL
 		tempLabel[2] << std::fixed << std::setprecision(1) << m_UnitReference->getName();
-		labelposition[2] = glm::vec2(xComponent + 177, yComponent + 25);
+		labelposition[2] = glm::vec2(xComponent + 240, yComponent + 35);
 		//JOB LABEL
 		tempLabel[3] << std::fixed << std::setprecision(1) << m_UnitReference->getJob()->getTexturename();
-		labelposition[3] = glm::vec2(xComponent + 150, yComponent + 52);
+		labelposition[3] = glm::vec2(xComponent + 200, yComponent + 70);
 		//RACE LABEL
 		tempLabel[4] << std::fixed << std::setprecision(1) << m_UnitReference->getRace()->getRaceName();
-		labelposition[4] = glm::vec2(xComponent + 210, yComponent + 52);
+		labelposition[4] = glm::vec2(xComponent + 280, yComponent + 70);
 		//STR LABEL
 		tempLabel[5] << std::fixed << std::setprecision(1) << m_UnitReference->getStrength();
-		labelposition[5] = glm::vec2(xComponent + 160, yComponent + 87);
+		labelposition[5] = glm::vec2(xComponent + 210, yComponent + 120);
 		//FIN LABEL
 		tempLabel[6] << std::fixed << std::setprecision(1) << m_UnitReference->getFinesse();
-		labelposition[6] = glm::vec2(xComponent + 160, yComponent + 107);
+		labelposition[6] = glm::vec2(xComponent + 210, yComponent + 145);
 		//CON LABEL
 		tempLabel[7] << std::fixed << std::setprecision(1) << m_UnitReference->getConcentration();
-		labelposition[7] = glm::vec2(xComponent + 160, yComponent + 127);
+		labelposition[7] = glm::vec2(xComponent + 210, yComponent + 170);
 		//RES LABEL
 		tempLabel[8] << std::fixed << std::setprecision(1) << m_UnitReference->getResolve();
-		labelposition[8] = glm::vec2(xComponent + 160, yComponent + 142);
+		labelposition[8] = glm::vec2(xComponent + 210, yComponent + 195);
 		//INIT LABEL
 		tempLabel[9] << std::fixed << std::setprecision(1) << m_UnitReference->getInitiative();
-		labelposition[9] = glm::vec2(xComponent + 220, yComponent + 87);
+		labelposition[9] = glm::vec2(xComponent + 290, yComponent + 120);
 		//DASH LABEL
 		tempLabel[10] << std::fixed << std::setprecision(1) << m_UnitReference->getJob()->getDashRange();
-		labelposition[10] = glm::vec2(xComponent + 220, yComponent + 107);
+		labelposition[10] = glm::vec2(xComponent + 290, yComponent + 145);
 		//RUN LABEL
 		tempLabel[11] << std::fixed << std::setprecision(1) << m_UnitReference->getJob()->getMoveRange();
-		labelposition[11] = glm::vec2(xComponent + 220, yComponent + 127);
+		labelposition[11] = glm::vec2(xComponent + 290, yComponent + 170);
 		//RANGE LABEL
 		tempLabel[12] << std::fixed << std::setprecision(1) << m_UnitReference->getJob()->getAttackRange();
-		labelposition[12] = glm::vec2(xComponent + 225, yComponent + 142);
+		labelposition[12] = glm::vec2(xComponent + 295, yComponent + 195);
 
 		for (int count = 0; count < m_Labels.size(); count++)
 		{
@@ -117,7 +146,10 @@ void UnitProfile::update()
 			m_Labels[count]->setText(labelstring[count]);
 			m_Labels[count]->setColour(green);
 		}
+
+		m_HealthPerc = m_UnitReference->getCurrentHealth() / m_UnitReference->getMaxHealth();
 	}
+
 }
 
 void UnitProfile::clean()

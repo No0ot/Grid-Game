@@ -31,6 +31,7 @@ public:
 	int getHeight();
 	GameObjectType getType();
 	int getFacing();
+	bool getActive();
 
 	//SETTERS
 	void setPosition(glm::vec2 newpos);
@@ -39,10 +40,12 @@ public:
 	void setHeight(int newHeight);
 	void setType(GameObjectType newType);
 	void setFacing(int newfacing);
+	void setActive(bool newactive);
 
 private:
 	// VARIABLES
 	int m_facing;
+	bool m_active;
 
 	//TRANSFORM
 	glm::vec2 m_worldPosition;

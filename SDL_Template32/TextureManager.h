@@ -27,9 +27,10 @@ public:
 	}
 	bool load(std::string fileName, std::string id, SDL_Renderer* pRenderer);
 
-	void draw(std::string id, int x, int y, int width, int height, SDL_Renderer* pRenderer,int state, SDL_RendererFlip flip = SDL_FLIP_NONE);
+	void draw(std::string id, int x, int y, int width, int height, SDL_Renderer* pRenderer, SDL_RendererFlip flip = SDL_FLIP_NONE);
 	void draw(std::string id, int x, int y, SDL_Renderer* pRenderer,int state, bool centered = false, SDL_RendererFlip flip = SDL_FLIP_NONE);
 	void drawHex(std::string id, int x, int y, SDL_Renderer* pRenderer, int angle, int type,int hexstate, bool centered = false, SDL_RendererFlip flip = SDL_FLIP_NONE);
+	void drawButton(std::string id, int x, int y, SDL_Renderer* pRenderer, int type, bool centered, SDL_RendererFlip flip);
 	void drawSelector(std::string id, int x, int y, SDL_Renderer* pRenderer, int angle, int state, bool centered = false, SDL_RendererFlip flip = SDL_FLIP_NONE);
 	void drawMerc(std::string id, int x, int y, SDL_Renderer* pRenderer, int angle, int state,int owner, bool centered = false, SDL_RendererFlip flip = SDL_FLIP_NONE);
 	void drawUnitProfile(std::string id, int x, int y, SDL_Renderer* pRenderer, int angle, bool centered = false, SDL_RendererFlip flip = SDL_FLIP_NONE);

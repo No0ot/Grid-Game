@@ -26,6 +26,8 @@ public:
 private:
 	Merc* m_UnitReference;
 
+	float m_HealthPerc;
+
 	std::vector<Label*> m_Labels;
 
 };

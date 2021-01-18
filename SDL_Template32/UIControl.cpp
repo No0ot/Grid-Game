@@ -27,8 +27,8 @@ UIControl::EventHandler UIControl::getEventHandler(Event event)
 
 bool UIControl::pointRectCheck(const glm::vec2 point, const glm::vec2 rect_start, const float rect_width, const float rect_height)
 {
-	const float topLeftX = rect_start.x - rect_width * 0.5;
-	const float topLeftY = rect_start.y - rect_height * 0.5;
+	const float topLeftX = rect_start.x - rect_width;
+	const float topLeftY = rect_start.y - rect_height;
 	const auto width = rect_width;
 	const auto height = rect_height;
 
@@ -46,8 +46,10 @@ void UIControl::onMouseOver()
 {
 	const auto mousePosition = EventManager::Instance().getMousePosition();
 
-	
-	if (pointRectCheck(mousePosition, getPosition(), getWidth(), getHeight()))
+	int mx = EventManager::Instance().getMousePosition().x;
+	int my = EventManager::Instance().getMousePosition().y;
+	if ((mx < (getPosition().x + getWidth()) && mx > getPosition().x &&
+		my < (getPosition().y + getHeight()) && my > getPosition().y))
 	{
 		m_mouseOver = true;
 	}
