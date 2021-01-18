@@ -1,4 +1,4 @@
-#include "HexCoordinates.h"
+#include "Hex.h"
 #include "Engine.h"
 #include "Util.h"
 #include <iostream>

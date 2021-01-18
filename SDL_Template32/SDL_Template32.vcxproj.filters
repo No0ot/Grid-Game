@@ -66,9 +66,6 @@
     <ClCompile Include="UnitProfile.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
-    <ClCompile Include="HexCoordinates.cpp">
-      <Filter>Objects\WIP</Filter>
-    </ClCompile>
     <ClCompile Include="PlayState.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
@@ -111,6 +108,9 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Hex.cpp">
+      <Filter>Objects\WIP</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FSM.h">
@@ -151,9 +151,6 @@
     </ClInclude>
     <ClInclude Include="UnitProfile.h">
       <Filter>Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="HexCoordinates.h">
-      <Filter>Objects\WIP</Filter>
     </ClInclude>
     <ClInclude Include="PlayState.h">
       <Filter>Scenes</Filter>
@@ -199,6 +196,9 @@
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Hex.h">
+      <Filter>Objects\WIP</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

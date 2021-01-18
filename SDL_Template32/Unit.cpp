@@ -1,5 +1,5 @@
 #include "Unit.h"
-#include "HexCoordinates.h"
+#include "Hex.h"
 
 Unit::Unit() : m_currentHex(nullptr), m_facingHex(nullptr)
 {
