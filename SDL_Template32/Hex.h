@@ -1,5 +1,5 @@
 #pragma once
-#include "GameObject.h"
+#include "UIControl.h"
 #include "TextureManager.h"
 #include "Label.h"
 #include "EventManager.h"
@@ -31,7 +31,7 @@ struct Layout {
 		: orientation(temporientation), size(tempsize), origin(temporigin) {}
 };
 
-class Hex : public GameObject
+class Hex : public UIControl
 {
 public:
 	glm::vec3 m_cubeCoordinate;
@@ -82,6 +82,7 @@ public:
 	Hex Hex_subtract(Hex a, Hex b);
 	Hex Hex_multiply(Hex a, int k);
 
+	void SetListenEvents();
 	bool mouseCol();
 	void BuildHex();
 	float computeGlobalValue(const glm::vec3 goal_location);

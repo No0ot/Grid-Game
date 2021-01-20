@@ -46,8 +46,8 @@ void UIControl::onMouseOver()
 {
 	const auto mousePosition = EventManager::Instance().getMousePosition();
 
-	int mx = EventManager::Instance().getMousePosition().x;
-	int my = EventManager::Instance().getMousePosition().y;
+	int mx = EventManager::Instance().getMousePosition().x + getCamPosition().x;
+	int my = EventManager::Instance().getMousePosition().y + getCamPosition().y;
 	if ((mx < (getPosition().x + getWidth()) && mx > getPosition().x &&
 		my < (getPosition().y + getHeight()) && my > getPosition().y))
 	{

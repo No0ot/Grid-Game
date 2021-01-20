@@ -37,6 +37,8 @@ Hex::Hex(int x, int y, int z) : m_hexLayout(Layout(layout_flat, glm::vec2(32.0, 
 	SDL_Color black{ 0, 0, 0, 255 };
 	auto valueLabelPosition = glm::vec2(getPosition().x + 30, getPosition().y + 40);
 	m_pValueLabel = new Label(labelstring, "Consolas", 14, black, valueLabelPosition, true);
+
+	SetListenEvents();
 }
 
 Hex::~Hex()
@@ -59,47 +61,35 @@ void Hex::draw()
 
 void Hex::update()
 {
-	bool mousecol = mouseCol();
-	switch (m_MouseState)
-	{
-	case STATE_OFF:
-		if (mousecol)
-		{
-			m_MouseState = STATE_HOVER;
-		}
-		//cout << " state off" << std::endl;
-		break;
-	case STATE_HOVER:
-		if (!mousecol)
-		{
-			m_MouseState = STATE_OFF;
-		}
-		if (mousecol && EventManager::Instance().getMouseButton(0))
-		{
-			m_MouseState = STATE_SELECTED;
+	//check if mouse is over the Button
+	onMouseOver();
 
-		}
-		//std::cout << " state hover " << std::endl;
+	// check if mouse outside the Button
+	onMouseOut();
 
-		break;
-	case STATE_SELECTED:
-		if (!EventManager::Instance().getMouseButton(0))
-		{
-			if (mousecol)
-			{
-				m_MouseState = STATE_HOVER;
-				// Execute new "callback".
+	// check if left mouse is clicked
+	onLeftMouseButtonClick();
 
-			}
-			else
-				m_MouseState = STATE_OFF;
-		}
-		break;
-	}
 	std::ostringstream tempLabel;
 	tempLabel << std::fixed << std::setprecision(1) << m_globalGoalValue;
 	const auto labelstring = tempLabel.str();
 	m_pValueLabel->setText(labelstring);
+}
+
+void Hex::SetListenEvents()
+{
+	addEventListener(MOUSE_OVER, [&]()-> void
+		{
+			m_MouseState = STATE_HOVER;
+		});
+	addEventListener(MOUSE_OUT, [&]()-> void
+		{
+			m_MouseState = STATE_OFF;
+		});
+	addEventListener(CLICK, [&]()-> void
+		{
+			m_MouseState = STATE_SELECTED;
+		});
 }
 
 bool Hex::mouseCol()
@@ -235,7 +225,6 @@ void Hex::BuildHex()
 
 float Hex::computeGlobalValue(const glm::vec3 goal_location)
 {
-
 	// declare heuristic;
 	auto h = 0.0f;
 
