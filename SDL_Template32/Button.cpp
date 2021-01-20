@@ -28,30 +28,33 @@ void Button::draw()
 	const auto y = getPosition().y;
 
 	// draw the button
-	if(getActive())
+	
 		TextureManager::Instance()->drawButton(m_name, x, y, Engine::Instance().GetRenderer(), m_state, false, SDL_FLIP_NONE);
 }
 
 void Button::update()
 {
-	//check if mouse is over the Button
-	onMouseOver();
-
-	// check if mouse outside the Button
-	onMouseOut();
-
-	// check if left mouse is clicked
-	onLeftMouseButtonClick();
-	if (m_mouseOver)
+	if (m_state != INACTIVE)
 	{
-		m_state = HOVER;
-	}
-	else
-		m_state = NONE;
+		//check if mouse is over the Button
+		onMouseOver();
 
-	if (m_mouseOver && EventManager::Instance().getMouseButton(0))
-	{
-		m_state = CLICKED;
+		// check if mouse outside the Button
+		onMouseOut();
+
+		// check if left mouse is clicked
+		onLeftMouseButtonClick();
+		if (m_mouseOver)
+		{
+			m_state = HOVER;
+		}
+		else
+			m_state = NONE;
+
+		if (m_mouseOver && EventManager::Instance().getMouseButton(0))
+		{
+			m_state = CLICKED;
+		}
 	}
 }
 

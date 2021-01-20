@@ -109,7 +109,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Hex.cpp">
-      <Filter>Objects\WIP</Filter>
+      <Filter>Objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -198,7 +198,7 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Hex.h">
-      <Filter>Objects\WIP</Filter>
+      <Filter>Objects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

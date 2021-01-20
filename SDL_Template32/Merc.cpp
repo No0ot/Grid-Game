@@ -151,28 +151,19 @@ void Merc::setMainStat(int new_stat)
 
 void Merc::updateFacing()
 {
-	int count = getHex()->getNeighbours().size();
-	for (int i = 0; i < count ; i++)
+	Hex* temphex = getFacingHex();
+
+	if (temphex != nullptr)
 	{
-		if (getHex()->getNeighbours()[i] != nullptr)
+		for (int i = 0; i < 7 ; i++)
 		{
-			Hex* checkHex = getHex()->getNeighbours()[i];
-			if (getFacingHex() == checkHex)
+			glm::vec3 temp = getHex()->getCubeCoordinate() + getHex()->directions[i];
+			if (temphex->getCubeCoordinate() == temp)
+			{
 				setFacing((60 * i) + 60);
+			}
 		}
 	}
-	//if (getFacingHex() == getHex()->getNeighbours()[0])
-	//	setFacing(120);
-	//else if (getFacingHex() == getHex()->getNeighbours()[1])
-	//	setFacing(60);
-	//else if (getFacingHex() == getHex()->getNeighbours()[2])
-	//	setFacing(0);
-	//else if (getFacingHex() == getHex()->getNeighbours()[3])
-	//	setFacing(300);
-	//else if (getFacingHex() == getHex()->getNeighbours()[4])
-	//	setFacing(240);
-	//else if (getFacingHex() == getHex()->getNeighbours()[5])
-	//	setFacing(180);
 }
 
 void Merc::rollInitiative()

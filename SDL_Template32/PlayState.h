@@ -42,6 +42,7 @@ private:
 
 	Hex* m_pSelectedHex;
 	int counter;
+	int m_mapRadius = 4;
 public:
 	TurnState current_state;
 	GameState();
@@ -53,6 +54,7 @@ public:
 	void AddHexestoList();
 	void drawGameBoard();
 	void drawUI();
+	void InitializeButtons();
 
 	//TURN FUNCTIONS
 	void TurnStart();

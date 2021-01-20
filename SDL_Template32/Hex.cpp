@@ -24,8 +24,8 @@ Hex::Hex(int x, int y, int z) : m_hexLayout(Layout(layout_flat, glm::vec2(32.0, 
 	
 	setPosition(hex_to_pixel(m_hexLayout, getCubeCoordinate()));
 
-	directions[0] = glm::vec3(1.0, -1.0, 0.0);	//DOWN RIGHT
-	directions[1] = glm::vec3(1.0, 0.0, -1.0);	//UP RIGHT
+	directions[0] = glm::vec3(1.0, -1.0, 0.0);	//UP RIGHT
+	directions[1] = glm::vec3(1.0, 0.0, -1.0);	//DOWN RIGHT
 	directions[2] = glm::vec3(0.0, 1.0, -1.0);	// UP
 	directions[3] = glm::vec3(-1.0, 1.0, 0.0);	//UP LEFT
 	directions[4] = glm::vec3(-1.0, 0.0, 1.0);	// DOWN LEFT

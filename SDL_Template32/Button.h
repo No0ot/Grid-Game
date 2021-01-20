@@ -6,11 +6,12 @@
 #include <SDL.h>
 #include "UIControl.h"
 
-enum MouseState
+enum ButtonState
 {
 	NONE,
 	HOVER,
-	CLICKED
+	CLICKED,
+	INACTIVE
 };
 
 class Button : public UIControl
@@ -32,7 +33,7 @@ public:
 	void setAlpha(Uint8 alpha);
 	void setActive(bool value);
 	
-	MouseState m_state;
+	ButtonState m_state;
 private:
 	Uint8 m_alpha;
 	std::string m_name;

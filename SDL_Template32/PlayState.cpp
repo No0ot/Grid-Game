@@ -10,7 +10,7 @@ GameState::GameState() : current_state(START) {}
 
 void GameState::BuildHexGrid()
 {
-	int map_radius = 10;
+	int map_radius = m_mapRadius;
 	for (int q = -map_radius; q <= map_radius; q++) {
 		int r1 = max(-map_radius, -q - map_radius);
 		int r2 = min(map_radius, -q + map_radius);
@@ -37,24 +37,21 @@ Hex* GameState::returnHex(glm::vec3 search)
 
 void GameState::MapGrid()
 {
-
 	for (auto hex : m_pHexGrid)
 	{
-
 		for (auto neighbour : hex->directions)
 		{
 			float x = hex->getCubeCoordinate().x + neighbour.x;
 			float y = hex->getCubeCoordinate().y + neighbour.y;
 			float z = hex->getCubeCoordinate().z + neighbour.z;
 
-			if (x < 7.0 && x > -7.0 && y < 7.0 && y > -7.0 && z < 7.0 && z > -7.0)
+			if (x < m_mapRadius + 1.0f && x > -m_mapRadius - 1.0f && y < m_mapRadius + 1.0f && y > -m_mapRadius - 1.0f && z < m_mapRadius + 1.0f && z > -m_mapRadius - 1.0f)
 			{
 				Hex* temp = returnHex(glm::vec3(x, y, z));
 				hex->m_pNeighbours.push_back(temp);
 			}
 		}
 	}
-
 }
 
 void GameState::ResetHexs()
@@ -127,6 +124,60 @@ void GameState::drawUI()
 	m_EndButton->draw();
 }
 
+void GameState::InitializeButtons()
+{
+	m_MoveButton = new Button("Img/move token.png", "MoveButton", glm::vec2(400, 650), true, BUTTON);
+	m_MoveButton->addEventListener(CLICK, [&]()-> void
+		{
+			current_state = MOVE;
+		});
+	m_MoveButton->addEventListener(MOUSE_OVER, [&]()-> void
+		{
+			for (auto hex : m_pHexGrid)
+			{
+				if (m_AttackButton->m_state != INACTIVE)
+				{
+					if (hex != nullptr && hex->getPathfindingState() != Hex::PathfindingState::IMPASSABLE && hex->getGlobalValue() <= m_CurrentMerc->getJob()->getMoveRange())
+					{
+						hex->setInteractiveState(Hex::RUN);
+					}
+				}
+				if (hex != nullptr && hex->getPathfindingState() != Hex::PathfindingState::IMPASSABLE && hex->getGlobalValue() <= m_CurrentMerc->getJob()->getDashRange())
+					hex->setInteractiveState(Hex::DASH);
+			}
+		});
+	m_MoveButton->addEventListener(MOUSE_OUT, [&]()-> void
+		{
+			ResetHexs();
+		});
+	m_AttackButton = new Button("Img/attack token.png", "AttackButton", glm::vec2(500, 650), true, BUTTON);
+	m_AttackButton->addEventListener(CLICK, [&]()-> void
+		{
+			current_state = ATTACK;
+		});
+	m_AttackButton->addEventListener(MOUSE_OVER, [&]()-> void
+		{
+			for (auto hex : m_pHexGrid)
+			{
+				if (hex != nullptr && hex->getGlobalValue() <= m_CurrentMerc->getJob()->getAttackRange())
+				{
+					hex->setInteractiveState(Hex::THREAT);
+				}
+			}
+		});
+	m_AttackButton->addEventListener(MOUSE_OUT, [&]()-> void
+		{
+			ResetHexs();
+		});
+	m_AbilityButton = new Button("Img/ability token.png", "AbilityButton", glm::vec2(600, 650), true, BUTTON);
+	m_AbilityButton->m_state = INACTIVE;
+	m_EndButton = new Button("Img/end token.png", "EndButton", glm::vec2(700, 650), true, BUTTON);
+	m_EndButton->addEventListener(CLICK, [&]()-> void
+		{
+			current_state = FACING;
+		});
+}
+
 void GameState::TurnStart()
 {
 	ResetHexs();
@@ -135,25 +186,21 @@ void GameState::TurnStart()
 	m_CurrentMerc->setState(Unit::State::ACTIVE);
 	m_ActiveUnitProfile->setUnitReference(m_CurrentMerc);
 	m_CurrentMerc->getHex()->setPathfindingState(Hex::PathfindingState::GOAL);
+	m_MoveButton->m_state = NONE;
+	m_AttackButton->m_state = NONE;
+	m_AbilityButton->m_state = INACTIVE;
+	m_EndButton->m_state = NONE;
+	m_GameCamera->setPosition(glm::vec2(m_CurrentMerc->getPosition().x - Config::SCREEN_WIDTH / 2, m_CurrentMerc->getPosition().y - Config::SCREEN_HEIGHT / 3));
 
 	counter++;
 
 	if (counter == 30)
 	{
 		std::cout << "----------------" << m_CurrentMerc->getName() << "'s Turn" << "----------------" << std::endl;
-		current_state = MOVE;
+		current_state = IDLE;
 		counter = 0;
 	}
 	//std::cout << " NONE STATE " << std::endl;
-	for (auto merc : m_Player1MercVec)
-	{
-		merc->update();
-	}
-	m_CurrentMerc->update();
-	for (auto merc : m_Player2MercVec)
-	{
-		merc->update();
-	}
 }
 
 void GameState::TurnIdle()
@@ -164,16 +211,18 @@ void GameState::TurnMove()
 {
 	for (auto hex : m_pHexGrid)
 	{
-		if (hex != nullptr && hex->getPathfindingState() != Hex::PathfindingState::IMPASSABLE && hex->getGlobalValue() <= m_CurrentMerc->getJob()->getMoveRange())
+		if (m_AttackButton->m_state != INACTIVE)
 		{
-			hex->setInteractiveState(Hex::RUN);
+			if (hex != nullptr && hex->getPathfindingState() != Hex::PathfindingState::IMPASSABLE && hex->getGlobalValue() <= m_CurrentMerc->getJob()->getMoveRange())
+			{
+				hex->setInteractiveState(Hex::RUN);
+			}
+		}
 			if (hex != nullptr && hex->getPathfindingState() != Hex::PathfindingState::IMPASSABLE && hex->getGlobalValue() <= m_CurrentMerc->getJob()->getDashRange())
 				hex->setInteractiveState(Hex::DASH);
-		}
 	}
 	for (int count = 0; count < (int)m_pHexGrid.size(); count++)
 	{
-		m_pHexGrid[count]->update();
 
 		if (m_pHexGrid[count]->getMouseState() == Hex::MouseState::STATE_SELECTED && m_pHexGrid[count]->getOccupied() != true && m_pHexGrid[count]->getInteractiveState() == Hex::DASH)
 		{
@@ -185,7 +234,8 @@ void GameState::TurnMove()
 			tempHex->setOccupier(m_CurrentMerc);
 			//std::cout << m_CurrentMerc->getName() <<" MOVED TO HEX: " << m_CurrentMerc->getHex()->getGridPosition().x << " " << m_CurrentMerc->getHex()->getGridPosition().y << std::endl;
 			ResetHexs();
-			current_state = ATTACK;
+			m_MoveButton->m_state = INACTIVE;
+			current_state = IDLE;
 		}
 		else if (m_pHexGrid[count]->getMouseState() == Hex::MouseState::STATE_SELECTED && m_pHexGrid[count]->getOccupied() != true && m_pHexGrid[count]->getInteractiveState() == Hex::RUN)
 		{
@@ -197,20 +247,11 @@ void GameState::TurnMove()
 			tempHex->setOccupier(m_CurrentMerc);
 			//std::cout << m_CurrentMerc->getName() << " MOVED TO HEX: " << m_CurrentMerc->getHex()->getGridPosition().x << " " << m_CurrentMerc->getHex()->getGridPosition().y << std::endl;
 			ResetHexs();
-			current_state = FACING;
+			m_MoveButton->m_state = INACTIVE;
+			m_AttackButton->m_state = INACTIVE;
+			current_state = IDLE;
 		}
 	}
-
-	for (auto merc : m_Player1MercVec)
-	{
-		merc->update();
-	}
-	for (auto merc : m_Player2MercVec)
-	{
-		merc->update();
-	}
-	//std::cout << " MOVE STATE" << std::endl;
-
 
 }
 
@@ -232,7 +273,8 @@ void GameState::TurnAttack()
 	if (m_pSelectedHex == nullptr)
 	{
 		ResetHexs();
-		current_state = FACING;
+		m_AttackButton->m_state = INACTIVE;
+		current_state = IDLE;
 	}
 
 	for (auto merc : m_turnOrder)
@@ -243,11 +285,14 @@ void GameState::TurnAttack()
 			m_CurrentMerc->attack(merc);
 			ResetHexs();
 			m_pSelectedHex = nullptr;
-			current_state = FACING;
+			m_AttackButton->m_state = INACTIVE;
+			current_state = IDLE;
 			break;
 		}
-		else
-			current_state = FACING;
+		else {
+			m_AttackButton->m_state = INACTIVE;
+			current_state = IDLE;
+		}
 	}
 }
 
@@ -266,14 +311,13 @@ void GameState::TurnFacing()
 		hex->setInteractiveState(Hex::FACEING);
 	}
 
-	for (int count = 0; count < (int)m_pHexGrid.size(); count++)
+	for (int count = 0; count < (int)m_pHexList.size(); count++)
 	{
-		m_pHexGrid[count]->update();
 
-		if (m_pHexGrid[count]->getMouseState() == Hex::MouseState::STATE_SELECTED && m_pHexGrid[count] != m_CurrentMerc->getHex() && m_pHexGrid[count]->getInteractiveState() == Hex::FACEING)
+		if (m_pHexList[count]->getMouseState() == Hex::MouseState::STATE_SELECTED && m_pHexList[count] != m_CurrentMerc->getHex() && m_pHexList[count]->getInteractiveState() == Hex::FACEING)
 		{
 			Hex* tempHex;
-			tempHex = m_pHexGrid[count];
+			tempHex = m_pHexList[count];
 			m_CurrentMerc->setFacingHex(tempHex);
 			// Move turn to next merc in list
 			m_turnOrder.push_back(m_CurrentMerc);
@@ -282,14 +326,6 @@ void GameState::TurnFacing()
 			ResetHexs();
 			current_state = START;
 		}
-	}
-	for (auto merc : m_Player1MercVec)
-	{
-		merc->update();
-	}
-	for (auto merc : m_Player2MercVec)
-	{
-		merc->update();
 	}
 }
 
@@ -332,19 +368,7 @@ void GameState::Enter()
 	}
 
 	m_GameCamera = new Camera(glm::vec2(50, 50));
-	m_MoveButton = new Button("Img/move token.png", "MoveButton", glm::vec2(400, 650), true, BUTTON);
-	m_MoveButton->addEventListener(CLICK, [&]()-> void
-		{
-			current_state = MOVE;
-		});
-
-	m_AttackButton = new Button("Img/attack token.png", "AttackButton", glm::vec2(500, 650), true, BUTTON);
-	m_AttackButton->addEventListener(CLICK, [&]()-> void
-		{
-			current_state = ATTACK;
-		});
-	m_AbilityButton = new Button("Img/ability token.png", "AbilityButton", glm::vec2(600, 650),true, BUTTON);
-	m_EndButton = new Button("Img/end token.png", "EndButton", glm::vec2(700, 650), true, BUTTON);
+	InitializeButtons();
 
 	m_turnOrder.sort([](const Merc* lhs, const Merc* rhs) {return lhs->getInitiative() > rhs->getInitiative(); });
 }
@@ -376,6 +400,7 @@ void GameState::Update()
 	//std::cout << " updating..." << std::endl;
 	for (auto hex : m_pHexGrid)
 	{
+		hex->update();
 
 		hex->computeGlobalValue(m_CurrentMerc->getHex()->getCubeCoordinate());
 
@@ -388,6 +413,16 @@ void GameState::Update()
 			m_HoverUnitProfile->setUnitReference(nullptr);
 		}
 	}
+
+	for (auto merc : m_Player1MercVec)
+	{
+		merc->update();
+	}
+	for (auto merc : m_Player2MercVec)
+	{
+		merc->update();
+	}
+
 	m_ActiveUnitProfile->update();
 	m_HoverUnitProfile->update();
 
@@ -404,21 +439,21 @@ void GameState::HandleEvents()
 
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_A))
 	{
-		m_GameCamera->setPosition(glm::vec2(m_GameCamera->getPosition().x - 25, m_GameCamera->getPosition().y));
+		m_GameCamera->setPosition(glm::vec2(m_GameCamera->getPosition().x - 10, m_GameCamera->getPosition().y));
 	}
 	else if (EventManager::Instance().isKeyDown(SDL_SCANCODE_D))
 	{
-		m_GameCamera->setPosition(glm::vec2(m_GameCamera->getPosition().x + 25, m_GameCamera->getPosition().y));
+		m_GameCamera->setPosition(glm::vec2(m_GameCamera->getPosition().x + 10, m_GameCamera->getPosition().y));
 	}
 
 
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_W))
 	{
-		m_GameCamera->setPosition(glm::vec2(m_GameCamera->getPosition().x, m_GameCamera->getPosition().y - 25));
+		m_GameCamera->setPosition(glm::vec2(m_GameCamera->getPosition().x, m_GameCamera->getPosition().y - 10));
 	}
 	else if (EventManager::Instance().isKeyDown(SDL_SCANCODE_S))
 	{
-		m_GameCamera->setPosition(glm::vec2(m_GameCamera->getPosition().x, m_GameCamera->getPosition().y + 25));
+		m_GameCamera->setPosition(glm::vec2(m_GameCamera->getPosition().x, m_GameCamera->getPosition().y + 10));
 	}
 
 	//if (m_MoveButton->m_state == CLICKED)
