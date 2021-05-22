@@ -141,14 +141,6 @@ void TextureManager::drawSelector(std::string id, int x, int y, SDL_Renderer* pR
 	SDL_RenderCopyEx(pRenderer, m_textureMap[id].get(), &srcRect, &dstRect, angle, 0, flip);
 }
 
-//ANGLES FOR HEX DIRECTIONS : 
-//	UP = 0
-//	UPRIGHT = 60
-//	DOWNRIGHT = 120
-//	DOWN = 180
-//	DOWNLEFT = 240
-//	UPLEFT = 300
-
 void TextureManager::drawMerc(std::string id, int x, int y, SDL_Renderer* pRenderer, int angle, int state,int owner, bool centered, SDL_RendererFlip flip)
 {
 	SDL_Rect srcRect;

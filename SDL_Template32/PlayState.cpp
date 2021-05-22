@@ -200,6 +200,11 @@ void GameState::TurnStart()
 		current_state = IDLE;
 		counter = 0;
 	}
+
+	for (auto hex : m_pHexGrid)
+	{
+		hex->computeGlobalValue(m_CurrentMerc->getHex()->getCubeCoordinate());
+	}
 	//std::cout << " NONE STATE " << std::endl;
 }
 
@@ -221,6 +226,7 @@ void GameState::TurnMove()
 			if (hex != nullptr && hex->getPathfindingState() != Hex::PathfindingState::IMPASSABLE && hex->getGlobalValue() <= m_CurrentMerc->getJob()->getDashRange())
 				hex->setInteractiveState(Hex::DASH);
 	}
+
 	for (int count = 0; count < (int)m_pHexGrid.size(); count++)
 	{
 
@@ -402,7 +408,7 @@ void GameState::Update()
 	{
 		hex->update();
 
-		hex->computeGlobalValue(m_CurrentMerc->getHex()->getCubeCoordinate());
+		//hex->computeGlobalValue(m_CurrentMerc->getHex()->getCubeCoordinate());
 
 		if (hex->getMouseState() == Hex::STATE_HOVER && hex->getOccupied())
 		{
@@ -501,6 +507,14 @@ void GameState::Exit()
 void GameState::Resume()
 {
 	//cout << "Resuming Game..." << endl;
+}
+
+std::vector<Hex*> GameState::ReachableHexs(Hex* start, int movement)
+{
+	std::vector<Hex*> visited;
+
+
+	return visited;
 }
 
 // End GameState.

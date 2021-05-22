@@ -59,6 +59,7 @@ public:
 	PathfindingState m_PathfindingState;
 	HexType m_HexType;
 	std::vector<Hex*> m_pNeighbours;
+	std::vector<Hex*> m_pPath;
 
 	//Getters
 	glm::vec3 getCubeCoordinate();
@@ -69,6 +70,7 @@ public:
 	bool getOccupied();
 	Merc* getOccupier();
 	float getGlobalValue() const;
+	Hex* getParentHex();
 
 	//Setters
 	void setInteractiveState(InteractiveState newstate);
@@ -76,6 +78,7 @@ public:
 	void setMouseState(MouseState newstate);
 	void setOccupied(bool newbool);
 	void setOccupier(Merc* newunit);
+	void setParentHex(Hex* newhex);
 
 	//Maths
 	Hex Hex_add(Hex a, Hex b);
@@ -86,14 +89,21 @@ public:
 	bool mouseCol();
 	void BuildHex();
 	float computeGlobalValue(const glm::vec3 goal_location);
+	void aStarpathfinding(Hex* end);
 
 	glm::vec3 directions[6];
 private:
 	Label* m_pValueLabel;
 
+	std::list<Hex*> m_pOpenList;
+	std::vector<Hex*> m_pClosedList;
+	Hex* m_pHexParent;
+
+	int m_pHexCost;
 	bool m_pOccupied;
 	Merc* m_Occupier;
 	bool mouseHover;
 	float m_globalGoalValue;
+	float m_localGoalValue = 0;
 };
 

@@ -5,7 +5,6 @@
 #include <sstream>
 #include <iomanip>
 
-
 glm::vec2 hex_to_pixel(Layout layout, glm::vec3 h) {
 	const Orientation& M = layout.orientation;
 	double x = (M.f0 * h.x + M.f1 * h.y) * layout.size.x;
@@ -49,7 +48,6 @@ void Hex::draw()
 {
 	const int xComponent = getPosition().x - getCamPosition().x;
 	const int yComponent = getPosition().y - getCamPosition().y;
-    SDL_Rect rectangle = { xComponent,yComponent,64,64 };
 
     TheTextureManager::Instance()->drawHex("hex", xComponent, yComponent, Engine::Instance().GetRenderer(), 0, (int)m_HexType, (int)m_InteractiveState);
     if (m_MouseState != STATE_OFF)
@@ -136,6 +134,11 @@ float Hex::getGlobalValue() const
 	return m_globalGoalValue;
 }
 
+Hex* Hex::getParentHex()
+{
+	return m_pHexParent;
+}
+
 void Hex::setInteractiveState(InteractiveState newstate)
 {
 	m_InteractiveState = newstate;
@@ -159,6 +162,11 @@ void Hex::setOccupied(bool newbool)
 void Hex::setOccupier(Merc* newunit)
 {
 	m_Occupier = newunit;
+}
+
+void Hex::setParentHex(Hex* newhex)
+{
+	m_pHexParent = newhex;
 }
 
 Hex::PathfindingState Hex::getPathfindingState()
@@ -211,14 +219,17 @@ void Hex::BuildHex()
 	case PLAINS:
 		m_InteractiveState = INITIAL;
 		m_PathfindingState = UNVISITED;
+		m_pHexCost = 1;
 		break;
 	case WALL:
 		m_InteractiveState = INITIAL;
 		m_PathfindingState = IMPASSABLE;
+		m_pHexCost = 0;
 		break;
 	case ROUGH:
 		m_InteractiveState = INITIAL;
 		m_PathfindingState = UNVISITED;
+		m_pHexCost = 2;
 		break;
 	}
 }
@@ -245,11 +256,73 @@ float Hex::computeGlobalValue(const glm::vec3 goal_location)
 			 var ac = offset_to_cube(a)
 			 var bc = offset_to_cube(b)
 			 return cube_distance(ac, bc)*/
-	float g = 1;
+	float g = m_pHexCost - 1.0f;
 
-	m_globalGoalValue = h;
-
-
+	m_globalGoalValue = h + g;
 
 	return m_globalGoalValue;
+}
+
+void Hex::aStarpathfinding(Hex* end)
+{
+	Hex* current_hex = this;
+
+	m_pOpenList.push_back(current_hex);
+	std::vector<Hex*> visited;
+
+	while (!m_pOpenList.empty() && current_hex != end)
+	{
+		m_pOpenList.sort([](const Hex* lhs, const Hex* rhs) {return lhs->getGlobalValue() < rhs->getGlobalValue(); });
+
+		for (auto hex : visited)
+		{
+			if (!m_pOpenList.empty() && m_pOpenList.front() == hex)
+				m_pOpenList.pop_front();
+		}
+
+		if (m_pOpenList.empty())
+			break;
+
+		current_hex = m_pOpenList.front();
+		visited.push_back(current_hex);
+
+		std::vector<Hex*> adjacent = current_hex->getNeighbours();
+		for (auto hex : adjacent)
+		{
+			if (hex != nullptr)
+			{
+				if (hex == end)
+				{
+					hex->setParentHex(current_hex);
+					Hex* current = end;
+					while (current->getParentHex() != nullptr)
+					{
+						m_pPath.push_back(current);
+						current = current->getParentHex();
+					}
+
+					current_hex = hex;
+					break;
+				}
+				for (auto visitedhex : visited)
+				{
+					if (hex != visitedhex && hex->getPathfindingState() != IMPASSABLE)
+					{
+						m_pOpenList.push_back(hex);
+					}
+					else
+						continue;
+				}
+
+				float tempLocal = current_hex->m_localGoalValue + current_hex->m_pHexCost;
+
+				if (tempLocal < hex->m_localGoalValue)
+				{
+					hex->setParentHex(current_hex);
+					hex->m_localGoalValue = tempLocal;
+					hex->m_globalGoalValue = hex->computeGlobalValue(end->getCubeCoordinate()) + hex->m_localGoalValue;
+				}
+			}
+		}
+	}
 }

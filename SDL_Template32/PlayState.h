@@ -9,6 +9,7 @@
 #include "Hex.h"
 #include "Merc.h"
 #include "UnitProfile.h"
+
 enum TurnState 
 {
 	START,
@@ -42,7 +43,7 @@ private:
 
 	Hex* m_pSelectedHex;
 	int counter;
-	int m_mapRadius = 4;
+	int m_mapRadius = 8;
 public:
 	TurnState current_state;
 	GameState();
@@ -64,7 +65,6 @@ public:
 	void TurnFacing();
 	void TurnEnd();
 
-
 	//Inherited functions
 	void Enter();
 	void Update();
@@ -72,4 +72,7 @@ public:
 	void Render();
 	void Exit();
 	void Resume();
+
+	//Other Hex Operators
+	std::vector<Hex*> ReachableHexs(Hex* start, int movement);
 };
