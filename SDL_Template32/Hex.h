@@ -71,6 +71,7 @@ public:
 	Merc* getOccupier();
 	float getGlobalValue() const;
 	Hex* getParentHex();
+	int getCost();
 
 	//Setters
 	void setInteractiveState(InteractiveState newstate);

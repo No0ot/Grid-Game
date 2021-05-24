@@ -150,7 +150,7 @@
     <ClCompile Include="Job.cpp" />
     <ClCompile Include="Label.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Map.cpp" />
+    <ClCompile Include="HexMap.cpp" />
     <ClCompile Include="Merc.cpp" />
     <ClCompile Include="PlayState.cpp" />
     <ClCompile Include="State.cpp" />
@@ -181,7 +181,7 @@
     <ClInclude Include="Job.h" />
     <ClInclude Include="JobEnum.h" />
     <ClInclude Include="Label.h" />
-    <ClInclude Include="Map.h" />
+    <ClInclude Include="HexMap.h" />
     <ClInclude Include="Merc.h" />
     <ClInclude Include="PlayState.h" />
     <ClInclude Include="resource.h" />

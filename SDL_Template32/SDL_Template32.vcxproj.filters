@@ -111,7 +111,7 @@
     <ClCompile Include="Hex.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Map.cpp">
+    <ClCompile Include="HexMap.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
   </ItemGroup>
@@ -206,7 +206,7 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Map.h">
+    <ClInclude Include="HexMap.h">
       <Filter>Objects</Filter>
     </ClInclude>
   </ItemGroup>

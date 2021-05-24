@@ -139,6 +139,11 @@ Hex* Hex::getParentHex()
 	return m_pHexParent;
 }
 
+int Hex::getCost()
+{
+	return m_pHexCost;
+}
+
 void Hex::setInteractiveState(InteractiveState newstate)
 {
 	m_InteractiveState = newstate;

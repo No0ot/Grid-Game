@@ -8,72 +8,14 @@ using namespace std;
 // Begin GameState.
 GameState::GameState() : current_state(START) {}
 
-void GameState::BuildHexGrid()
-{
-	int map_radius = m_mapRadius;
-	for (int q = -map_radius; q <= map_radius; q++) {
-		int r1 = max(-map_radius, -q - map_radius);
-		int r2 = min(map_radius, -q + map_radius);
-		for (int r = r1; r <= r2; r++) {
-			m_pHexGrid.push_back(new Hex(q, r, -q - r));
-		}
-	}
-}
-
-Hex* GameState::returnHex(glm::vec3 search)
-{
-	Hex* temp = NULL;
-
-	for (auto hex : m_pHexGrid)
-	{
-		if (hex->getCubeCoordinate() == search)
-		{
-			temp = hex;
-		}
-	}
-
-	return temp;
-}
-
-void GameState::MapGrid()
-{
-	for (auto hex : m_pHexGrid)
-	{
-		for (auto neighbour : hex->directions)
-		{
-			float x = hex->getCubeCoordinate().x + neighbour.x;
-			float y = hex->getCubeCoordinate().y + neighbour.y;
-			float z = hex->getCubeCoordinate().z + neighbour.z;
-
-			if (x < m_mapRadius + 1.0f && x > -m_mapRadius - 1.0f && y < m_mapRadius + 1.0f && y > -m_mapRadius - 1.0f && z < m_mapRadius + 1.0f && z > -m_mapRadius - 1.0f)
-			{
-				Hex* temp = returnHex(glm::vec3(x, y, z));
-				hex->m_pNeighbours.push_back(temp);
-			}
-		}
-	}
-}
-
-void GameState::ResetHexs()
-{
-	m_pHexList.clear();
-	m_pThreatenedHexes.clear();
-	for (int count = 0; count < (int)m_pHexGrid.size(); count++)
-	{
-		m_pHexGrid[count]->setInteractiveState(Hex::INITIAL);
-		m_pHexGrid[count]->setMouseState(Hex::STATE_OFF);
-	}
-	//std::cout << " HEXES RESET " << std::endl;
-}
-
 int GameState::SpawnObjects(Unit* spawned_object)
 {
 	Hex* randomHex = nullptr;
 	auto randomHexIndex = 0;
 	do
 	{
-		randomHexIndex = int(Util::RandomRange(0, m_pHexGrid.size() - 1));
-		randomHex = m_pHexGrid[randomHexIndex];
+		randomHexIndex = int(Util::RandomRange(0, m_pHexGrid.ReturnGrid().size() - 1));
+		randomHex = m_pHexGrid.ReturnGrid()[randomHexIndex];
 	} while (randomHex->getPathfindingState() != Hex::PathfindingState::UNVISITED); // search for empty tile
 
 
@@ -95,10 +37,10 @@ void GameState::AddHexestoList()
 
 void GameState::drawGameBoard()
 {
-	for (int count = 0; count < (int)m_pHexGrid.size(); count++)
+	for (int count = 0; count < (int)m_pHexGrid.ReturnGrid().size(); count++)
 	{
-		m_pHexGrid[count]->setCamPosition(m_GameCamera->getPosition());
-		m_pHexGrid[count]->draw();
+		m_pHexGrid.ReturnGrid()[count]->setCamPosition(m_GameCamera->getPosition());
+		m_pHexGrid.ReturnGrid()[count]->draw();
 	}
 
 	for (auto merc : m_Player2MercVec)
@@ -133,7 +75,7 @@ void GameState::InitializeButtons()
 		});
 	m_MoveButton->addEventListener(MOUSE_OVER, [&]()-> void
 		{
-			for (auto hex : m_pHexGrid)
+			for (auto hex : m_pHexGrid.ReturnGrid())
 			{
 				if (m_AttackButton->m_state != INACTIVE)
 				{
@@ -148,7 +90,7 @@ void GameState::InitializeButtons()
 		});
 	m_MoveButton->addEventListener(MOUSE_OUT, [&]()-> void
 		{
-			ResetHexs();
+			m_pHexGrid.ResetHexs();
 		});
 	m_AttackButton = new Button("Img/attack token.png", "AttackButton", glm::vec2(500, 650), true, BUTTON);
 	m_AttackButton->addEventListener(CLICK, [&]()-> void
@@ -157,7 +99,7 @@ void GameState::InitializeButtons()
 		});
 	m_AttackButton->addEventListener(MOUSE_OVER, [&]()-> void
 		{
-			for (auto hex : m_pHexGrid)
+			for (auto hex : m_pHexGrid.ReturnGrid())
 			{
 				if (hex != nullptr && hex->getGlobalValue() <= m_CurrentMerc->getJob()->getAttackRange())
 				{
@@ -167,7 +109,7 @@ void GameState::InitializeButtons()
 		});
 	m_AttackButton->addEventListener(MOUSE_OUT, [&]()-> void
 		{
-			ResetHexs();
+			m_pHexGrid.ResetHexs();
 		});
 	m_AbilityButton = new Button("Img/ability token.png", "AbilityButton", glm::vec2(600, 650), true, BUTTON);
 	m_AbilityButton->m_state = INACTIVE;
@@ -180,7 +122,7 @@ void GameState::InitializeButtons()
 
 void GameState::TurnStart()
 {
-	ResetHexs();
+	m_pHexGrid.ResetHexs();
 	m_CurrentMerc = nullptr;
 	m_CurrentMerc = m_turnOrder.front();
 	m_CurrentMerc->setState(Unit::State::ACTIVE);
@@ -201,7 +143,7 @@ void GameState::TurnStart()
 		counter = 0;
 	}
 
-	for (auto hex : m_pHexGrid)
+	for (auto hex : m_pHexGrid.ReturnGrid())
 	{
 		hex->computeGlobalValue(m_CurrentMerc->getHex()->getCubeCoordinate());
 	}
@@ -214,7 +156,7 @@ void GameState::TurnIdle()
 
 void GameState::TurnMove()
 {
-	for (auto hex : m_pHexGrid)
+	for (auto hex : m_pHexGrid.ReturnGrid())
 	{
 		if (m_AttackButton->m_state != INACTIVE)
 		{
@@ -227,32 +169,32 @@ void GameState::TurnMove()
 				hex->setInteractiveState(Hex::DASH);
 	}
 
-	for (int count = 0; count < (int)m_pHexGrid.size(); count++)
+	for (int count = 0; count < (int)m_pHexGrid.ReturnGrid().size(); count++)
 	{
 
-		if (m_pHexGrid[count]->getMouseState() == Hex::MouseState::STATE_SELECTED && m_pHexGrid[count]->getOccupied() != true && m_pHexGrid[count]->getInteractiveState() == Hex::DASH)
+		if (m_pHexGrid.ReturnGrid()[count]->getMouseState() == Hex::MouseState::STATE_SELECTED && m_pHexGrid.ReturnGrid()[count]->getOccupied() != true && m_pHexGrid.ReturnGrid()[count]->getInteractiveState() == Hex::DASH)
 		{
 			Hex* tempHex;
-			tempHex = m_pHexGrid[count];
+			tempHex = m_pHexGrid.ReturnGrid()[count];
 			m_CurrentMerc->getHex()->setOccupied(false);
 			m_CurrentMerc->getHex()->setOccupier(nullptr);
 			m_CurrentMerc->setHex(tempHex);
 			tempHex->setOccupier(m_CurrentMerc);
 			//std::cout << m_CurrentMerc->getName() <<" MOVED TO HEX: " << m_CurrentMerc->getHex()->getGridPosition().x << " " << m_CurrentMerc->getHex()->getGridPosition().y << std::endl;
-			ResetHexs();
+			m_pHexGrid.ResetHexs();
 			m_MoveButton->m_state = INACTIVE;
 			current_state = IDLE;
 		}
-		else if (m_pHexGrid[count]->getMouseState() == Hex::MouseState::STATE_SELECTED && m_pHexGrid[count]->getOccupied() != true && m_pHexGrid[count]->getInteractiveState() == Hex::RUN)
+		else if (m_pHexGrid.ReturnGrid()[count]->getMouseState() == Hex::MouseState::STATE_SELECTED && m_pHexGrid.ReturnGrid()[count]->getOccupied() != true && m_pHexGrid.ReturnGrid()[count]->getInteractiveState() == Hex::RUN)
 		{
 			Hex* tempHex;
-			tempHex = m_pHexGrid[count];
+			tempHex = m_pHexGrid.ReturnGrid()[count];
 			m_CurrentMerc->getHex()->setOccupied(false);
 			m_CurrentMerc->getHex()->setOccupier(nullptr);
 			m_CurrentMerc->setHex(tempHex);
 			tempHex->setOccupier(m_CurrentMerc);
 			//std::cout << m_CurrentMerc->getName() << " MOVED TO HEX: " << m_CurrentMerc->getHex()->getGridPosition().x << " " << m_CurrentMerc->getHex()->getGridPosition().y << std::endl;
-			ResetHexs();
+			m_pHexGrid.ResetHexs();
 			m_MoveButton->m_state = INACTIVE;
 			m_AttackButton->m_state = INACTIVE;
 			current_state = IDLE;
@@ -264,7 +206,7 @@ void GameState::TurnMove()
 void GameState::TurnAttack()
 {
 	// Get closest target in range with highest threat
-	for (auto hex : m_pHexGrid)
+	for (auto hex : m_pHexGrid.ReturnGrid())
 	{
 		if (hex->getOccupied() == true && hex->getGlobalValue() <= m_CurrentMerc->getJob()->getAttackRange() && hex != m_CurrentMerc->getHex() && hex->getOccupier()->getOwner() != m_CurrentMerc->getOwner())
 		{
@@ -278,7 +220,7 @@ void GameState::TurnAttack()
 
 	if (m_pSelectedHex == nullptr)
 	{
-		ResetHexs();
+		m_pHexGrid.ResetHexs();
 		m_AttackButton->m_state = INACTIVE;
 		current_state = IDLE;
 	}
@@ -289,7 +231,7 @@ void GameState::TurnAttack()
 		{
 			merc->setState(Unit::State::TARGET);
 			m_CurrentMerc->attack(merc);
-			ResetHexs();
+			m_pHexGrid.ResetHexs();
 			m_pSelectedHex = nullptr;
 			m_AttackButton->m_state = INACTIVE;
 			current_state = IDLE;
@@ -329,7 +271,7 @@ void GameState::TurnFacing()
 			m_turnOrder.push_back(m_CurrentMerc);
 			m_turnOrder.pop_front();
 			m_CurrentMerc->setState(Unit::State::NO_STATE);
-			ResetHexs();
+			m_pHexGrid.ResetHexs();
 			current_state = START;
 		}
 	}
@@ -342,8 +284,8 @@ void GameState::TurnEnd()
 void GameState::Enter()
 {
 	//cout << "Entering Game..." << endl;
-	BuildHexGrid();
-	MapGrid();
+	m_pHexGrid.BuildHexGrid();
+	m_pHexGrid.MapGrid();
 	mouseDown = false;
 	counter = 0;
 	m_ActiveUnitProfile = new UnitProfile(glm::vec2(20, 550));
@@ -404,7 +346,7 @@ void GameState::Update()
 	//	std::cout << " FACEING STATE" << std::endl;
 
 	//std::cout << " updating..." << std::endl;
-	for (auto hex : m_pHexGrid)
+	for (auto hex : m_pHexGrid.ReturnGrid())
 	{
 		hex->update();
 

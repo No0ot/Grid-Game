@@ -4,7 +4,7 @@
 #include "Camera.h"
 
 //Game Objects
-//#include "Hex.h"
+#include "HexMap.h"
 #include "Button.h"
 #include "Hex.h"
 #include "Merc.h"
@@ -24,15 +24,19 @@ enum TurnState
 class GameState : public State
 {
 private:
-	std::vector<Hex*> m_pHexGrid;
+	//HexMap Variables
+	HexMap m_pHexGrid;
+	//std::vector<Hex*> m_pHexGrid;
 	std::vector<Hex*> m_pHexList;
 	std::list<Hex*> m_pThreatenedHexes;
+	//Player Character References
 	std::vector<Merc*> m_Player1MercVec;
 	std::vector<Merc*> m_Player2MercVec;
 	Merc* m_CurrentMerc;
 	Merc* m_Player1Merc;
 	Merc* m_Player2Merc;
 	std::list<Merc*> m_turnOrder;
+	//UI References
 	UnitProfile* m_ActiveUnitProfile;
 	UnitProfile* m_HoverUnitProfile;
 	Button* m_MoveButton;
@@ -47,10 +51,7 @@ private:
 public:
 	TurnState current_state;
 	GameState();
-	void BuildHexGrid();
-	Hex* returnHex(glm::vec3 search);
-	void MapGrid();
-	void ResetHexs();
+	
 	int SpawnObjects(Unit* spawned_object);
 	void AddHexestoList();
 	void drawGameBoard();
