@@ -66,6 +66,8 @@ void HexMap::ResetHexs()
 	{
 		m_pHexGrid[count]->setInteractiveState(Hex::INITIAL);
 		m_pHexGrid[count]->setMouseState(Hex::STATE_OFF);
+		m_pHexGrid[count]->b_visited = false;
+		m_pHexGrid[count]->setLocalValue(INFINITY);
 	}
 }
 
@@ -74,28 +76,47 @@ std::vector<Hex*> HexMap::ReturnGrid()
 	return m_pHexGrid;
 }
 
-std::unordered_map<Hex*, Hex*> HexMap::GetReachableHexs(Hex* startingHex, int Movement)
+std::vector<Hex*> HexMap::GetReachableHexs(Hex* startingHex, int Movement)
 {
 	//Get the current hex and add it to the visited Hexs
-	std::queue<Hex*> frontier;
-	frontier.push(startingHex);
+	std::list<Hex*> frontier;
+	frontier.push_back(startingHex);
+	Hex* current = frontier.front();
+	current->setLocalValue(0.0f);
 
-	std::unordered_map<Hex*, Hex*> came_from;
-	came_from[startingHex] = startingHex;
+	std::vector<Hex*> reached;
+	//reached.push_back(startingHex);
 	//int cost_so_far = 0;
-	while (!frontier.empty())
+	while (!frontier.empty() && current->getLocalValue() < Movement)
 	{
-		Hex* current = frontier.front();
-		frontier.pop();
+		frontier.sort([](const Hex* lhs, const Hex* rhs) {return lhs->getLocalValue() < rhs->getLocalValue(); });
+
+		while(!frontier.empty() && frontier.front()->b_visited)
+			frontier.pop_front();
+
+		if (frontier.empty())
+			break;
+
+		current = frontier.front();
+		current->b_visited = true;
 
 		for (Hex* next : current->getNeighbours())
 		{
-			if (came_from.find(next) == came_from.end())
+			float templocal = current->getLocalValue() + next->getCost();
+			if (next->getPathfindingState() != Hex::IMPASSABLE && templocal < next->getLocalValue())
 			{
-				frontier.push(next);
-				came_from[next] = current;
+				next->setLocalValue(templocal);
 			}
+
+			if (next->getPathfindingState() != Hex::IMPASSABLE && !next->b_visited && next->getLocalValue() <= Movement)
+			{
+				frontier.push_front(next);
+				reached.push_back(next);
+			}
+			else
+				continue;
+
 		}
 	}
-	return came_from;
+	return reached;
 }

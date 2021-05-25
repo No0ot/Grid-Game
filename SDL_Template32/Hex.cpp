@@ -69,7 +69,7 @@ void Hex::update()
 	onLeftMouseButtonClick();
 
 	std::ostringstream tempLabel;
-	tempLabel << std::fixed << std::setprecision(1) << m_globalGoalValue;
+	tempLabel << std::fixed << std::setprecision(1) << m_localGoalValue;
 	const auto labelstring = tempLabel.str();
 	m_pValueLabel->setText(labelstring);
 }
@@ -134,6 +134,11 @@ float Hex::getGlobalValue() const
 	return m_globalGoalValue;
 }
 
+float Hex::getLocalValue() const
+{
+	return m_localGoalValue;
+}
+
 Hex* Hex::getParentHex()
 {
 	return m_pHexParent;
@@ -172,6 +177,11 @@ void Hex::setOccupier(Merc* newunit)
 void Hex::setParentHex(Hex* newhex)
 {
 	m_pHexParent = newhex;
+}
+
+void Hex::setLocalValue(float newvalue)
+{
+	m_localGoalValue = newvalue;
 }
 
 Hex::PathfindingState Hex::getPathfindingState()

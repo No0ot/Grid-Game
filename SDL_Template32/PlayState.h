@@ -40,6 +40,7 @@ private:
 	UnitProfile* m_ActiveUnitProfile;
 	UnitProfile* m_HoverUnitProfile;
 	Button* m_MoveButton;
+	bool MoveClicked = false;
 	Button* m_AttackButton;
 	Button* m_AbilityButton;
 	Button* m_EndButton;

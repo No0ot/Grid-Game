@@ -70,6 +70,7 @@ public:
 	bool getOccupied();
 	Merc* getOccupier();
 	float getGlobalValue() const;
+	float getLocalValue() const;
 	Hex* getParentHex();
 	int getCost();
 
@@ -80,6 +81,7 @@ public:
 	void setOccupied(bool newbool);
 	void setOccupier(Merc* newunit);
 	void setParentHex(Hex* newhex);
+	void setLocalValue(float newvalue);
 
 	//Maths
 	Hex Hex_add(Hex a, Hex b);
@@ -93,6 +95,7 @@ public:
 	void aStarpathfinding(Hex* end);
 
 	glm::vec3 directions[6];
+	bool b_visited;
 private:
 	Label* m_pValueLabel;
 
@@ -105,6 +108,6 @@ private:
 	Merc* m_Occupier;
 	bool mouseHover;
 	float m_globalGoalValue;
-	float m_localGoalValue = 0;
+	float m_localGoalValue = INFINITY;
 };
 

@@ -72,21 +72,49 @@ void GameState::InitializeButtons()
 	m_MoveButton = new Button("Img/move token.png", "MoveButton", glm::vec2(400, 650), true, BUTTON);
 	m_MoveButton->addEventListener(CLICK, [&]()-> void
 		{
+			MoveClicked = !MoveClicked;
 			current_state = MOVE;
-		});
-	m_MoveButton->addEventListener(MOUSE_OVER, [&]()-> void
-		{
-			std::unordered_map<Hex*, Hex*> temp = m_pHexGrid.GetReachableHexs(m_CurrentMerc->getHex(), 4);
+			std::vector<Hex*> temp = m_pHexGrid.GetReachableHexs(m_CurrentMerc->getHex(), m_CurrentMerc->getJob()->getMoveRange());
+			std::vector<Hex*> temp2 = m_pHexGrid.GetReachableHexs(m_CurrentMerc->getHex(), m_CurrentMerc->getJob()->getDashRange());
+
 
 			for (auto hex : temp)
 			{
-				hex.first->setInteractiveState(Hex::RUN);
+				hex->setInteractiveState(Hex::RUN);
+
+			}
+			for (auto hex : temp2)
+			{
+				hex->setInteractiveState(Hex::DASH);
+			}
+		});
+	m_MoveButton->addEventListener(MOUSE_OVER, [&]()-> void
+		{
+			if (!MoveClicked)
+			{
+				std::vector<Hex*> temp = m_pHexGrid.GetReachableHexs(m_CurrentMerc->getHex(), m_CurrentMerc->getJob()->getMoveRange());
+				m_pHexGrid.ResetHexs();
+				std::vector<Hex*> temp2 = m_pHexGrid.GetReachableHexs(m_CurrentMerc->getHex(), m_CurrentMerc->getJob()->getDashRange());
+
+				for (auto hex : temp)
+				{
+					hex->setInteractiveState(Hex::RUN);
+				}
+				for (auto hex : temp2)
+				{
+					hex->setInteractiveState(Hex::DASH);
+				}
+
 			}
 		});
 	m_MoveButton->addEventListener(MOUSE_OUT, [&]()-> void
 		{
-			m_pHexGrid.ResetHexs();
+			if (!MoveClicked)
+			{
+				m_pHexGrid.ResetHexs();
+			}
 		});
+
 	m_AttackButton = new Button("Img/attack token.png", "AttackButton", glm::vec2(500, 650), true, BUTTON);
 	m_AttackButton->addEventListener(CLICK, [&]()-> void
 		{
@@ -106,8 +134,10 @@ void GameState::InitializeButtons()
 		{
 			m_pHexGrid.ResetHexs();
 		});
+
 	m_AbilityButton = new Button("Img/ability token.png", "AbilityButton", glm::vec2(600, 650), true, BUTTON);
 	m_AbilityButton->m_state = INACTIVE;
+
 	m_EndButton = new Button("Img/end token.png", "EndButton", glm::vec2(700, 650), true, BUTTON);
 	m_EndButton->addEventListener(CLICK, [&]()-> void
 		{
@@ -151,18 +181,18 @@ void GameState::TurnIdle()
 
 void GameState::TurnMove()
 {
-	for (auto hex : m_pHexGrid.ReturnGrid())
-	{
-		if (m_AttackButton->m_state != INACTIVE)
-		{
-			if (hex != nullptr && hex->getPathfindingState() != Hex::PathfindingState::IMPASSABLE && hex->getGlobalValue() <= m_CurrentMerc->getJob()->getMoveRange())
-			{
-				hex->setInteractiveState(Hex::RUN);
-			}
-		}
-			if (hex != nullptr && hex->getPathfindingState() != Hex::PathfindingState::IMPASSABLE && hex->getGlobalValue() <= m_CurrentMerc->getJob()->getDashRange())
-				hex->setInteractiveState(Hex::DASH);
-	}
+	//for (auto hex : m_pHexGrid.ReturnGrid())
+	//{
+	//	if (m_AttackButton->m_state != INACTIVE)
+	//	{
+	//		if (hex != nullptr && hex->getPathfindingState() != Hex::PathfindingState::IMPASSABLE && hex->getGlobalValue() <= m_CurrentMerc->getJob()->getMoveRange())
+	//		{
+	//			hex->setInteractiveState(Hex::RUN);
+	//		}
+	//	}
+	//		if (hex != nullptr && hex->getPathfindingState() != Hex::PathfindingState::IMPASSABLE && hex->getGlobalValue() <= m_CurrentMerc->getJob()->getDashRange())
+	//			hex->setInteractiveState(Hex::DASH);
+	//}
 
 	for (int count = 0; count < (int)m_pHexGrid.ReturnGrid().size(); count++)
 	{

@@ -7,7 +7,7 @@ class HexMap
 private:
 
 	std::vector<Hex*> m_pHexGrid;
-	int m_mapRadius = 4;
+	int m_mapRadius = 8;
 
 public:
 
@@ -20,6 +20,6 @@ public:
 	void ResetHexs();
 	std::vector<Hex*> ReturnGrid();
 
-	std::unordered_map<Hex*, Hex*> GetReachableHexs(Hex* startingHex, int Movement);
+	std::vector<Hex*> GetReachableHexs(Hex* startingHex, int Movement);
 
 };
