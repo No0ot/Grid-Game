@@ -74,19 +74,7 @@ void GameState::InitializeButtons()
 		{
 			MoveClicked = !MoveClicked;
 			current_state = MOVE;
-			std::vector<Hex*> temp = m_pHexGrid.GetReachableHexs(m_CurrentMerc->getHex(), m_CurrentMerc->getJob()->getMoveRange());
-			std::vector<Hex*> temp2 = m_pHexGrid.GetReachableHexs(m_CurrentMerc->getHex(), m_CurrentMerc->getJob()->getDashRange());
-
-
-			for (auto hex : temp)
-			{
-				hex->setInteractiveState(Hex::RUN);
-
-			}
-			for (auto hex : temp2)
-			{
-				hex->setInteractiveState(Hex::DASH);
-			}
+			
 		});
 	m_MoveButton->addEventListener(MOUSE_OVER, [&]()-> void
 		{
@@ -148,6 +136,8 @@ void GameState::InitializeButtons()
 void GameState::TurnStart()
 {
 	m_pHexGrid.ResetHexs();
+	if (MoveClicked)
+		MoveClicked = false;
 	m_CurrentMerc = nullptr;
 	m_CurrentMerc = m_turnOrder.front();
 	m_CurrentMerc->setState(Unit::State::ACTIVE);

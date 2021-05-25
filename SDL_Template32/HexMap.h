@@ -21,5 +21,7 @@ public:
 	std::vector<Hex*> ReturnGrid();
 
 	std::vector<Hex*> GetReachableHexs(Hex* startingHex, int Movement);
+	float DistancebetweenHexs(Hex* a, Hex* b);
+	std::vector<Hex*> HexLineDraw(Hex* a, Hex* b);
 
 };

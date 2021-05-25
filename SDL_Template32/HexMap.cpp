@@ -120,3 +120,17 @@ std::vector<Hex*> HexMap::GetReachableHexs(Hex* startingHex, int Movement)
 	}
 	return reached;
 }
+
+float HexMap::DistancebetweenHexs(Hex* a, Hex* b)
+{
+
+	std::cout << max(abs(a->getCubeCoordinate().x - b->getCubeCoordinate().x),
+			abs(a->getCubeCoordinate().y - b->getCubeCoordinate().y),
+			abs(a->getCubeCoordinate().z - b->getCubeCoordinate().z));
+	return 0.0f;
+}
+
+std::vector<Hex*> HexMap::HexLineDraw(Hex* a, Hex* b)
+{
+	return std::vector<Hex*>();
+}
