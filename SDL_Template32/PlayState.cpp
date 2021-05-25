@@ -3,6 +3,7 @@
 #include "Engine.h"
 #include <algorithm>
 #include "EventManager.h"
+#include <unordered_map>
 using namespace std;
 
 // Begin GameState.
@@ -75,17 +76,11 @@ void GameState::InitializeButtons()
 		});
 	m_MoveButton->addEventListener(MOUSE_OVER, [&]()-> void
 		{
-			for (auto hex : m_pHexGrid.ReturnGrid())
+			std::unordered_map<Hex*, Hex*> temp = m_pHexGrid.GetReachableHexs(m_CurrentMerc->getHex(), 4);
+
+			for (auto hex : temp)
 			{
-				if (m_AttackButton->m_state != INACTIVE)
-				{
-					if (hex != nullptr && hex->getPathfindingState() != Hex::PathfindingState::IMPASSABLE && hex->getGlobalValue() <= m_CurrentMerc->getJob()->getMoveRange())
-					{
-						hex->setInteractiveState(Hex::RUN);
-					}
-				}
-				if (hex != nullptr && hex->getPathfindingState() != Hex::PathfindingState::IMPASSABLE && hex->getGlobalValue() <= m_CurrentMerc->getJob()->getDashRange())
-					hex->setInteractiveState(Hex::DASH);
+				hex.first->setInteractiveState(Hex::RUN);
 			}
 		});
 	m_MoveButton->addEventListener(MOUSE_OUT, [&]()-> void

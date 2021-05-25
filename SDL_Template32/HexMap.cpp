@@ -1,5 +1,7 @@
 #include "HexMap.h"
 #include <algorithm>
+#include <queue>
+
 using namespace std;
 
 HexMap::HexMap()
@@ -72,35 +74,28 @@ std::vector<Hex*> HexMap::ReturnGrid()
 	return m_pHexGrid;
 }
 
-std::vector<Hex*> HexMap::GetReachableHexs(Hex* startingHex, int Movement)
+std::unordered_map<Hex*, Hex*> HexMap::GetReachableHexs(Hex* startingHex, int Movement)
 {
 	//Get the current hex and add it to the visited Hexs
-	Hex* current_hex = startingHex;
-	std::list<Hex*> visited;
-	visited.push_back(current_hex);
+	std::queue<Hex*> frontier;
+	frontier.push(startingHex);
 
-	std::list<Hex*> came_from;
-	int cost_so_far = 0;
-
-	for (int i = 0; i <= Movement; i++)
+	std::unordered_map<Hex*, Hex*> came_from;
+	came_from[startingHex] = startingHex;
+	//int cost_so_far = 0;
+	while (!frontier.empty())
 	{
-		if (!visited.empty())
-		{
-			current_hex = visited.front();
-		}
-		std::vector<Hex*> adjacent = current_hex->getNeighbours();
+		Hex* current = frontier.front();
+		frontier.pop();
 
-		for (auto hex : adjacent)
+		for (Hex* next : current->getNeighbours())
 		{
-			if (hex != nullptr)
+			if (came_from.find(next) == came_from.end())
 			{
-				int new_cost = cost_so_far + hex->getCost();
-
-
+				frontier.push(next);
+				came_from[next] = current;
 			}
 		}
-		
 	}
-
-	return visited;
+	return came_from;
 }
