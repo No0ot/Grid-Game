@@ -69,6 +69,7 @@ void GameState::drawUI()
 
 void GameState::InitializeButtons()
 {
+	// MOVE BUTTON INITIALIZATION
 	m_MoveButton = new Button("Img/move token.png", "MoveButton", glm::vec2(400, 650), true, BUTTON);
 	m_MoveButton->addEventListener(CLICK, [&]()-> void
 		{
@@ -103,6 +104,7 @@ void GameState::InitializeButtons()
 			}
 		});
 
+	// ATTACK BUTTON INITIALIZATION
 	m_AttackButton = new Button("Img/attack token.png", "AttackButton", glm::vec2(500, 650), true, BUTTON);
 	m_AttackButton->addEventListener(CLICK, [&]()-> void
 		{
@@ -110,24 +112,59 @@ void GameState::InitializeButtons()
 		});
 	m_AttackButton->addEventListener(MOUSE_OVER, [&]()-> void
 		{
-			for (auto hex : m_pHexGrid.ReturnGrid())
+			if (!MoveClicked)
 			{
-				if (hex != nullptr && hex->getGlobalValue() <= m_CurrentMerc->getJob()->getAttackRange())
+				for (auto hex : m_pHexGrid.ReturnGrid())
 				{
-					hex->setInteractiveState(Hex::THREAT);
+					if (hex != nullptr && hex->getGlobalValue() <= m_CurrentMerc->getJob()->getAttackRange())
+					{
+						m_pHexGrid.m_ThreatenedHexes.push_back(hex);
+					}
 				}
+
+				for (auto hex : m_pHexGrid.m_ThreatenedHexes)
+				{
+					if (m_pHexGrid.CheckLineofSight(m_pHexGrid.HexLineDraw(m_CurrentMerc->getHex(), hex)))
+					{
+						hex->setInteractiveState(Hex::THREAT);
+						if (hex->getOccupied() && hex->getOccupier()->getOwner() != m_CurrentMerc->getOwner())
+						{
+							m_pThreatenedMercs.push_back(hex->getOccupier());
+						}
+					}
+				}
+
+				m_pThreatenedMercs.sort([](const Merc* lhs, const Merc* rhs) {return lhs->getThreat() > rhs->getThreat(); });
+				if(!m_pThreatenedMercs.empty())
+					m_pThreatenedMercs.front()->setState(Unit::State::TARGET);
+			}
+			else
+			{
+				MoveClicked = !MoveClicked;
 			}
 		});
 	m_AttackButton->addEventListener(MOUSE_OUT, [&]()-> void
 		{
 			m_pHexGrid.ResetHexs();
+			if (!m_pThreatenedMercs.empty())
+				m_pThreatenedMercs.front()->setState(Unit::State::NO_STATE);
+			m_pThreatenedMercs.clear();
 		});
-
+	// ABILITY BUTTON INITIALIZATION
 	m_AbilityButton = new Button("Img/ability token.png", "AbilityButton", glm::vec2(600, 650), true, BUTTON);
 	m_AbilityButton->m_state = INACTIVE;
 
+	// END TURN INTIALIZATION
 	m_EndButton = new Button("Img/end token.png", "EndButton", glm::vec2(700, 650), true, BUTTON);
 	m_EndButton->addEventListener(CLICK, [&]()-> void
+		{
+			current_state = FACING;
+		});
+	m_EndButton->addEventListener(MOUSE_OVER, [&]()-> void
+		{
+			current_state = FACING;
+		});
+	m_EndButton->addEventListener(MOUSE_OUT, [&]()-> void
 		{
 			current_state = FACING;
 		});
@@ -167,23 +204,14 @@ void GameState::TurnStart()
 
 void GameState::TurnIdle()
 {
+	for (auto hex : m_pHexGrid.ReturnGrid())
+	{
+		hex->computeGlobalValue(m_CurrentMerc->getHex()->getCubeCoordinate());
+	}
 }
 
 void GameState::TurnMove()
 {
-	//for (auto hex : m_pHexGrid.ReturnGrid())
-	//{
-	//	if (m_AttackButton->m_state != INACTIVE)
-	//	{
-	//		if (hex != nullptr && hex->getPathfindingState() != Hex::PathfindingState::IMPASSABLE && hex->getGlobalValue() <= m_CurrentMerc->getJob()->getMoveRange())
-	//		{
-	//			hex->setInteractiveState(Hex::RUN);
-	//		}
-	//	}
-	//		if (hex != nullptr && hex->getPathfindingState() != Hex::PathfindingState::IMPASSABLE && hex->getGlobalValue() <= m_CurrentMerc->getJob()->getDashRange())
-	//			hex->setInteractiveState(Hex::DASH);
-	//}
-
 	for (int count = 0; count < (int)m_pHexGrid.ReturnGrid().size(); count++)
 	{
 
@@ -221,7 +249,7 @@ void GameState::TurnMove()
 void GameState::TurnAttack()
 {
 	// Get closest target in range with highest threat
-	for (auto hex : m_pHexGrid.ReturnGrid())
+	/*for (auto hex : m_pHexGrid.ReturnGrid())
 	{
 		if (hex->getOccupied() == true && hex->getGlobalValue() <= m_CurrentMerc->getJob()->getAttackRange() && hex != m_CurrentMerc->getHex() && hex->getOccupier()->getOwner() != m_CurrentMerc->getOwner())
 		{
@@ -247,6 +275,12 @@ void GameState::TurnAttack()
 			merc->setState(Unit::State::TARGET);
 			m_CurrentMerc->attack(merc);
 			m_pHexGrid.ResetHexs();
+
+			std::vector<Hex*> temp = m_pHexGrid.HexLineDraw(m_CurrentMerc->getHex(), merc->getHex());
+
+			for (auto hex : temp)
+				hex->setInteractiveState(Hex::THREAT);
+
 			m_pSelectedHex = nullptr;
 			m_AttackButton->m_state = INACTIVE;
 			current_state = IDLE;
@@ -256,6 +290,13 @@ void GameState::TurnAttack()
 			m_AttackButton->m_state = INACTIVE;
 			current_state = IDLE;
 		}
+	}*/
+	if (!m_pThreatenedMercs.empty())
+	{
+		m_CurrentMerc->attack(m_pThreatenedMercs.front());
+		m_pHexGrid.ResetHexs();
+		m_AttackButton->m_state = INACTIVE;
+		current_state = IDLE;
 	}
 }
 

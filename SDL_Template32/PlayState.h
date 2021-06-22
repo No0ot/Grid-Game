@@ -26,6 +26,7 @@ class GameState : public State
 private:
 	//HexMap Variables
 	HexMap m_pHexGrid;
+	std::list<Merc*> m_pThreatenedMercs;
 	//std::vector<Hex*> m_pHexGrid;
 	std::vector<Hex*> m_pHexList;
 	std::list<Hex*> m_pThreatenedHexes;
@@ -48,7 +49,6 @@ private:
 
 	Hex* m_pSelectedHex;
 	int counter;
-	int m_mapRadius = 8;
 public:
 	TurnState current_state;
 	GameState();

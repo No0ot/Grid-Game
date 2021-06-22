@@ -17,6 +17,7 @@ Merc::Merc(Jobenum job , Owner owner, int race, std::string name)
 	setResolve(m_Job->getBaseRes() + m_Race->getRaceRes());
 	setMaxHealth(50 + (getStrength() * 10));
 	setCurrentHealth(getMaxHealth());
+	m_Threat = m_Job->getBaseThreat();
 	
 	switch (m_Job->getPrimaryStat())
 	{
@@ -50,7 +51,7 @@ void Merc::draw()
 void Merc::update()
 {
 	setPosition( glm::vec2(getHex()->getPosition().x + 10 ,getHex()->getPosition().y + 5 ));
-	getHex()->setOccupied(true);
+	//getHex()->setOccupied(true);
 	updateFacing();
 	
 }
@@ -112,6 +113,11 @@ int Merc::getMainStat()
 Race* Merc::getRace()
 {
 	return m_Race;
+}
+
+int Merc::getThreat() const
+{
+	return m_Threat;
 }
 
 void Merc::setMaxHealth(float new_maxhealth)
@@ -185,6 +191,9 @@ void Merc::attack(Merc* targetUnit)
 		std::cout << this->getName() << " dealt " << damage << " damage to " << targetUnit->getName() << std::endl;
 		targetUnit->setCurrentHealth(targetUnit->getCurrentHealth() - damage);
 		std::cout << targetUnit->getName() << " has " << targetUnit->getCurrentHealth() << " health remaining." << std::endl;
+
+		m_Threat += damage;
+		std::cout << this->getName() << " Threat = " << this->getThreat() << std::endl;
 	}
 	else
 	{

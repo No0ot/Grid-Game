@@ -239,7 +239,7 @@ void Hex::BuildHex()
 	case WALL:
 		m_InteractiveState = INITIAL;
 		m_PathfindingState = IMPASSABLE;
-		m_pHexCost = 0;
+		m_pHexCost = 100;
 		break;
 	case ROUGH:
 		m_InteractiveState = INITIAL;
@@ -273,7 +273,7 @@ float Hex::computeGlobalValue(const glm::vec3 goal_location)
 			 return cube_distance(ac, bc)*/
 	float g = m_pHexCost - 1.0f;
 
-	m_globalGoalValue = h + g;
+	m_globalGoalValue = h;
 
 	return m_globalGoalValue;
 }

@@ -29,6 +29,7 @@ public:
 	std::string getName();
 	int getMainStat();
 	Race* getRace();
+	int getThreat() const;
 
 	//Setters
 	void setMaxHealth(float new_maxhealth);
@@ -61,7 +62,8 @@ private:
 		m_Concentration,
 		m_Resolve,
 		m_Initiative,
-		m_Mainstat;
+		m_Mainstat,
+		m_Threat;
 
 
 };

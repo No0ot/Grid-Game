@@ -62,6 +62,9 @@ void HexMap::MapGrid()
 
 void HexMap::ResetHexs()
 {
+	m_ThreatenedHexes.clear();
+	m_ThreatenedHexes.shrink_to_fit();
+
 	for (int count = 0; count < (int)m_pHexGrid.size(); count++)
 	{
 		m_pHexGrid[count]->setInteractiveState(Hex::INITIAL);
@@ -121,16 +124,72 @@ std::vector<Hex*> HexMap::GetReachableHexs(Hex* startingHex, int Movement)
 	return reached;
 }
 
-float HexMap::DistancebetweenHexs(Hex* a, Hex* b)
+int HexMap::DistancebetweenHexs(Hex* a, Hex* b)
 {
-
-	std::cout << max(abs(a->getCubeCoordinate().x - b->getCubeCoordinate().x),
-			abs(a->getCubeCoordinate().y - b->getCubeCoordinate().y),
-			abs(a->getCubeCoordinate().z - b->getCubeCoordinate().z));
-	return 0.0f;
+		return (abs(a->getCubeCoordinate().x - b->getCubeCoordinate().x) +
+				  abs(a->getCubeCoordinate().y - b->getCubeCoordinate().y) +
+				  abs(a->getCubeCoordinate().z - b->getCubeCoordinate().z)) / 2;
 }
 
 std::vector<Hex*> HexMap::HexLineDraw(Hex* a, Hex* b)
 {
-	return std::vector<Hex*>();
+	int distance = DistancebetweenHexs(a, b);
+	std::vector<Hex*> results;
+	double step = 1.0 / max(distance, 1);
+
+	for (int i = 1; i < distance; i++)
+	{
+		Hex* thing = HexRound(HexLerp(a, b, step * i));
+		//std::cout << thing->getCubeCoordinate().x << " " << thing->getCubeCoordinate().y << " " << thing->getCubeCoordinate().z << std::endl;
+		results.push_back(HexRound(HexLerp(a, b, step * i)));
+	}
+
+	return results;
+}
+
+bool HexMap::CheckLineofSight(std::vector<Hex*> line)
+{
+	for (auto hex : line)
+	{
+		if (hex->getPathfindingState() == Hex::IMPASSABLE)
+		{
+			return false;
+			break;
+		}
+	}
+	return true;
+}
+
+float HexMap::lerp(float a, float b, float t)
+{
+	return a + (b - a) * t;
+}
+
+glm::vec3 HexMap::HexLerp(Hex* a, Hex* b, float t)
+{
+	glm::vec3 temp = { lerp(a->getCubeCoordinate().x, b->getCubeCoordinate().x, t),
+					   lerp(a->getCubeCoordinate().y, b->getCubeCoordinate().y, t),
+					   lerp(a->getCubeCoordinate().z, b->getCubeCoordinate().z, t)};
+
+	return temp;
+}
+
+Hex* HexMap::HexRound(glm::vec3 cube)
+{
+	float rx = round(cube.x);
+	float ry = round(cube.y);
+	float rz = round(cube.z);
+
+	float x_diff = abs(rx - cube.x);
+	float y_diff = abs(ry - cube.y);
+	float z_diff = abs(rz - cube.z);
+
+	if (x_diff > y_diff && x_diff > z_diff)
+		rx = -ry - rz;
+	else if (y_diff > z_diff)
+		ry = -rx - rz;
+	else
+		rz = -rx - ry;
+
+	return returnHex(glm::vec3(rx,ry,rz));
 }

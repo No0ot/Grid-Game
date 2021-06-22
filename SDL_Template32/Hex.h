@@ -50,7 +50,7 @@ public:
 	void clean() override;
 
 	enum MouseState { STATE_OFF, STATE_HOVER, STATE_SELECTED };
-	enum InteractiveState { INITIAL, DASH, RUN, FACEING, THREAT };
+	enum InteractiveState { INITIAL, DASH, RUN, FACEING, RED, THREAT };
 	enum PathfindingState { NO_PATH, OPEN, CLOSED, START, GOAL, PATH, UNVISITED, IMPASSABLE };
 	enum HexType { PLAINS, WALL, ROUGH, RAISED };
 

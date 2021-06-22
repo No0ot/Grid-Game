@@ -18,6 +18,7 @@ Job::Job(Jobenum job)
 		setMoveRange(4);
 		setDashRange(1);
 		setAttackRange(4);
+		setBaseThreat(20);
 		m_Texturename = "Archer";
 		m_PrimaryStat = FINESSE;
 		break;
@@ -33,6 +34,7 @@ Job::Job(Jobenum job)
 		setMoveRange(6);
 		setDashRange(2);
 		setAttackRange(1);
+		setBaseThreat(50);
 		m_Texturename = "Barbarian";
 		m_PrimaryStat = STRENGTH;
 		break;
@@ -48,6 +50,7 @@ Job::Job(Jobenum job)
 		setMoveRange(4);
 		setDashRange(1);
 		setAttackRange(3);
+		setBaseThreat(25);
 		m_Texturename = "Mage";
 		m_PrimaryStat = CONCENTRATION;
 		break;
@@ -63,6 +66,7 @@ Job::Job(Jobenum job)
 		setMoveRange(4);
 		setDashRange(1);
 		setAttackRange(3);
+		setBaseThreat(15);
 		m_Texturename = "Priest";
 		m_PrimaryStat = RESOLVE;
 		break;
@@ -128,6 +132,11 @@ int Job::getMainStat()
 	return m_mainStat;
 }
 
+int Job::getBaseThreat()
+{
+	return m_baseThreat;
+}
+
 std::string Job::getTexturename()
 {
 	return m_Texturename;
@@ -191,4 +200,9 @@ void Job::setAttackRange(int attackrange)
 void Job::setMainStat(int mainstat)
 {
 	m_mainStat = mainstat;
+}
+
+void Job::setBaseThreat(int threat)
+{
+	m_baseThreat = threat;
 }
