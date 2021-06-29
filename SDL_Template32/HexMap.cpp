@@ -139,7 +139,6 @@ std::vector<Hex*> HexMap::HexLineDraw(Hex* a, Hex* b)
 
 	for (int i = 1; i < distance; i++)
 	{
-		Hex* thing = HexRound(HexLerp(a, b, step * i));
 		//std::cout << thing->getCubeCoordinate().x << " " << thing->getCubeCoordinate().y << " " << thing->getCubeCoordinate().z << std::endl;
 		results.push_back(HexRound(HexLerp(a, b, step * i)));
 	}

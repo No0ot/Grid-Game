@@ -1,8 +1,10 @@
 #include "Unit.h"
 #include "Hex.h"
+#include "Engine.h"
 
 Unit::Unit() : m_currentHex(nullptr), m_facingHex(nullptr)
 {
+	TheTextureManager::Instance()->load("Img/Death.png", "Death", Engine::Instance().GetRenderer());
 }
 
 Unit::~Unit()
@@ -27,6 +29,16 @@ void Unit::setHex(Hex* new_hex)
 Hex* Unit::getFacingHex() const
 {
 	return m_facingHex;
+}
+
+Hex* Unit::getAttackDirection() const
+{
+	return m_attackDirection;
+}
+
+void Unit::setAttackDirection(Hex* new_hex)
+{
+	m_attackDirection = new_hex;
 }
 
 void Unit::setFacingHex(Hex* new_hex)

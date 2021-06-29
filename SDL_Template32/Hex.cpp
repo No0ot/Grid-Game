@@ -23,12 +23,12 @@ Hex::Hex(int x, int y, int z) : m_hexLayout(Layout(layout_flat, glm::vec2(32.0, 
 	
 	setPosition(hex_to_pixel(m_hexLayout, getCubeCoordinate()));
 
-	directions[0] = glm::vec3(1.0, -1.0, 0.0);	//UP RIGHT
-	directions[1] = glm::vec3(1.0, 0.0, -1.0);	//DOWN RIGHT
-	directions[2] = glm::vec3(0.0, 1.0, -1.0);	// UP
-	directions[3] = glm::vec3(-1.0, 1.0, 0.0);	//UP LEFT
-	directions[4] = glm::vec3(-1.0, 0.0, 1.0);	// DOWN LEFT
-	directions[5] = glm::vec3(0.0, -1.0, 1.0);	//DOWN
+	directions[0] = glm::vec3(0.0, -1.0, 1.0);	// UP
+	directions[1] = glm::vec3(1.0, -1.0, 0.0);	//UP RIGHT
+	directions[2] = glm::vec3(1.0, 0.0, -1.0);	//DOWN RIGHT
+	directions[3] = glm::vec3(0.0, 1.0, -1.0);	//DOWN
+	directions[4] = glm::vec3(-1.0, 1.0, 0.0);	// DOWN LEFT
+	directions[5] = glm::vec3(-1.0, 0.0, 1.0);	//UP LEFT
 
 	std::ostringstream tempLabel;
 	tempLabel << std::fixed << std::setprecision(1) << m_globalGoalValue;
@@ -87,6 +87,7 @@ void Hex::SetListenEvents()
 	addEventListener(CLICK, [&]()-> void
 		{
 			m_MouseState = STATE_SELECTED;
+			std::cout << getCubeCoordinate().x << " " << getCubeCoordinate().y << " " << getCubeCoordinate().z << std::endl;
 		});
 }
 

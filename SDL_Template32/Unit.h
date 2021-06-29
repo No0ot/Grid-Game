@@ -19,20 +19,31 @@ public:
 	virtual void clean() override = 0;
 
 	Hex* getHex() const;
-	void setHex(Hex* new_hex);
 	Hex* getFacingHex() const;
-	void setFacingHex(Hex* new_hex);
-
+	Hex* getAttackDirection() const;
 	State getState();
 	Owner getOwner();
+
+	void setAttackDirection(Hex* new_hex);
+	void setFacingHex(Hex* new_hex);
+	void setHex(Hex* new_hex);
 	void setOwner(Owner newowner);
 	void setState(State newstate);
+
+	bool m_isDead = false;
+	Hex* m_sideFacingHex1;
+	Hex* m_sideFacingHex2;
+	Hex* m_sideBehindHex1;
+	Hex* m_sideBehindHex2;
+	Hex* m_BehindHex;
 private:
 	Owner m_pOwner;
 	State m_pState;
 
 	Hex* m_currentHex;
 	Hex* m_facingHex;
+
+	Hex* m_attackDirection;
 
 };
 

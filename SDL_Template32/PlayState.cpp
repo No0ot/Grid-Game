@@ -27,6 +27,7 @@ int GameState::SpawnObjects(Unit* spawned_object)
 
 	spawned_object->setPosition(randomHex->getPosition());
 	spawned_object->setHex(randomHex);
+	spawned_object->setFacingHex(spawned_object->getHex()->getNeighbours().front());
 
 	return randomHexIndex;
 }
@@ -40,31 +41,46 @@ void GameState::drawGameBoard()
 {
 	for (int count = 0; count < (int)m_pHexGrid.ReturnGrid().size(); count++)
 	{
-		m_pHexGrid.ReturnGrid()[count]->setCamPosition(m_GameCamera->getPosition());
-		m_pHexGrid.ReturnGrid()[count]->draw();
+		if (m_pHexGrid.ReturnGrid()[count]->getActive())
+		{
+			m_pHexGrid.ReturnGrid()[count]->setCamPosition(m_GameCamera->getPosition());
+			m_pHexGrid.ReturnGrid()[count]->draw();
+		}
 	}
 
 	for (auto merc : m_Player2MercVec)
 	{
-		merc->setCamPosition(m_GameCamera->getPosition());
-		merc->draw();
+		if (merc->getActive())
+		{
+			merc->setCamPosition(m_GameCamera->getPosition());
+			merc->draw();
+		}
 	}
 	for (auto merc : m_Player1MercVec)
 	{
-		merc->setCamPosition(m_GameCamera->getPosition());
-		merc->draw();
+		if (merc->getActive())
+		{
+			merc->setCamPosition(m_GameCamera->getPosition());
+			merc->draw();
+		}
 	}
 
 }
 
 void GameState::drawUI()
 {
-	m_ActiveUnitProfile->draw();
-	m_HoverUnitProfile->draw();
-	m_MoveButton->draw();
-	m_AttackButton->draw();
-	m_AbilityButton->draw();
-	m_EndButton->draw();
+	if(m_ActiveUnitProfile->getActive())
+		m_ActiveUnitProfile->draw();
+	if(m_HoverUnitProfile->getActive())
+		m_HoverUnitProfile->draw();
+	if (m_MoveButton->getActive())
+		m_MoveButton->draw();
+	if (m_AttackButton->getActive())
+		m_AttackButton->draw();
+	if (m_AbilityButton->getActive())
+		m_AbilityButton->draw();
+	if (m_EndButton->getActive())
+		m_EndButton->draw();
 }
 
 void GameState::InitializeButtons()
@@ -84,10 +100,12 @@ void GameState::InitializeButtons()
 				std::vector<Hex*> temp = m_pHexGrid.GetReachableHexs(m_CurrentMerc->getHex(), m_CurrentMerc->getJob()->getMoveRange());
 				m_pHexGrid.ResetHexs();
 				std::vector<Hex*> temp2 = m_pHexGrid.GetReachableHexs(m_CurrentMerc->getHex(), m_CurrentMerc->getJob()->getDashRange());
-
-				for (auto hex : temp)
+				if (m_AttackButton->m_state != INACTIVE)
 				{
-					hex->setInteractiveState(Hex::RUN);
+					for (auto hex : temp)
+					{
+						hex->setInteractiveState(Hex::RUN);
+					}
 				}
 				for (auto hex : temp2)
 				{
@@ -129,7 +147,8 @@ void GameState::InitializeButtons()
 						hex->setInteractiveState(Hex::THREAT);
 						if (hex->getOccupied() && hex->getOccupier()->getOwner() != m_CurrentMerc->getOwner())
 						{
-							m_pThreatenedMercs.push_back(hex->getOccupier());
+							if(!hex->getOccupier()->m_isDead)
+								m_pThreatenedMercs.push_back(hex->getOccupier());
 						}
 					}
 				}
@@ -146,6 +165,7 @@ void GameState::InitializeButtons()
 	m_AttackButton->addEventListener(MOUSE_OUT, [&]()-> void
 		{
 			m_pHexGrid.ResetHexs();
+			m_pHexGrid.m_ThreatenedHexes.clear();
 			if (!m_pThreatenedMercs.empty())
 				m_pThreatenedMercs.front()->setState(Unit::State::NO_STATE);
 			m_pThreatenedMercs.clear();
@@ -159,14 +179,29 @@ void GameState::InitializeButtons()
 	m_EndButton->addEventListener(CLICK, [&]()-> void
 		{
 			current_state = FACING;
+			EndClicked = !EndClicked;
 		});
 	m_EndButton->addEventListener(MOUSE_OVER, [&]()-> void
 		{
-			current_state = FACING;
+			if (!EndClicked)
+			{
+				for (auto hex : m_pHexGrid.ReturnGrid())
+				{
+					if (hex != nullptr && hex->getGlobalValue() <= 1 && hex != m_CurrentMerc->getHex())
+					{
+						hex->setInteractiveState(Hex::FACEING);
+					}
+				}
+			}
+
+
 		});
 	m_EndButton->addEventListener(MOUSE_OUT, [&]()-> void
 		{
-			current_state = FACING;
+			if (!EndClicked)
+			{
+				m_pHexGrid.ResetHexs();
+			}
 		});
 }
 
@@ -175,7 +210,13 @@ void GameState::TurnStart()
 	m_pHexGrid.ResetHexs();
 	if (MoveClicked)
 		MoveClicked = false;
+	if (EndClicked)
+		EndClicked = false;
 	m_CurrentMerc = nullptr;
+	while (m_turnOrder.front()->m_isDead)
+	{
+		m_turnOrder.pop_front();
+	}
 	m_CurrentMerc = m_turnOrder.front();
 	m_CurrentMerc->setState(Unit::State::ACTIVE);
 	m_ActiveUnitProfile->setUnitReference(m_CurrentMerc);
@@ -227,6 +268,7 @@ void GameState::TurnMove()
 			m_pHexGrid.ResetHexs();
 			m_MoveButton->m_state = INACTIVE;
 			current_state = IDLE;
+			MoveClicked = !MoveClicked;
 		}
 		else if (m_pHexGrid.ReturnGrid()[count]->getMouseState() == Hex::MouseState::STATE_SELECTED && m_pHexGrid.ReturnGrid()[count]->getOccupied() != true && m_pHexGrid.ReturnGrid()[count]->getInteractiveState() == Hex::RUN)
 		{
@@ -241,6 +283,7 @@ void GameState::TurnMove()
 			m_MoveButton->m_state = INACTIVE;
 			m_AttackButton->m_state = INACTIVE;
 			current_state = IDLE;
+			MoveClicked = !MoveClicked;
 		}
 	}
 
@@ -293,35 +336,64 @@ void GameState::TurnAttack()
 	}*/
 	if (!m_pThreatenedMercs.empty())
 	{
-		m_CurrentMerc->attack(m_pThreatenedMercs.front());
-		m_pHexGrid.ResetHexs();
+		if (m_pHexGrid.DistancebetweenHexs(m_CurrentMerc->getHex(), m_pThreatenedMercs.front()->getHex()) > 1)
+		{
+			std::vector<Hex*> temp = m_pHexGrid.HexLineDraw(m_CurrentMerc->getHex(), m_pThreatenedMercs.front()->getHex());
+
+			for (auto hex : temp)
+			{
+				for (auto neighbour : m_pThreatenedMercs.front()->getHex()->getNeighbours())
+				{
+					if (hex == neighbour)
+					{
+						m_pThreatenedMercs.front()->setAttackDirection(neighbour);
+						neighbour->setInteractiveState(Hex::RED);
+						m_CurrentMerc->DealDamage(m_pThreatenedMercs.front());
+
+					}
+				}
+			}
+		}
+		else
+		{
+			for (auto neighbour : m_pThreatenedMercs.front()->getHex()->getNeighbours())
+			{
+				if (m_CurrentMerc->getHex() == neighbour)
+				{
+					m_pThreatenedMercs.front()->setAttackDirection(neighbour);
+					neighbour->setInteractiveState(Hex::RED);
+					m_CurrentMerc->DealDamage(m_pThreatenedMercs.front());
+
+				}
+			}
+		}
+
+		//m_pHexGrid.ResetHexs();
 		m_AttackButton->m_state = INACTIVE;
 		current_state = IDLE;
 	}
+	
+	m_pThreatenedHexes.clear();
 }
 
 void GameState::TurnFacing()
 {
-	for (auto hex : m_CurrentMerc->getHex()->getNeighbours())
+
+	/*for (auto hex : m_pHexGrid.ReturnGrid())
 	{
-		if (hex != nullptr && hex != m_CurrentMerc->getHex())
+		if (hex != nullptr && hex->getGlobalValue() <= 1 && hex != m_CurrentMerc->getHex())
 		{
-			m_pHexList.push_back(hex);
+			hex->setInteractiveState(Hex::FACEING);
 		}
-	}
+	}*/
 
-	for (auto hex : m_pHexList)
-	{
-		hex->setInteractiveState(Hex::FACEING);
-	}
-
-	for (int count = 0; count < (int)m_pHexList.size(); count++)
+	for (int count = 0; count < (int)m_pHexGrid.ReturnGrid().size(); count++)
 	{
 
-		if (m_pHexList[count]->getMouseState() == Hex::MouseState::STATE_SELECTED && m_pHexList[count] != m_CurrentMerc->getHex() && m_pHexList[count]->getInteractiveState() == Hex::FACEING)
+		if (m_pHexGrid.ReturnGrid()[count]->getMouseState() == Hex::MouseState::STATE_SELECTED && m_pHexGrid.ReturnGrid()[count] != m_CurrentMerc->getHex() && m_pHexGrid.ReturnGrid()[count]->getInteractiveState() == Hex::FACEING)
 		{
 			Hex* tempHex;
-			tempHex = m_pHexList[count];
+			tempHex = m_pHexGrid.ReturnGrid()[count];
 			m_CurrentMerc->setFacingHex(tempHex);
 			// Move turn to next merc in list
 			m_turnOrder.push_back(m_CurrentMerc);
@@ -443,21 +515,21 @@ void GameState::HandleEvents()
 
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_A))
 	{
-		m_GameCamera->setPosition(glm::vec2(m_GameCamera->getPosition().x - 10, m_GameCamera->getPosition().y));
+		m_GameCamera->setPosition(glm::vec2(m_GameCamera->getPosition().x - 5, m_GameCamera->getPosition().y));
 	}
 	else if (EventManager::Instance().isKeyDown(SDL_SCANCODE_D))
 	{
-		m_GameCamera->setPosition(glm::vec2(m_GameCamera->getPosition().x + 10, m_GameCamera->getPosition().y));
+		m_GameCamera->setPosition(glm::vec2(m_GameCamera->getPosition().x + 5, m_GameCamera->getPosition().y));
 	}
 
 
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_W))
 	{
-		m_GameCamera->setPosition(glm::vec2(m_GameCamera->getPosition().x, m_GameCamera->getPosition().y - 10));
+		m_GameCamera->setPosition(glm::vec2(m_GameCamera->getPosition().x, m_GameCamera->getPosition().y - 5));
 	}
 	else if (EventManager::Instance().isKeyDown(SDL_SCANCODE_S))
 	{
-		m_GameCamera->setPosition(glm::vec2(m_GameCamera->getPosition().x, m_GameCamera->getPosition().y + 10));
+		m_GameCamera->setPosition(glm::vec2(m_GameCamera->getPosition().x, m_GameCamera->getPosition().y + 5));
 	}
 
 	//if (m_MoveButton->m_state == CLICKED)

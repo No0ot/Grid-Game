@@ -34,14 +34,13 @@ private:
 	std::vector<Merc*> m_Player1MercVec;
 	std::vector<Merc*> m_Player2MercVec;
 	Merc* m_CurrentMerc;
-	Merc* m_Player1Merc;
-	Merc* m_Player2Merc;
 	std::list<Merc*> m_turnOrder;
 	//UI References
 	UnitProfile* m_ActiveUnitProfile;
 	UnitProfile* m_HoverUnitProfile;
 	Button* m_MoveButton;
 	bool MoveClicked = false;
+	bool EndClicked = false;
 	Button* m_AttackButton;
 	Button* m_AbilityButton;
 	Button* m_EndButton;

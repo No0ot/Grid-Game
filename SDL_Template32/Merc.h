@@ -43,7 +43,9 @@ public:
 	//other functions
 	void updateFacing();
 	void rollInitiative();
-	void attack(Merc* targetUnit);
+	void DealDamage(Merc* targetUnit);
+	void TakeDamage(int damage);
+	Hex* ReturnNeighbour(glm::vec3 coordinate);
 
 private:
 	// Needs a race and Job

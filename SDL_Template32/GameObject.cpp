@@ -5,6 +5,7 @@ GameObject::GameObject()
 	m_worldPosition = glm::vec2(0, 0);
 	m_rotation = glm::vec2(0, 0);
 	m_scale = glm::vec2(1.0f, 1.0f);
+	m_active = true;
 }
 
 GameObject::~GameObject()
